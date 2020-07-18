@@ -1,0 +1,29 @@
+post unary operator			-	x--, x++
+pre unary operator 			-	++x, --x
+other unary operator		-	+,-,!
+binaray 
+multiplicative operators	-	*,/,% 
+additive operators			- 	+,- 
+relational operators		- 	<,>,<=,>=
+equality/non equality		-	==,!=
+logical operators			-	&,\,^
+logical short-circuit operators		-	&&,||
+shift operators				-	<<,>>,>>>
+ternary operators			-	(booleanExp) ? (true-block):(false-block)
+assignment operators		-	=, +=, *=
+--------------------
+
+pre unary operator
+post unary operator
+other unary operator
+multiplicative operators
+additive operators
+logical operators
+relational operators
+equality/non equality
+short-circuit operators
+shift operators
+ternary operators
+assignment operators
+
+----------------

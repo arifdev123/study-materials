@@ -1,0 +1,56 @@
+chapter - 2 : Working with Java Data Types 
+
+Attempt - 1 : without revision
+-------------
+Scored : 44 out of 50
+
+ 1) A  Correct
+ 2) D  Correct
+ 3) C  Wrong
+ 4) B  Correct
+ 5) B  Correct
+ 6) C  Correct
+ 7) C  Correct
+ 8) C  Correct
+ 9) C  Correct
+10) C  Correct
+11) D  Correct
+12) A  Correct
+13) D  Correct
+14) B  Correct
+15) C  Correct
+16) A  Correct
+17) A  Correct
+18) D  Correct
+19) C  Correct
+20) C  Correct
+21) B  Correct
+22) B  Correct
+23) C  Correct
+24) D  Correct
+25) D  Wrong
+26) C  Correct
+27) B  Correct
+28) C  Correct
+29) D  Correct
+30) A  Correct
+31) D  Wrong
+32) A  Correct
+33) A  Correct
+34) B  Wrong
+35) C  Correct
+36) D  Wrong
+37) B  Correct
+38) C  Correct
+39) C  Correct
+40) B  Correct
+41) A  Correct
+42) A  Correct
+43) B  Correct
+44) A  Correct
+45) B  Correct
+46) B  Correct
+47) C  Correct
+48) B  Wrong
+49) B  Correct
+50) C  Correct

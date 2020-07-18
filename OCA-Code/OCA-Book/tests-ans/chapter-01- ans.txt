@@ -1,0 +1,56 @@
+chapter - 1 : Basics 
+
+Attempt - 1 : (without revision)
+-------------
+Scored : 43 out of 50
+
+ 1) 4  Correct
+ 2) 1  Correct
+ 3) 3  Correct
+ 4) 4  Wrong
+ 5) 2  Wrong
+ 6) 4  Correct
+ 7) 2  Correct
+ 8) 3  Correct
+ 9) 4  Correct
+10) 2  Correct
+11) 2  Correct
+12) 1  Correct
+13) 4  Correct
+14) 4  Correct
+15) 4  Wrong
+16) 2  Correct
+17) 4  Correct
+18) 4  Correct
+19) 1  Correct
+20) 4  Correct
+21) 3  Correct
+22) 3  Correct
+23) 4  Correct
+24) 4  Wrong
+25) 3  Wrong
+26) 3  Correct
+27) 4  Correct
+28) 4  Correct
+29) 3  Correct
+30) 2  Correct
+31) 2  Correct
+32) 4  Correct
+33) 1  Correct
+34) 4  Correct
+35) 1  Correct
+36) 2  Correct
+37) 2  Correct
+38) 1  Correct
+39) 4  Correct
+40) 3  Correct
+41) 1  Correct
+42) 1  Wrong
+43) 1  Correct
+44) 3  Correct
+45) 4  Correct
+46) 2  Correct
+47) 4  Wrong
+48) 4  Correct
+49) 3  Correct
+50) 3  Correct
