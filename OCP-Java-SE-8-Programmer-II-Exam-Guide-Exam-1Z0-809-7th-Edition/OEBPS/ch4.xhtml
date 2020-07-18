@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pls="http://www.w3.org/2005/01/pronunciation-lexicon" xmlns:ssml="http://www.w3.org/2001/10/synthesis" xmlns:svg="http://www.w3.org/2000/svg">
+<head>
+  <meta charset="UTF-8" />
+  <title>4 Dates, Times, Locales, and Resource Bundles</title>
+  <link type="text/css" rel="stylesheet" media="all" href="style.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="core.css" />
+</head>
+<body>
+  <div id="sbo-rt-content"><section epub:type="chapter">
+<p class="image"><img src="images/common-01.jpg" alt="Images" /></p>
+<h2 class="h2p" id="ch4"><span id="page_205" epub:type="pagebreak"></span><strong>4</strong></h2>
+<h2 class="h2p1"><strong>Dates, Times, Locales, and Resource Bundles</strong></h2>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVES</strong></span></p>
+<p class="toc-l">•       Create and Manage Date-Based and Time-Based Events Including a Combination of Date and Time into a Single Object Using LocalDate, LocalTime, LocalDateTime, Instant, Period, and Duration</p>
+<p class="toc-l">•       Work with Dates and Times Across Timezones and Manage Changes Resulting from Daylight Savings Including Format Date and Times Values</p>
+<p class="toc-l">•       Define and Create and Manage Date-Based and Time-Based Events Using Instant, Period, Duration, and TemporalUnit</p>
+<p class="toc-l">•       Read and Set the Locale by Using the Locale Object</p>
+<p class="toc-l">•       Create and Read a Properties File</p>
+<p class="toc-l">•       Build a Resource Bundle for Each Locale and Load a Resource Bundle in an Application</p>
+<p class="toc-lq"><img src="images/tick.jpg" alt="Images" />     Two-Minute Drill</p>
+<p class="toc-q"><strong>Q&amp;A</strong>   Self Test</p>
+<p class="noindent-d"><span id="page_206" epub:type="pagebreak"></span><span class="dropcap"><strong>T</strong></span>his chapter focuses on the exam objectives related to working with date- and time-related events, formatting dates and times, and using resource bundles for localization and internationalization tasks. Many of these topics could fill an entire book. Fortunately, you won’t have to become a guru to do well on the exam. The intention of the exam team was to include just the basic aspects of these technologies, and in this chapter, we cover <em>more</em> than you’ll need to get through the related objectives on the exam.</p>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch4lev1sec1"><strong>Dates, Times, and Locales (OCP Objectives 7.1, 7.2, 7.3, and 12.1)</strong></h3>
+<p class="noindent"><em>7.1 Create and manage date-based and time-based events including a combination of date and time into a single object using LocalDate, LocalTime, LocalDateTime, Instant, Period, and Duration.</em></p>
+<p class="noindent"><em>7.2 Work with dates and times across timezones and manage changes resulting from daylight savings including Format date and times values.</em></p>
+<p class="noindent"><em>7.3 Define, create and manage date-based and time-based events using Instant, Period, Duration, and TemporalUnit.</em></p>
+<p class="noindentb"><em>12. 1 Read and set the locale by using the Locale object.</em></p>
+<p class="indent">The Java API provides an extensive (perhaps a little <em>too</em> extensive) set of classes to help you work with dates and times. The exam will test your knowledge of the basic classes and methods you’ll use to work with dates and such. When you’ve finished this section, you should have a solid foundation in tasks such as creating date and time objects, and creating, manipulating, and formatting dates and times, and doing all of this for locations around the globe. In fact, a large part of why this section was added to the exam was to test whether you can do some basic internationalization (often shortened to “i18n“).</p>
+<p class="indent">Note: In this section, we’ll introduce the <code>Locale</code> class. Later in the chapter, we’ll be discussing resource bundles, and you’ll learn more about <code>Locale</code> then.</p>
+<h4 class="h4" id="ch4lev2sec1"><span id="page_207" epub:type="pagebreak"></span><strong>Working with Dates and Times</strong></h4>
+<p class="noindent">If you want to work with dates and times from around the world (and who doesn’t?), you’ll need to be familiar with several classes from the <code>java.time</code> package. <code>java.time</code> is new in Java 8, so if you’re looking for the old familiar <code>java.util.Date</code> and <code>java.util.Calendar</code>, you won’t find them on the exam, although we’ll briefly mention them here for comparison purposes.</p>
+<p class="indentb">Here’s an overview of how the classes in <code>java.time</code> are organized:</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>L</strong><strong>ocal dates and times</strong> These dates and times are local to your time zone and so don’t have time-zone information associated with them. These are represented by classes <code>java.time.LocalDate</code>, <code>java.time.LocalTime</code>, and <code>java.time.LocalDateTime</code>.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>Z</strong><strong>oned dates and times</strong> These dates and times include time-zone information. They are represented by classes <code>java.time.ZonedDateTime</code> and <code>java.time.OffsetDateTime</code>.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>F</strong><strong>ormatters for dates and times</strong> With <code>java.time.format<br/>.DateTimeFormatter</code>, you can parse and print dates and times with patterns and in a variety of styles.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>A</strong><strong>djustments to dates and times</strong> With <code>java.time.temporal<br/>.TemporalAdjusters</code> and <code>java.time.temporal.ChronoUnit</code>, you can adjust and manipulate dates and times by handy increments.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>P</strong><strong>eriods, Durations, and Instants</strong> <code>java.time.Period</code>s and <code>java<br/>.time.Duration</code>s represent an amount of time, periods for days or longer and durations for shorter periods like minutes or seconds. <code>java.time<br/>.Instant</code>s represent a specific instant in time, so you can, say, compute the number of minutes between two instants.</p>
+<p class="indent">If you’re used to working with <code>java.util.Date</code>, <code>java.util.Calendar</code>, and <code>java.text.DateFormat</code>, you’re going to have to forget most of what you’ve learned and start over (although the concepts are similar, so you have a bit of a head start). All those classes are still around (although some methods are marked as deprecated), but they are considered “old,” and the classes in <code>java.time</code> are designed to replace them completely. Hopefully this design will stick!</p>
+<h5 class="h5">The <code>Date</code> Class</h5>
+<p class="noindent">The API design of the <code>java.util.Date</code> class didn’t do a good job of handling internationalization and localization situations, so it’s been largely replaced by the classes in <code>java.time</code>, like <code>java.time.localDateTime</code> and <code>java.time.ZonedDateTime</code>. <span id="page_208" epub:type="pagebreak"></span>You might find <code>Date</code> used in legacy code, but, for the most part, it’s time to leave it behind.</p>
+<h5 class="h5">The <code>Calendar</code> Class</h5>
+<p class="noindent">Likewise, the <code>java.util.Calendar</code> class has largely been replaced with the classes in <code>java.time</code>. You’ll still find plenty of legacy <code>Calendar</code> code around, but if you’ve worked with <code>Calendar</code> before, you’ll likely find the <code>java.time</code> classes easier and less convoluted to work with.</p>
+<p class="indent">With that, we’ll dive right into the <code>java.time</code> classes.</p>
+<h4 class="h4" id="ch4lev2sec2"><strong>The java.time.* Classes for Dates and Times</strong></h4>
+<p class="noindent">To make learning about dates and times more fun, let’s imagine you are a solar eclipse hunter. You love chasing solar eclipses around the country and around the world. This example will be U.S.-centric, but you can easily apply all these ideas to dates and times in other countries too (and doing so is great practice for the exam).</p>
+<p class="indent">Let’s begin by figuring out the current date and time where you are, right now:</p>
+<p class="pre"><img src="images/un208-01.jpg" alt="Images" /></p>
+<p class="indent">Here we’re using the static method <code>LocalDate.now()</code> to get the current date. It has no time zone, so think of it as a description of “the date,” whatever that date is for you today, wherever you are, as you try this code. Similarly, we’re using the static method <code>LocalTime.now()</code> to get the current time, so that will be whatever the time is for you right now, wherever you are, as you try this code. We then use the date and time of “now” to create a <code>LocalDateTime</code> object using the <code>of()</code> static method and then display it.</p>
+<p class="indent">When we run this code we see</p>
+<p class="pre"><code>It's currently 2017-10-11T14:51:19.982 where I am</code></p>
+<p class="noindent">The string <code>2017-10-11T14:51:19.982</code> represents the date, October 11, 2017, and time, 14:51:19.982, which is 2:51 <code>PM</code> and 19 seconds and 982 milliseconds. <span id="page_209" epub:type="pagebreak"></span>Notice that Java displays a “<code>T</code>” between the date and the time when converting the <code>LocalDateTime</code> to a string.</p>
+<p class="indent">Of course, you’ll see a completely different date and time because you’re running this code in your own date and time, wherever and whenever that is.</p>
+<p class="indent">We could also write:</p>
+<p class="pre"><code>LocalDateTime nowDateTime = LocalDateTime.now();</code></p>
+<p class="indent">to get the current date and time of now as a <code>LocalDateTime</code>.</p>
+<p class="indent">What if you want to set a specific date and time rather than “now”?</p>
+<p class="indent">Let’s say you went to Madras, Oregon, in the United States to see the solar eclipse on August 21, 2017. Here are a couple of ways you can set that specific date:</p>
+<p class="pre"><img src="images/un209-02.jpg" alt="Images" /></p>
+<p class="indent">We’re creating the same date in two slightly different ways: first, by specifying a year, month, and day as arguments to the <code>LocalDate.of()</code> static method; and second, by using the <code>LocalDate.parse()</code> method to parse a string that matches the date. <code>LocalDate</code> represents a date in the ISO-8601 calendar system (which specifies a format of YYYY-MM-DD). You don’t need to know that, except to know the kinds of strings that the <code>parse()</code> method can parse correctly. (For a full list of the formats of the dates and times that can be parsed and represented, check out the documentation for <code>java.time.format.DateTimeFormatter</code>, which we’ll talk more about in a little bit. See https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html.)</p>
+<p class="indent">When we run this code, we see the default display (using that ISO format) for both dates:</p>
+<p class="pre"><code>Eclipse date: 2017-08-21, 2017-08-21</code></p>
+<p class="indent">An eclipse happens at a specific time of day. The eclipse begins awhile before <em>totality</em> (when the moon almost completely obscures the sun), so let’s create <code>LocalTime</code> objects to represent the time the eclipse begins and the time of totality:</p>
+<p class="pre"><img src="images/un209-04.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_210" epub:type="pagebreak"></span>As with <code>LocalDate</code>, a <code>LocalTime</code> has no time zone associated with it, so in this case, we need to know that we’re creating times that are valid in Madras, OR (on U.S. Pacific time). For these times, we again use the static <code>of()</code> and <code>parse()</code> methods to demonstrate two different ways to create <code>LocalTime</code> objects.</p>
+<p class="indent">When we print the times, we see:</p>
+<p class="pre"><code>Eclipse begins at 09:06:43 and totality is at 10:19:36</code></p>
+<p class="indent">If you want to be precise about the format of the date and time you’re parsing into a <code>LocalDate</code> or <code>LocalTime</code> or <code>LocalDateTime</code>, you can use <code>DateTimeFormatter</code>. You can either use one of several predefined formats or create your own format for parsing using a sequence of letters and symbols. In the following example, we create a date and time in a string and then tell the <code>LocalDateTime</code> how to parse that using a <code>DateTimeFormatter</code>:</p>
+<p class="pre"><img src="images/un210-02.jpg" alt="Images" /></p>
+<p class="indent">This creates a <code>LocalDateTime</code> object from the string, formatted using the pattern we specified, and when we print out the <code>LocalDateTime</code>, we see the correct date and time, printed in the standard ISO format we saw before:</p>
+<p class="pre"><code>Eclipse day: 2017-08-21T10:19</code></p>
+<p class="indent">Of course, you can also use <code>DateTimeFormatter</code> to change the format of the output (again using letters and symbols):</p>
+<p class="pre"><code>System.out.println("Eclipse day, formatted: " +<br/>  eclipseDay.format(DateTimeFormatter.ofPattern("dd, mm, yy hh, mm")));</code></p>
+<p class="noindent">This code results in the output:</p>
+<p class="pre"><code>Eclipse day, formatted: 21, 19, 17 10, 19</code></p>
+<p class="indent">We’ll come back to <code>DateTimeFormatter</code> in a bit.</p>
+<p class="indent"><code>LocalDateTime</code> has several methods that make it easy to add to and subtract from dates and times. For instance, let’s say your Mom calls from Nashville, TN (on U.S. Central time) and asks, “What time will it be here when you’re seeing the eclipse there?” You know that Central time is two hours ahead of Pacific time, so to answer that question you can write:</p>
+<p class="pre"><code>System.out.println("Mom time: " + eclipseDay.plusHours(2));</code></p>
+<p class="noindent"><span id="page_211" epub:type="pagebreak"></span>which reveals that it will be 12:19 <code>PM</code> where she is in Tennessee when you’re watching the eclipse at 10:19 <code>AM</code> in Oregon:</p>
+<p class="pre"><code>Mom time: 2017-08-21T12:19:36</code></p>
+<p class="indent">Then she asks, “When are you coming home?” You can tell her, “In three days” by writing the following code:</p>
+<p class="pre"><code>System.out.println("Going home: " + eclipseDay.plusDays(3));</code></p>
+<p class="noindent">which means you’ll be going home on August 24:</p>
+<p class="pre"><code>Going home: 2017-08-24T10:19:36</code></p>
+<p class="indent">Of course, there are loads of other handy methods too, like <code>getDayOfWeek()</code> to find out what day of the week the eclipse occurs:</p>
+<p class="pre"><code>System.out.println("What day of the week is eclipse? " +<br/>   eclipseDay.getDayOfWeek());</code></p>
+<p class="noindent">which lets you know the eclipse was on a Monday:</p>
+<p class="pre"><code>What day of the week is eclipse? MONDAY</code></p>
+<h5 class="h5">Zoned Dates and Times</h5>
+<p class="noindent">Local dates and times are great when you don’t need to worry about the time zone, but sometimes we need to share dates and times with people in other time zones, so knowing which time zone you’re in or they’re in becomes important.</p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1a"><strong><em>You don’t need to know too much about time zones for the exam, except, of course, to understand what a time zone is and that different places in different parts of the world are on different time zones. For instance, in Madras, Oregon, you are in the U.S. Pacific time zone, whereas your Mom in Tennessee is in the U.S. Central time zone.</em></strong>
+</div>
+<p class="indent">All time zones are based on <em>Greenwich Mean Time (GMT),</em> the time in Greenwich, England. GMT is a time zone. The name of the time standard that uses GMT as the basis for all other time zones is <em>Coordinated Universal Time (UTC).</em></p>
+<p class="indent">Your time zone will either be ahead of or behind GMT. For instance, in Madras, OR, for the eclipse, you are GMT-7, meaning you are seven hours behind GMT. <span id="page_212" epub:type="pagebreak"></span>That’s for summer; in winter, you’ll be GMT-8, or eight hours behind GMT because the United States has daylight savings time in summer and standard time in winter. Yes, zoned dates and times can get complicated fast, but rest assured, the exam is not about your depth of understanding of time zones. As long as you know the basics and you can create and use zoned dates and times, you’ll be fine.</p>
+<p class="indent">Let’s create a zoned date and time for the date and time of the eclipse:</p>
+<p class="pre"><img src="images/un212-01.jpg" alt="Images" /></p>
+<p class="noindent">Looking at the output, we see:</p>
+<p class="pre"><code>Date and time totality begins with time zone:<br/>  2017-08-21T10:19:36-07:00[US/Pacific]</code></p>
+<p class="noindent">A <code>ZonedDateTime</code> is a <code>LocalDateTime</code> plus a time zone, which is represented as a <code>ZoneId</code>. In this example, the <code>ZoneId</code> is “<code>US/Pacific</code>,” which happens to be GMT-7 (which you may also see written as UTC-7). You can use either “US/Pacific” or “GMT-7” as the <code>ZoneId</code>.</p>
+<p class="indent">You might be asking: How did you know the name of the <code>ZoneId</code>? Good question. The names of the zones are not listed in the documentation page for <code>ZoneId</code>, so one good way to find them is to write some code to display them:</p>
+<p class="pre"><img src="images/un212-02.jpg" alt="Images" /></p>
+<p class="noindent">With this code, we’re displaying only the U.S. <code>zoneId</code>s. If you, say, want to display the <code>zoneId</code>s for Great Britain, then use <code>"GB"</code> in place of <code>"US"</code>. The list includes some <code>zoneId</code>s by country, some by city, and some by other names.</p>
+<p class="indent">Let’s get back to daylight savings time. Recall that the U.S. Pacific time zone is either GMT-7 (in winter, standard time) or GMT-8 (in summer, daylight savings time). That means when you’re creating a <code>ZonedDateTime</code> for Madras, Oregon (or any other place that uses daylight savings), you’re going to need to know if you’re currently in daylight savings time.</p>
+<p class="indent">You can find out if you’re in daylight savings time by using <code>ZoneRules</code>. All you need to know about <code>ZoneRules</code> is that the class captures the current rules about <span id="page_213" epub:type="pagebreak"></span>daylight savings in various parts of the world. Unfortunately, this tends to change (as politicians tend to change their minds—what a shocker!) so the rules are, as the documentation states, only as accurate as the information provided. Let’s assume the rules are up to date (as you should for the exam) and write some code to find out if the <code>"US/Pacific"</code> time zone is currently in daylight savings time:</p>
+<p class="pre"><img src="images/un213-01.jpg" alt="Images" /></p>
+<p class="indent">In this code, we first get the <code>ZoneId</code> for the <code>"US/Pacific"</code> time zone. We can then use that <code>ZoneId</code> to get the <code>ZoneRules</code> with the <code>getRules()</code> method. A <code>ZoneRules</code> object has a method <code>isDaylightSavings()</code>, which takes an <code>Instant</code> and determines whether that <code>Instant</code> is currently in daylight savings. We’ll discuss <code>Instant</code>s in more detail shortly; for now, just know that we can convert the <code>ZonedDateTime</code> representing the date and time of the eclipse into an <code>Instant</code> with the <code>toInstant()</code> method. The result is</p>
+<p class="pre"><code>Is Daylight Savings in effect at time of totality: true</code></p>
+<p class="noindent">The result is <code>true</code> because the date of the eclipse, <code>zTotalityDateTime</code> (that is, August 21, 2017, in the U.S. Pacific zone), was in daylight savings time (summer time).</p>
+<h5 class="h5">Date and Time Adjustments</h5>
+<p class="noindent">Once you’ve created a <code>LocalDateTime</code> or <code>ZonedDateTime</code>, you can’t modify it. The documentation describes datetime objects as “immutable.” However, you can create a new datetime object from an existing datetime object, and <code>java.time.*</code> provides plenty of adjusters that make it easy to do so. In other words, rather than modifying an existing datetime, you just make a new datetime from the existing one.</p>
+<p class="indent">Let’s say you want to find the date of the Thursday following the eclipse. We can take the <code>ZonedDateTime</code> for the eclipse we made above, <code>zTotalityDateTime</code>, and create a new <code>ZonedDateTime</code> from it to represent “the following Thursday” like this:</p>
+<p class="pre"><img src="images/un213-03.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_214" epub:type="pagebreak"></span>The output is:</p>
+<p class="pre"><code>Thursday following the totality: 2017-08-24T10:19:36-07:00[US/Pacific]</code></p>
+<p class="noindent">We can see that the Thursday following the eclipse (which, remember, was on Monday, August 21, 2017) is August 24.</p>
+<p class="indent">The class <code>TemporalAdjusters</code> has a whole slew of handy methods to make a <code>TemporalAdjuster</code> for a variety of scenarios, such as <code>firstDayOfNextYear()</code>, <code>lastDayOfMonth()</code>, and more.</p>
+<p class="indent">You’ve already seen how you can add days and hours from a datetime; many other adjustments, including <code>plusMinutes()</code>, <code>plusYears()</code>, <code>minusWeeks()</code>, <code>minusSeconds()</code>, and so on, are available as methods in <code>LocalDateTime</code> and <code>ZonedDateTime</code>. You’ll also find a variety of adjustments like <code>withHour()</code> and <code>withYear()</code>, which you can use to create a new datetime object from an existing one, but with a different hour or year. Each of these methods creates a new adjusted datetime from an existing one.</p>
+<p class="indent"><code>ZonedDateTimes</code> are subject to <code>ZoneRules</code> when you adjust them. So, if you, say, add a month to an existing <code>ZonedDateTime</code>, the <code>ZoneRules</code> will be used to determine if the new <code>ZonedDateTime</code> is GMT-7 or GMT-8, for instance, (depending on daylight savings time). If you want to create a datetime with a zone offset from GMT that does not use the <code>ZoneRules</code>, then you can use an <code>OffsetDateTime</code>. An <code>OffsetDateTime</code> is a fixed datetime and offset that doesn’t change even if the <code>ZoneRules</code> change.</p>
+<h5 class="h5">Periods, Durations, and Instants</h5>
+<p class="noindent">So far, we’ve looked at how to create specific dates and times. The <code>java.time.* package</code> also includes ways to represent a period of time, whether that’s a period of days, months, or years (a <code>Period</code>), a short period of minutes or hours (a <code>Duration</code>), or an instant in time (an <code>Instant</code>).</p>
+<p class="noindentt"><strong>Periods</strong> You’re looking forward to the next eclipse on April 8, 2024, which you’re going to watch in Austin, Texas, and you want to set a reminder for yourself one month in advance, so you don’t forget. You could just say, well, I’ll remind myself on March 8, 2024, but what fun would that be? Let’s compute one month before the eclipse in code:</p>
+<p class="pre"><img src="images/un214-02.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_215" epub:type="pagebreak"></span>To create the reminder, we first create a <code>ZonedDateTime</code> for when totality begins in Austin. We use the <code>ZonedDateTIme.of()</code> static method to create the datetime with the arguments year, month, day, hours, minutes, seconds, nanoseconds, and zone id. We have no idea what the nanoseconds are for the totality beginning, so we just put 0. Notice we used 13 to specify 1 <code>PM</code>. Austin is in the U.S. Central time zone, so we get the <code>zoneId</code> using that name (which we got earlier when we displayed all the U.S. time-zone names). When we print this <code>ZonedDateTime</code>, we see</p>
+<p class="pre"><img src="images/un215-01.jpg" alt="Images" /></p>
+<p class="indent">Now let’s create the reminder for one month before this date and time by creating a <code>Period</code> that represents one month and subtract it from the date and time for the eclipse:</p>
+<p class="pre"><img src="images/un215-02.jpg" alt="Images" /></p>
+<p class="noindent">Here’s the output:</p>
+<p class="pre"><code>Period is P1M<br/>  DateTime of 1 month reminder: 2024-03-08T13:35:56-06:00[US/Central]</code></p>
+<p class="noindent">Notice how the period is displayed, with “<code>P</code>” meaning period and “<code>1M</code>” meaning month.</p>
+<p class="indent">While we’re here, let’s see how to create a <code>LocalDateTime</code> from the <code>ZonedDateTime</code> for people who are in Austin:</p>
+<p class="pre"><code>System.out.println("Local DateTime (Austin, TX) of reminder: " +<br/>   reminder.toLocalDateTime());</code></p>
+<p class="noindent">Notice the difference in the <code>LocalDateTime</code>—there’s no time zone:</p>
+<p class="pre"><code>Local DateTime (Austin, TX) of reminder: 2024-03-08T13:35:56</code></p>
+<p class="indent">And finally, let’s figure out when we’ll see the reminder in Madras, Oregon:</p>
+<p class="pre"><code>System.out.println("Zoned DateTime (Madras, OR) of reminder: " +<br/>   reminder.withZoneSameInstant(ZoneId.of("US/Pacific")));</code></p>
+<p class="indent">We’ll see the reminder at 11 <code>AM</code>, two hours earlier than the reminder in Austin, because Madras is two hours behind.</p>
+<p class="pre"><code>Zoned DateTime (Madras, OR) of reminder: 2024-03-08T11:35:56-08:00[US/Pacific]</code></p>
+<p class="indent"><span id="page_216" epub:type="pagebreak"></span>One more thing to notice about this code. The eclipse is happening in April 2024. April happens to be in summer time, or daylight savings time, so notice that during daylight savings, U.S. Central time is five hours behind GMT:</p>
+<p class="pre"><code>Next total eclipse in the US, date/time in Austin, TX:<br/>  2024-04-08T13:35:56-05:00[US/Central]</code></p>
+<p class="indent">When we subtracted the one-month period from this date and time to get the date and time for our reminder, we compute that the reminder is on March 8, which is in winter time, or standard time:</p>
+<p class="pre"><code>DateTime of 1 month reminder: 2024-03-08T13:35:56-06:00[US/Central]</code></p>
+<p class="noindent">So, on March 8, 2024, Austin will be six hours behind GMT. Nice for us that Java correctly computed the time using <code>ZoneRules</code> behind the scenes.</p>
+<p class="noindentt"><strong>Durations</strong> How many minutes from the time the eclipse begins to the time totality begins? We can compute the time in a couple of ways; we’re going to do it using <code>ChronoUnit</code> and <code>Duration</code>. <code>ChronoUnit</code> is an <code>enum</code> in <code>java.time<br/>.temporal</code> that provides a set of predefined units of time periods. For instance, <code>ChronoUnit.MINUTES</code> represents the concept of a minute. <code>ChronoUnit</code> also supplies a method <code>between()</code> that we can use to compute a <code>ChronoUnit</code> time period between two times. Once we have the number of minutes between two times, we can use that to create a <code>Duration</code>. <code>Duration</code>s have all kinds of handy methods for computing things, like adding and subtracting hours and minutes and seconds, or converting a <code>Duration</code> into a number of seconds or milliseconds, and so on. Think of <code>ChronoUnit</code> as a unit of time and <code>Duration</code> as specifying a period of time (like a <code>Period</code>, only for period lengths less than a day).</p>
+<p class="indent">First, let’s create two <code>LocalTime</code>s to represent the start of the eclipse (when the moon first starts to cross the sun) and the time of totality (when the moon completely obscures the sun):</p>
+<p class="pre"><img src="images/un216-03.jpg" alt="Images" /></p>
+<p class="indent">Notice we’re just using <code>LocalTime</code> here, not <code>ZonedDateTime</code>, so we don’t have to specify a time zone. The output looks like this:</p>
+<p class="pre"><code>Eclipse begins at 12:17:32 and totality is at 13:35:56</code></p>
+<p class="indent"><span id="page_217" epub:type="pagebreak"></span>Now, let’s use a <code>ChronoUnit</code> to compute the number of minutes between <code>begins</code> and <code>totality</code>:</p>
+<p class="pre"><img src="images/un217-01.jpg" alt="Images" /></p>
+<p class="indent">The minutes returned by the <code>between()</code> method is a <code>long</code>. When we look at the output, we see we have 78 minutes between the beginning of the eclipse and the beginning of totality. Notice that we lost the number of seconds in this computation because we asked for the number of minutes between the two times.</p>
+<p class="indent">Let’s turn this into a <code>Duration</code>. As you might expect, we can turn the number of minutes into a <code>Duration</code> using <code>Duration.ofMinutes()</code>:</p>
+<p class="pre"><img src="images/un217-02.jpg" alt="Images" /></p>
+<p class="noindent">Looking at the output we see:</p>
+<p class="pre"><code>Duration: PT1H18M</code></p>
+<p class="noindent"><code>PT</code> means “period of time,” meaning <code>Duration</code> (rather than <code>Period</code>), and then <code>1H18M</code> means “1 hour and 18 minutes” corresponding to our 78 minutes.</p>
+<p class="indent">Just to double-check ourselves, let’s take the <code>begin</code> <code>LocalTime</code> we created before and add back our <code>Duration</code> using the <code>LocalTime.plus()</code> method. We could also do this with our <code>betweenMins</code> value, using <code>LocalTime.plusMinutes()</code>. The <code>plus()</code> method takes a <code>TemporalAmount</code> (like a <code>Duration</code> or a <code>Period</code>), whereas <code>plusMinutes()</code> takes <code>minutes</code> as a <code>long</code>. Either way will work.</p>
+<p class="pre"><img src="images/un217-04.jpg" alt="Images" /></p>
+<p class="noindent">The result is</p>
+<p class="pre"><code>Totality begins, computed: 13:35:32</code></p>
+<p class="noindent">This time is slightly different than our original <code>begins</code> time of 13:35:56 because we lost the seconds when we created the <code>Duration</code> from the minutes between <code>begins</code> and <code>totality</code>.</p>
+<p class="noindentt"><strong>Instants</strong> An <code>Instant</code> represents an instant in time. Makes sense, right? But how is it different from a <code>DateTime</code>? If you’re used to timestamps, then you’ll probably recognize an <code>Instant</code> as the number of seconds (and nanoseconds) since January 1, 1970—the standard Java epoch. <code>Instant</code>s can’t be represented as just <span id="page_218" epub:type="pagebreak"></span>one <code>long</code>, like you might be used to, because an <code>Instant</code> includes nanoseconds, so the seconds plus the nanoseconds is too big for a <code>long</code>. However, once you’ve created an <code>Instant</code>, you can always get the number of seconds as a <code>long</code> value from the <code>Instant</code>.</p>
+<p class="indent"><code>ZonedDateTime</code>s can be converted to <code>Instant</code>s using the <code>toInstant()</code> method:</p>
+<p class="pre"><img src="images/un218-01.jpg" alt="Images" /></p>
+<p class="noindent">Looking at the output we see</p>
+<p class="pre"><code>Austin's eclipse instant is: 2024-04-08T18:35:56Z</code></p>
+<p class="indent">Even though we created a <code>ZonedDateTime</code> for Austin at 1:35 <code>PM</code>, in the <code>US/Central</code> time zone, the instant displays as 6:35 <code>PM</code> and shows a <code>Z</code> at the end. That datetime represents 6:35 <code>PM</code> GMT. The <code>Z</code> is how you know the time displayed is for the GMT zone, rather than the U.S. Central zone. This format is the <code>ISO_INSTANT</code> format of displaying a datetime.</p>
+<p class="indent">Note that if you want to call the <code>toInstant()</code> method on a <code>LocalDateTime</code>, you’ll need to supply a <code>ZoneOffset</code> as an argument. To create a unique instant in time that works globally, a time zone is required when the <code>Instant</code> is created. If we don’t include a time zone, then <em>your</em> instant and <em>our</em> instant may mean two different things.</p>
+<p class="indent">Let’s once again compute the number of minutes between two times using <code>ChronoUnit.MINUTES</code>. This time we’ll compute the minutes between now and the Austin eclipse as represented by <code>Instant</code>s and then use that to create a <code>Duration</code>. We’ll use the <code>totalityInstant</code> we created above for the instant of the totality, and we’ll use the <code>Instant.now()</code> method to create an instant representing right now:</p>
+<p class="pre"><img src="images/un218-03.jpg" alt="Images" /></p>
+<p class="noindent">The output is</p>
+<p class="pre"><code>Minutes between 3405250, is duration PT56754H10M</code></p>
+<p class="noindent"><span id="page_219" epub:type="pagebreak"></span>As you can see (reading the <code>Duration</code>), between now and the next eclipse in Austin, we have only 56,754 hours and 10 minutes to wait. That eclipse will be here in no time.</p>
+<p class="indent">Lastly, if you want to get the number of seconds since January 1, 1970, from an <code>Instant</code>, use the method <code>getEpochSecond()</code>:</p>
+<p class="pre"><img src="images/un219-01.jpg" alt="Images" /></p>
+<p class="noindent">The number of seconds is</p>
+<p class="pre"><code>Seconds since epoch: 1508286832</code></p>
+<h5 class="h5">A Few Other Handy Methods and Examples</h5>
+<p class="noindent">Let’s add another reminder before the next eclipse, say, for three days before the eclipse, and then let’s figure out what day of the week this reminder will occur:</p>
+<p class="pre"><img src="images/un219-03.jpg" alt="Images" /></p>
+<p class="noindent">We see that the three-day reminder is on April 5, which is a Friday:</p>
+<p class="pre"><img src="images/un219-04.jpg" alt="Images" /></p>
+<p class="indent">And we really should call our sister in Paris a couple of hours after the next eclipse to tell her how it was:</p>
+<p class="pre"><img src="images/un219-05.jpg" alt="Images" /></p>
+<p class="indent">From the output, we can see that the eclipse happens at 8:35 Paris time, and when we call our sister two hours after the eclipse, it will be 3:35 <code>PM</code> Austin time and 10:35 <code>PM</code> Paris time:</p>
+<p class="pre"><img src="images/un219-06.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_220" epub:type="pagebreak"></span>If you tend to lose track of time, but you really, really don’t want to miss the eclipse, you can check to make sure the eclipse is still in the future with this code:</p>
+<p class="pre"><img src="images/un220-01.jpg" alt="Images" /></p>
+<p class="noindent">Since we’re writing this in 2017, the 2024 eclipse is still far in the future, so we see</p>
+<p class="pre"><code>Is the 2024 eclipse still in the future? true</code></p>
+<p class="indent">And finally, we’d better do one more check about 2024. How about checking to see if 2024 is a leap year? You definitely don’t want to miss the eclipse by a day:</p>
+<p class="pre"><code><code>System.out.println("Is 2024 a leap year? " + totalityAustin.isLeapYear());</code></code></p>
+<p class="noindent">Try this code and you’ll get a compile-time error:</p>
+<p class="pre"><code>The method isLeapYear() is undefined for the type ZonedDateTime</code></p>
+<p class="noindent">Hmm. It turns out <code>isLeapYear()</code> is defined only for <code>LocalDate</code>, not for <code>LocalDateTime</code> or <code>ZonedDateTime</code>. We can fix the code by converting <code>totalityAustin</code> to a <code>LocalDate</code>:</p>
+<p class="pre"><code>System.out.println("Is 2024 a leap year? " +<br/>   totalityAustin.toLocalDate().isLeapYear());</code></p>
+<p class="indent">Another way to check for a leap year is</p>
+<p class="pre"><code>System.out.println("Is 2024 a leap year? " + Year.of(2024).isLeap());</code></p>
+<p class="noindent">The output from both lines of code shows that 2024 is, indeed, a leap year.</p>
+<h5 class="h5">Formatting Output with DateTimeFormatter</h5>
+<p class="indent">Earlier we used <code>DateTimeFormatter</code> to specify a pattern when parsing a date string. We can also use <code>DateTimeFormatter</code> when we display a datetime as a string.</p>
+<p class="indent">You might know that in the United States, we tend to write month/day/year, and in the European Union, they tend to write day/month/year. (Yes, that can get a bit confusing at times!)</p>
+<p class="indent">Let’s format and display the datetime of the eclipse in Austin using the European-preferred format. There are a couple of different ways we can do that. First, we can specify exactly the format we want using letters and symbols, as we described earlier:</p>
+<p class="pre"><img src="images/un220-07.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_221" epub:type="pagebreak"></span>Here, we’re using the <code>format()</code> method of the <code>ZonedDateTime</code>, <code>totalityAustin</code>, and passing in a formatter. The formatter specifies a format to use for formatting the datetime, using allowed letters and symbols (see the <code>DateTimeFormatter</code> documentation for all the options). When we look at the output, we see</p>
+<p class="pre"><img src="images/un221-01.jpg" alt="Images" /></p>
+<p class="indent">Alternatively, we could specify a format style and a locale:</p>
+<p class="pre"><img src="images/un221-02.jpg" alt="Images" /></p>
+<p class="noindent">Now when we look at the output, we see</p>
+<p class="pre"><img src="images/un221-03.jpg" alt="Images" /></p>
+<p class="indent">You’ll learn more about <code>Locale</code>s shortly; essentially, <code>Locale</code>s are designed to tailor data for a specific region. Here, we’re creating a <code>DateTimeFormatter</code> by specifying a built-in style and then using that to create a new formatter for a specific locale, the UK locale. Creating a formatter with a specific locale means the formatter is adjusted appropriately for that locale. We see that the UK locale uses the day/month/year format for the date and the 24-hour format for the time. As you can see, there is a lot to the <code>java.time.*</code> package. There’s no way you can memorize everything in the package for the exam, so we recommend you focus on the classes, properties, and methods in <a href="ch4.xhtml#ch4tab1">Tables 4-1</a> and <a href="ch4.xhtml#ch4tab2">4-2</a> (later in the chapter) and familiarize yourself with the rest of the package by looking over 222the documentation to get a sense of what’s there (see https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html).</p>
+<p class="indent">You’ve probably noticed a pattern in the method names used in the <code>java<br/>.time.*</code> package. For instance, <code>of()</code> methods create a new date from, typically, a sequence of numbers specifying the year, month, day, and so on. <code>parse()</code> methods create a new date by parsing a string that’s either in a standard ISO format already or by using a formatter. <code>with()</code> methods allow you to adjust a date with a <code>TemporalAdjuster</code> to make a new date. <code>plusX()</code> and <code>minusX()</code> methods create a new datetime object from an existing one by adding and subtracting <code>TemporalUnits</code> or longs representing weeks, minutes, and so on. Study the <code>LocalDateTime</code> and <code>ZonedDateTime</code> methods enough to get the hang of this pattern so you can recognize the methods on the exam (without having to memorize them all).</p>
+<h5 class="h5"><span id="page_222" epub:type="pagebreak"></span>Using Dates and Times with Locales</h5>
+<p class="indent">The <code>Locale</code> class is your ticket to understanding how to internationalize your code. Both the <code>DateTimeFormatter</code> class and the <code>NumberFormat</code> class can use an instance of <code>Locale</code> to customize formatted output for a specific locale (and you just got a taste of this with <code>DateTimeFormatter</code> in the previous section).</p>
+<p class="indent">You might ask how Java defines a locale. The API says a locale is “a specific geographical, political, or cultural region.” The two <code>Locale</code> constructors you’ll need to understand for the exam are</p>
+<p class="pre"><img src="images/un222-01.jpg" alt="Images" /></p>
+<p class="indent">The language argument represents an ISO 639 Language code, so, for instance, if you want to format your dates or numbers in Walloon (the language sometimes used in southern Belgium), you’d use <code>"wa"</code> as your language string. There are over 500 ISO Language codes, including one for Klingon (<code>"tlh"</code>), although, unfortunately, Java doesn’t yet support the Klingon locale. We thought about telling you that you’d have to memorize all these codes for the exam…but we didn’t want to cause any heart attacks. So rest assured, you will <em>not</em> have to memorize any ISO Language codes or ISO Country codes (of which there are about 240) for the exam.</p>
+<p class="indent">Let’s get back to how you might use these codes. If you want to represent basic Italian in your application, all you need is the Language code. If, on the other hand, you want to represent the Italian used in Switzerland, you’d want to indicate that the country is Switzerland (yes, the Country code for Switzerland is <code>"CH"</code>), but that the language is Italian:</p>
+<p class="pre"><img src="images/un222-02.jpg" alt="Images" /></p>
+<p class="indent">Using these two locales on a date could give us output like this:</p>
+<p class="pre"><img src="images/un222-03.jpg" alt="Images" /></p>
+<p class="indent">Now let’s put this all together in some code that creates a <code>ZonedDateTime</code> object and sets its date. We’ll then take that datetime object and print it using locales from around the world:</p>
+<p class="pre"><img src="images/un222-04.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_223" epub:type="pagebreak"></span><img src="images/un223-01.jpg" alt="Images" /></p>
+<p class="indent">This code, on our JVM, produces the output:</p>
+<p class="pre"><img src="images/un223-02.jpg" alt="Images" /></p>
+<p class="indent">So you can see how a single <code>ZonedDateTime</code> object can be formatted to work for many locales and varying amounts of detail. (Note that you’ll need Eclipse in UTF-8 format to see the Indian output properly.)</p>
+<p class="indent">There are a couple more methods in <code>Locale</code> (<code>getDisplayCountry()</code> and <code>getDisplayLanguage()</code>) that you need to know for the exam. These methods <span id="page_224" epub:type="pagebreak"></span>let you create strings that represent a given locale’s country and language in terms of both the default locale and any other locale:</p>
+<p class="pre"><img src="images/un224-01.jpg" alt="Images" /></p>
+<p class="indent">This code, on our JVM, produces the output:</p>
+<p class="pre"><img src="images/un224-02.jpg" alt="Images" /></p>
+<p class="indent">Our JVM’s locale (the default for us, which we saw displayed earlier) is <code>en_US</code>, and when we display the country name for Brazil, in our locale, we get <code>Brazil</code>. In Brazil, however, the country is <code>Brasil</code>. Same with the language; for us the language of Brazil is <code>Portuguese</code>; for people in Brasil, it’s <code>português</code>. Likewise, for Denmark, you can see how we have different names for the country and the language than the Danish do.</p>
+<p class="indent">Finally, just for fun, we discovered that in Italy, the Danish language is called <code>danese</code>.</p>
+<h5 class="h5">Orchestrating Date- and Time-Related Classes</h5>
+<p class="noindent">When you work with dates and times, you’ll often use several classes together. It’s important to understand how the classes described earlier relate to each other and when to use which classes in combination. For instance, you need to know <span id="page_225" epub:type="pagebreak"></span>that if you’re creating a new <code>ZonedDateTime</code> from an existing <code>LocalDate</code> and <code>LocalTime</code>, you need a <code>ZoneId</code> too; if you want to do date formatting for a specific locale, you need to create your <code>Locale</code> object before your <code>DateTimeFormatter</code> object because you’ll need your <code>Locale</code> object as an argument to your <code>DateTimeFormatter</code> method; and so on. <a href="ch4.xhtml#ch4tab1">Tables 4-1</a> and <a href="ch4.xhtml#ch4tab2">4-2</a> provide a quick overview and summary of common date- and time-related use cases: how to create datetime objects and how to adjust them. We are by no means <span id="page_226" epub:type="pagebreak"></span>including all of the many available methods to work with dates and times, however, so make sure you peruse the documentation too (see https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html).</p>
+<p class="tabcap" id="ch4tab1"><span class="table"><strong>TABLE 4-1</strong></span> Instance Creation for <code>java.time</code> Classes</p>
+<p class="imaget"><img src="images/tab04-01.jpg" alt="Images" /></p>
+<p class="tabcap" id="ch4tab2"><span class="table"><strong>TABLE 4-2</strong></span> Adjustment Options for <code>java.time</code> Classes</p>
+<p class="imaget"><img src="images/tab04-02.jpg" alt="Images" /></p>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch4lev1sec2"><strong>Properties Files (OCP Objective 12.2)</strong></h3>
+<p class="noindentb"><em>12.2 Create and read a Properties file.</em></p>
+<p class="indentb">Property files are typically used to externally store configuration settings and operating parameters for your applications. In the Java world, there are at least three variations on property files:</p>
+<p class="numlist">1.   There is a system-level properties file that holds system information like hardware info, software versions, classpaths, and so on. The <code>java.lang.System</code> class has methods that allow you to update this file and view its contents. This property file is not on the exam.</p>
+<p class="numlist">2.   There is a class called <code>java.util.Properties</code> that makes it easy for a programmer to create and maintain property files for whatever applications the programmer chooses. We’ll talk about the <code>java.util.Properties</code> <span id="page_227" epub:type="pagebreak"></span>class in this section. In this section, when we say “property” files, we’re referring to files that are compliant with the <code>java.util.Properties</code> class.</p>
+<p class="numlistb">3.   There is a class called <code>java.util.ResourceBundle</code> that <em>can</em>—optionally—use <code>java.util.Properties</code> files to make it easier for a programmer to add localization and/or internationalization features to applications. After we discuss <code>java.util.Properties</code>, we’ll discuss <code>java.util.ResourceBundle</code>.</p>
+<p class="indent">The <code>java.util.Properties</code> class is used to create and/or maintain human-readable text files. It’s also possible to create well-formed, <code>Properties</code>-compliant text files using a text editor. If you’re using a <code>Properties</code> file for applications other than to support resource bundles, you can give them whatever legal filenames you want. Typically their names end in “<code>.properties</code>,” e.g., “<code>MyApp.properties</code>.” Other suffixes like “<code>.props</code>” are also common. The basic structure of a <code>Properties</code> file is a set of comments (usually comment lines begin with “<code>#</code>“) at the top of the file, followed by a number of rows of text data, each row representing a key/value pair, with the key and value usually separated with an “<code>=</code>“.</p>
+<p class="indent">Almost everyone uses <code>#</code> for comments and <code>=</code> to separate key/value pairs. There are alternative syntax choices, though, which you should understand if you come across them.</p>
+<p class="indent">Property files can use two styles of commenting:</p>
+<p class="pre"><code>! comment</code></p>
+<p class="noindent">or</p>
+<p class="pre"><code># comment</code></p>
+<p class="indent">Property files can define key/value pairs in any of the following formats:</p>
+<p class="pre"><code>key=value<br/>  key:value<br/>  key value</code></p>
+<p class="noindent">Let’s refresh what we’ve learned about property files and take a closer look. Aside from comments, a property file contains key/value pairs:</p>
+<p class="pre"><code># this file contains a single key/value<br/>  hello=Hello Java</code></p>
+<p class="indent">A <em>key</em> is the first string on a line. Keys and values are usually separated by an equal sign. If you want to break up a single line into multiple lines, you use a backslash. Given an entry in a property file:</p>
+<p class="pre"><code>hello1 = Hello \<br/>  World!</code></p>
+<p class="noindent"><span id="page_228" epub:type="pagebreak"></span>the code and output would be</p>
+<p class="pre"><code>System.out.println(rb.getString("hello1"));<br/>  Hello World!</code></p>
+<p class="indent">If you actually want a line break, you use the standard Java <code>\n</code> escape sequence. Given an entry in a property file:</p>
+<p class="pre"><code>hello2 = Hello \nWorld  !</code></p>
+<p class="noindent">The code and output would be</p>
+<p class="pre"><code>System.out.println(rb.getString("hello2"));<br/>  Hello<br/>  World  !</code></p>
+<p class="indent">You can mix and match these to your heart’s content. Java helpfully ignores any whitespace before subsequent lines of a multiline property, so you can use indentation for clarity:</p>
+<p class="pre"><code>hello3 =    123\<br/>  45</code></p>
+<p class="indent">Given the above entry in a properties file, the code and output would be</p>
+<p class="pre"><code>System.out.println(rb.getString("hello3"));<br/>  12345</code></p>
+<p class="indent">As we mentioned earlier, <code>java.lang.System</code> provides access to a property file. Although this file isn’t on the exam, the following code</p>
+<p class="pre"><img src="images/un228-06.jpg" alt="Images" /></p>
+<p class="noindent">will produce output that contains entries like these:</p>
+<p class="pre"><img src="images/un228-07.jpg" alt="Images" /></p>
+<p class="indent">Again, what we’re seeing here is a list of key/value pairs.</p>
+<p class="indent"><span id="page_229" epub:type="pagebreak"></span>Let’s move on to creating and working with our own property file. Here’s some code that creates a new <code>Properties</code> object, adds a few properties, and then stores the contents of the <code>Properties</code> object to a file on disk:</p>
+<p class="pre"><img src="images/un229-01.jpg" alt="Images" /></p>
+<p class="noindent">which produces the following output:</p>
+<p class="pre"><img src="images/un229-02.jpg" alt="Images" /></p>
+<p class="noindent">and a file named <code>myProps1.props</code>, which contains</p>
+<p class="pre"><img src="images/un229-03.jpg" alt="Images" /></p>
+<p class="indent">Note that there are a couple of comments at the top of the file. Now let’s run a second program that opens up the file we just created, adds a new key/value pair, then saves the result to a second file on disk:</p>
+<p class="pre"><img src="images/un229-04.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_230" epub:type="pagebreak"></span><img src="images/un230-01.jpg" alt="Images" /></p>
+<p class="noindent">which produces</p>
+<p class="pre"><img src="images/un230-02.jpg" alt="Images" /></p>
+<p class="noindent">and a file named <code>myProps2.props</code>, which contains</p>
+<p class="pre"><img src="images/un230-03.jpg" alt="Images" /></p>
+<p class="indent">It’s important to know that <code>java.util.Properties</code> inherits from <code>java<br/>.util.Hashtable</code>. Technically, when mucking around with property files, you could use methods from Hashtable like <code>put()</code> and <code>get()</code>, but Oracle encourages you to stick with the methods provided in the <code>Properties</code> class since those methods will force you to use arguments of type <code>String</code>. For the exam you should know the following methods from the <code>Properties</code> class:</p>
+<p class="pre"><img src="images/un230-04.jpg" alt="Images" /></p>
+<p class="indent">Next, let’s move on to the resource bundles to see how they work and how you can (if you want to) use property files to support your resource bundles.</p>
+<p class="title-o"><span id="page_231" epub:type="pagebreak"></span><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch4lev1sec3"><strong>Resource Bundles (OCP Objectives 12.1, 12.2, and 12.3)</strong></h3>
+<p class="noindent"><em>12.1 Read and set the locale by using the Locale object.</em></p>
+<p class="noindent"><em>12.2 Create and read a Properties file.</em></p>
+<p class="noindentb"><em>12.3 Build a resource bundle for each locale and load a resource bundle in an application.</em></p>
+<p class="indent">Earlier, we used the <code>Locale</code> class to display dates for basic localization. For full-fledged localization, we also need to provide language- and country-specific strings for display. There are only two parts to building an application with resource bundles:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <code>L</code><code>ocale</code> You can use the same <code>Locale</code> we used for <code>DateFormat</code> and <code>NumberFormat</code> to identify which resource bundle to choose.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <code>R</code><code>esourceBundle</code> Think of a <code>ResourceBundle</code> as a map. You can use property files or Java classes to specify the mappings.</p>
+<p class="indent">Let’s build a simple application to be used in Canada. Since Canada has two official languages, we want to let the user choose her favorite language. Designing our application, we decided to have it just output “Hello Java” to show off how cool it is. We can always add more text later.</p>
+<p class="indent">We are going to externalize everything language specific to special property files. They’re just property files that contain keys and string values to display, but they follow very specific, <code>ResourceBundle</code>-required naming conventions. Here are two simple resource bundle files:</p>
+<p class="indent">A file named <code>Labels_en.properties</code> that contains a single line of data:</p>
+<p class="pre"><code>hello=Hello Java!</code></p>
+<p class="noindent">A second file named <code>Labels_fr.properties</code> that contains a single line of data:</p>
+<p class="pre"><code>hello=Bonjour Java!</code></p>
+<p class="indentb"><span id="page_232" epub:type="pagebreak"></span>It’s critical to understand that when you use <code>Properties</code> files to support <code>ResourceBundle</code> objects, the naming of the files MUST follow two rules:</p>
+<p class="numlist">1.   These files must end in “<code>.properties</code>.“</p>
+<p class="numlistb">2.   The end of the name before the <code>.properties</code> suffix must be a string that starts with an underscore and then declares the Locale the file represents (e.g., <code>MyApp_en.properties</code> or <code>MyApp_fr.properties</code> or <code>MyApp_fr_CA.properties</code>). <code>ResourceBundle</code> only knows how to find the appropriate file via the filename. There is no requirement for the data in the file to contain locale information.</p>
+<p class="indent">Using a resource bundle requires three steps: obtaining the <code>Locale</code>, getting the <code>ResourceBundle</code>, and looking up a value from the resource bundle. First, we create a <code>Locale</code> object. To review, this means one of the following:</p>
+<p class="pre"><img src="images/un232-01.jpg" alt="Images" /></p>
+<p class="indent">Next, we need to create the resource bundle. We need to know the bundle name of the resource bundle and the locale. The bundle name of the resource bundle is that part of the filename up to (but not including) the underscore that is the start of the locale info. For example, if a <code>Properties</code> file is named <code>MyApp_en.properties</code>, then the bundle name is “<code>MyApp</code>.” Then we pass those values to a factory, which creates the resource bundle. The <code>getBundle()</code> method looks in the classpath for bundles that match the bundle name (in the code below, the bundle name is <code>"Labels"</code>) and the provided <code>locale</code>.</p>
+<p class="pre"><img src="images/un232-02.jpg" alt="Images" /></p>
+<p class="noindent">Finally, we use the resource bundle like a map and get a value based on the key:</p>
+<p class="pre"><img src="images/un232-03.jpg" alt="Images" /></p>
+<p class="noindent">So, back to our example, we have two files: <code>Labels_en.properties</code> and <code>Labels_fr.properties</code>. The following code takes a <code>locale</code> argument and builds a <code>ResourceBundle</code> object that’s tied to the <code>Properties</code> file containing data for that <code>Locale</code> and read from the “resource bundle”:</p>
+<p class="pre"><img src="images/un232-04.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_233" epub:type="pagebreak"></span><img src="images/un233-01.jpg" alt="Images" /></p>
+<p class="noindent">Running the code twice, we get</p>
+<p class="pre"><img src="images/un233-02.jpg" alt="Images" /></p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<div class="indentb"><strong><em>The Java API for <code>java.util.ResourceBundle</code> lists three good reasons to use resource bundles. Using resource bundles “allows you to write programs that can</em></strong></div>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong><em>Be easily localized, or translated, into different languages</em></strong></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong><em>Handle multiple locales at once</em></strong></p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <strong><em>Be easily modified later to support even more locales”</em></strong></p>
+<p class="noindent"><strong><em>If you encounter any questions on the exam that ask about the advantages of using resource bundles, this quote from the API will serve you well.</em></strong></p>
+</div>
+<p class="text-icon"><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindent"><strong><em>The most common use of localization in Java is web applications. You can get the user’s locale from information passed in the request rather than hard-coding it.</em></strong></p>
+<h4 class="h4" id="ch4lev2sec3"><strong>Java Resource Bundles</strong></h4>
+<p class="noindent">When we need to move beyond simple property file key to string value mappings, we can use resource bundles that are Java classes. We write Java classes that extend <code>ListResourceBundle</code>. The class name is similar to the one for property files. Only the extension is different.</p>
+<p class="pre"><img src="images/un233-03.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_234" epub:type="pagebreak"></span>We implement <code>ListResourceBundle</code>’s one required method that returns an array of arrays. The inner array is key/value pairs. The outer array accumulates such pairs. Notice that now we aren’t limited to <code>String</code> values. We can call <code>getObject()</code> to get a non-<code>String</code> value:</p>
+<p class="pre"><img src="images/un234-01.jpg" alt="Images" /></p>
+<p class="noindent">which prints <code>"from Java"</code>.</p>
+<h4 class="h4" id="ch4lev2sec4"><strong>Default Locale</strong></h4>
+<p class="noindent">What do you think happens if we call <code>ResourceBundle</code><code>.getBundle</code><code>("Labels")</code> without any locale? It depends. Java will pick the resource bundle that matches the locale the JVM is using. Typically, this matches the locale of the machine running the program, but it doesn’t have to. You can even change the default locale at runtime, which might be useful if you are working with people in different locales so you can get the same behavior on all machines.</p>
+<p class="indent">Let’s explore the API to get and set the default locale:</p>
+<p class="pre"><img src="images/un234-02.jpg" alt="Images" /></p>
+<p class="noindent">which on our computer prints:</p>
+<p class="pre"><img src="images/un234-03.jpg" alt="Images" /></p>
+<p class="noindent">For the first and last line, you may get different output depending on where you live. The key is that the middle of the program executes as if it were in Germany, regardless of where it is actually being run. It is good practice to restore the default unless your program is ending right away. That way, the rest of your code works normally—it probably doesn’t expect to be in Germany.</p>
+<h4 class="h4" id="ch4lev2sec5"><span id="page_235" epub:type="pagebreak"></span><strong>Choosing the Right Resource Bundle</strong></h4>
+<p class="noindent">There are two main ways to get a resource bundle:</p>
+<p class="pre"><img src="images/un235-01.jpg" alt="Images" /></p>
+<p class="noindent">Luckily, <code>ResourceBundle.getBundle(baseName)</code>is just shorthand for <code>ResourceBundle.getBundle(baseName, Locale.getDefault())</code>, and you only have to remember one set of rules. There are a few other overloaded signatures for <code>getBundle()</code>, such as taking a <code>ClassLoader</code>. But don’t worry—these aren’t on the exam.</p>
+<p class="indent">Now on to the rules. How does Java choose the right resource bundle to use? In a nutshell, Java chooses the most specific resource bundle it can while giving preference to Java <code>ListResourceBundle</code>.</p>
+<p class="indent">Going back to our Canadian application, we decide to request the Canadian French resource bundle:</p>
+<p class="pre"><img src="images/un235-02.jpg" alt="Images" /></p>
+<p class="noindent">Java will look for the following files in the classpath in this order:</p>
+<p class="pre"><img src="images/un235-03.jpg" alt="Images" /></p>
+<p class="noindent">If none of these files exist, Java gives up and throws a <code>MissingResourceException</code>. Although this is a lot of things for Java to try, it is pretty easy to remember. Start with the full <code>Locale</code> requested. Then fall back to just language. Then fall back to the default <code>Locale</code>. Then fall back to the default bundle. Then cry.</p>
+<p class="indent">Make sure you understand this because it is about to get more complicated.</p>
+<p class="indent">You don’t have to specify all the keys in all the property files. They can inherit from each other. This is a good thing, as it reduces duplication.</p>
+<p class="pre"><img src="images/un235-04.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_236" epub:type="pagebreak"></span><img src="images/un236-01.jpg" alt="Images" /></p>
+<p class="noindent">Outputs:</p>
+<p class="pre"><img src="images/un236-02.jpg" alt="Images" /></p>
+<p class="noindent">The common <code>"ride.in"</code> property comes from the parent noncountry-specific bundle “<code>RB_en.properties</code>.” The <code>"elevator"</code> property is different by country and comes from the UK version that we specifically requested.</p>
+<p class="indent">The parent hierarchy is more specific than the search order. A bundle’s parent always has a shorter name than the child bundle. If a parent is missing, Java just skips along that hierarchy. <code>ListResourceBundle</code>s and <code>PropertyResourcesBundle</code>s do not share a hierarchy. Similarly, the default locale’s resource bundles do not share a hierarchy with the requested locale’s resource bundles. <a href="ch4.xhtml#ch4tab3">Table 4-3</a> shows examples of bundles that do share a hierarchy.</p>
+<p class="tabcap" id="ch4tab3"><span class="table"><strong>TABLE 4-3</strong></span> Resource Bundle Lookups</p>
+<p class="imaget"><img src="images/tab04-03.jpg" alt="Images" /></p>
+<p class="indent">Remember that searching for a property file uses a linear list. However, once a matching resource bundle is found, keys can only come from that resource bundle’s hierarchy.</p>
+<p class="indent">One more example to make this clear. Think about which resource bundles will be used from the previous code if we use the following code to request a resource bundle:</p>
+<p class="pre"><img src="images/un236-03.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_237" epub:type="pagebreak"></span>First, Java looks for <code>RB_fr_FR.java</code> and <code>RB_fr_FR.properties</code>. Because neither is found, Java falls back to using <code>RB_fr.java</code>. Then as we request keys from <code>rb</code>, Java starts looking in <code>RB_fr.java</code> and additionally looks in <code>RB.java</code>. Java started out looking for a matching file and then switched to searching the hierarchy of that file.</p>
+<h3 class="h3b" id="ch4lev1sec4">CERTIFICATION SUMMARY</h3>
+<hr/>
+<p class="noindentt"><strong>Dates and Times</strong> The <code>Date</code> and <code>Calendar</code> classes, as well as <code>DateFormat</code>, have all been replaced by classes in the <code>java.time</code> package, so pay close attention if you’re transitioning from the old classes to the new. The key datetime classes to know from <code>java.time</code> are <code>LocalDate</code>, <code>LocalTime</code>, <code>LocalDateTime</code>, and <code>ZonedDateTime</code>. Each has a variety of methods to create and adjust datetime objects. You also need to know about <code>TemporalAdjuster</code>s (like <code>TemporalAdjuster.firstDayOfMonth()</code>) and <code>TemporalUnit</code>s (like <code>ChronoUnit.DAYS</code>), both from the <code>java.time.temporal</code> package, and <code>Instant</code>s, <code>Period</code>s, and <code>Duration</code>s, in the <code>java.time</code> package. <code>DataFormat</code> has been replaced with <code>DateTimeFormatter</code> in the <code>java.time.format</code> package, which is used to parse, format, and print datetime objects. The <code>Locale</code> class is used with <code>DateTimeFormatter</code> to generate a variety of output styles that are language and/or country specific.</p>
+<p class="indent">Make sure you are clear on how to work with time zones and daylight savings time. Fortunately, the <code>ZonedDateTime</code> and related classes handle most of the hard work for you, but pay close attention to the format of the datetimes when they are represented as strings so you can recognize a local datetime from a zoned datetime and so you know how to create a <code>ZonedDateTime</code> using a <code>ZoneId</code>.</p>
+<p class="noindentt"><strong>Locales, Properties Files, and Resource Bundles</strong> Resource bundles allow you to move locale-specific information (usually strings) out of your code and into external files where they can easily be amended. This provides an easy way for you to localize your applications across many locales. Properties files allow you to create text files formatted as key/value pairs to store application customization parameters and such external to your application. The <code>ResourceBundle</code> class provides convenient ways to use files that are <code>Properties</code> class–compatible to store internationalization and localization values.</p>
+<h3 class="h3b" id="ch4lev1sec5"><span id="page_238" epub:type="pagebreak"></span><img src="images/tick1.jpg" alt="Images" /> TWO-MINUTE DRILL</h3>
+<p class="noindentt">Here are some of the key points from the certification objectives in this chapter.</p>
+<h5 class="h5">Dates and Times (OCP Objectives 7.1, 7.2, and 7.3)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The classes you need to understand are those in <code>java.time</code>, <code>java.time<br/>.temporal</code>, and <code>java.time.format</code>, as well as <code>java.util.Locale</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>D</code><code>ate</code> and <code>Calendar</code> are no longer used, and most of the <code>Date</code> class’s methods have been deprecated.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>LocalDate</code> is a date, and a <code>LocalTime</code> is a time. Combine the two to make a <code>LocalDateTime</code>. None of these types have a time zone associated with them.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>ZonedDateTime</code> is a datetime object with a time zone. All zoned datetimes are relative to Greenwich Mean Time (GMT). You may sometimes see GMT written as UTC.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>ZoneId</code> can be created from a string representing a time zone (e.g. <code>"US/Pacific"</code>).</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  When you adjust <code>ZonedDateTime</code>s, daylight savings time will be automatically handled using the <code>ZoneRules</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If you want a datetime object with a time zone that is independent of zone rules, use an <code>OffsetDateTime</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>Period</code> is a period of time that is a day or longer.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>Duration</code> is a period of time that is shorter than a day.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>Instant</code> is an instant in time and represents the number of seconds and nanoseconds since January 1, 1970. You can get the number of seconds as a <code>long</code> value from an <code>Instant</code> and convert any <code>ZonedDateTime</code> object into an <code>Instant</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  There are several format “styles” available in the <code>java.format</code> class. You can use format styles such as <code>FormatStyle.SHORT</code> with <code>DateTimeFormatter</code> to format datetime objects.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>DateTimeFormatter</code> class is used to parse and create strings containing properly formatted dates.</p>
+<p class="bull-image"><span id="page_239" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>Locale</code> class is used in conjunction with <code>DateFormat</code> and <code>NumberFormat</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>DateTimeFormatter</code> object can be constructed with a specific, immutable <code>Locale</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  For the exam, you should understand creating <code>Locale</code>s using either language or a combination of language and country.</p>
+<h5 class="h5">Locales, Properties Files, and Resource Bundles (OCP 12.1, 12.2, and 12.3)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>java.util.Properties</code> class gives you a convenient way to create and maintain text files that are external to your applications and can hold configuration values.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A file that is <code>java.util.Properties</code>–compliant and has a name that ends with a locale and a suffix of <code>.properties</code> can be used by <code>ResourceBundle.getBundle()</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>ListResourceBundle</code> comes from Java classes, and a <code>PropertyResourceBundle</code> comes from <code>.properties</code> files.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>R</code><code>esourceBundle.getBundle(name)</code>uses the default <code>Locale</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>L</code><code>ocale.getDefault()</code>returns the JVM’s default <code>Locale</code>. <code>Locale<br/>.setDefault(locale)</code> can change the JVM’s <code>locale</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Java searches for resource bundles in this order: requested language/country, requested language, default locale language/country, default locale language, default bundle. Within each item, Java <code>ListResourceBundle</code> is favored over <code>PropertyResourceBundle</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Once a <code>ResourceBundle</code> is found, only parents of that bundle can be used to look up keys.</p>
+<h3 class="h3b" id="ch4lev1sec6"><span id="page_240" epub:type="pagebreak"></span><img src="images/qs.jpg" alt="Images" /> SELF TEST</h3>
+<p class="que"><strong><a id="ch4ans1" href="ch4.xhtml#r_ch4ans1">1</a>.</strong>   Given the code fragment:</p>
+<p class="pre">         <code>ZonedDateTime zd = ZonedDateTime.parse("2020-05-04T08:05:00");<br/>      System.out.println(zd.getMonth() + " " + zd.getDayOfMonth());</code></p>
+<p class="alpha-no">What is the result? (Choose all that apply.)</p>
+<p class="alpha">A. <code>MAY 4</code></p>
+<p class="alpha">B. <code>APRIL 5</code></p>
+<p class="alpha">C. <code>MAY 4 2020</code></p>
+<p class="alpha">D. <code>APRIL 5 2020</code></p>
+<p class="alpha">E. Compilation fails</p>
+<p class="alpha">F. Runtime exception</p>
+<p class="que"><strong><a id="ch4ans2" href="ch4.xhtml#r_ch4ans2">2</a>.</strong>   Given the code fragment:</p>
+<p class="pre">       <img src="images/un240-02.jpg" alt="Images" /></p>
+<p class="alpha-no">Which of the following code fragment(s) will produce a new <code>LocalTime</code> <code>t3</code> that represents the same time as <code>t2</code>? (Choose all that apply.)</p>
+<p class="pre"><img src="images/un240-03.jpg" alt="Images" /></p>
+<p class="que"><strong><a id="ch4ans3" href="ch4.xhtml#r_ch4ans3">3</a>.</strong>   Given the code fragment:</p>
+<p class="pre"><img src="images/un240-04.jpg" alt="Images" /></p>
+<p class="alpha-no">What are the correct types to fill in the blanks on line 3?</p>
+<p class="alpha">A. <code>Duration, Duration</code></p>
+<p class="alpha">B. <code>Instant, Period</code></p>
+<p class="alpha">C. <code>Period, Instant</code></p>
+<p class="alpha">D. <code>Period, ChronoUnit</code></p>
+<p class="alpha">E. <code>Period, Period</code></p>
+<p class="alpha">F. <code>Duration, LocalDate</code></p>
+<p class="que"><span id="page_241" epub:type="pagebreak"></span><strong><a id="ch4ans4" href="ch4.xhtml#r_ch4ans4">4</a>.</strong>   How would you use <code>nowzdt</code> from the code fragment below to compute the equivalent time in Berlin, Germany? (Choose all that apply.)</p>
+<p class="pre"><img src="images/un241-01.jpg" alt="Images" /></p>
+<p class="pre"><img src="images/un241-02.jpg" alt="Images" /></p>
+<p class="que"><strong><a id="ch4ans5" href="ch4.xhtml#r_ch4ans5">5</a>.</strong>   The next total solar eclipse visible in South America is on July 2, 2019, at 16:55 UTC. Which code fragment will correctly compute and display the time in San Juan, Argentina, for this solar eclipse?</p>
+<p class="pre"><img src="images/un241-03.jpg" alt="Images" /></p>
+<p class="pre"><img src="images/un241-04.jpg" alt="Images" /></p>
+<p class="pre"><img src="images/un241-05.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_242" epub:type="pagebreak"></span><img src="images/un242-01.jpg" alt="Images" /></p>
+<p class="pre"><img src="images/un242-02.jpg" alt="Images" /></p>
+<p class="que"><strong><a id="ch4ans6" href="ch4.xhtml#r_ch4ans6">6</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un242-03.jpg" alt="Images" /></p>
+<p class="alpha-no">Assume the default <code>Locale</code> is Italian. If each of the following is the only resource bundle on the classpath and contains <code>key=value</code>, which will be used? (Choose all that apply.)</p>
+<p class="alpha">A. <code>Flag.java</code></p>
+<p class="alpha">B. <code>Flag_CA.properties</code></p>
+<p class="alpha">C. <code>Flag_en.java</code></p>
+<p class="alpha">D. <code>Flag_en.properties</code></p>
+<p class="alpha">E. <code>Flag_en_CA.properties</code></p>
+<p class="alpha">F. <code>Flag_fr_CA.properties</code></p>
+<p class="que"><strong><a id="ch4ans7" href="ch4.xhtml#r_ch4ans7">7</a>.</strong>   Given three resource bundles and a Java class:</p>
+<p class="pre"><img src="images/un242-04.jpg" alt="Images" /></p>
+<p class="alpha-no"><span id="page_243" epub:type="pagebreak"></span>Which of the following, when made independently, will change the output to “ride underground”? (Choose all that apply.)</p>
+<p class="alpha">A. Add <code>train=underground</code> to <code>Train_en.properties</code></p>
+<p class="alpha">B. Change line 3 to <code>Locale.setDefault(new Locale("en", "UK"));</code></p>
+<p class="alpha">C. Change line 5 to <code>Locale.ENGLISH);</code></p>
+<p class="alpha">D. Change line 5 to new <code>Locale("en", "UK"));</code></p>
+<p class="alpha">E. Delete file <code>Train_en_US.properties</code></p>
+<p class="que"><strong><a id="ch4ans8" href="ch4.xhtml#r_ch4ans8">8</a>.</strong>   Let’s say you want to print the day of the week and the date of Halloween (October 31) 2018, at 5 <code>PM</code> in German, using the <code>LONG</code> style. Complete the code below using the following fragments. Note: You can use each fragment either zero or more times, and you might not need to fill all of the slots. You probably won’t encounter a fill-in-the-blank question on the exam, but just in case, we put a few in the book, like this one.</p>
+<p class="alpha-no">Code:</p>
+<p class="pre"><img src="images/un243-01.jpg" alt="Images" /></p>
+<p class="alpha-no">Fragments:</p>
+<p class="pre"><img src="images/un243-02.jpg" alt="Images" /></p>
+<p class="que"><span id="page_244" epub:type="pagebreak"></span><strong><a id="ch4ans9" href="ch4.xhtml#r_ch4ans9">9</a>.</strong>   Given two files:</p>
+<p class="pre"><img src="images/un244-01.jpg" alt="Images" /></p>
+<p class="alpha-no">Which, inserted independently, will compile? (Choose all that apply.)</p>
+<p class="alpha">A. <code>Object obj = rb.getInteger("123");</code></p>
+<p class="alpha">B. <code>Object obj = rb.getInteger(123);</code></p>
+<p class="alpha">C. <code>Object obj = rb.getObject("123");</code></p>
+<p class="alpha">D. <code>Object obj = rb.getObject(123);</code></p>
+<p class="alpha">E. <code>Object obj = rb.getString("123");</code></p>
+<p class="alpha">F. <code>Object obj = rb.getString(123);</code></p>
+<p class="que"><strong><a id="ch4ans10" href="ch4.xhtml#r_ch4ans10">10</a>.</strong>   Given the following code fragment:</p>
+<p class="pre"><img src="images/un244-03.jpg" alt="Images" /></p>
+<p class="alpha-no">Which <code>String</code> inserted as an argument to <code>DateTimeFormatter.ofPattern()</code> at <code>// L1</code> will produce the output? (Choose all that apply.)</p>
+<p class="alpha-no">Formatted DateTime: 2017-10-27 14:22:54</p>
+<p class="alpha">A. <code>"yyyy-MM-dd hh:mm:ss a"</code></p>
+<p class="alpha">B. <code>"yyyy-MM-dd hh:mm:ss"</code></p>
+<p class="alpha"><strong>C</strong> <code>"yyyy-mm-dd HH:MM:ss"</code></p>
+<p class="alpha">D. <code>"yyyy-MM-dd HH:mm:ss"</code></p>
+<p class="alpha">E. <code>"yyyy-MM-dd HH:mm:ss Z"</code></p>
+<p class="que"><span id="page_245" epub:type="pagebreak"></span><strong><a id="ch4ans11" href="ch4.xhtml#r_ch4ans11">11</a>.</strong>   Given the following code fragment:</p>
+<p class="pre"><img src="images/un245-01.jpg" alt="Images" /></p>
+<p class="alpha-no">What output will you see?</p>
+<p class="alpha">A. <code>2017-11-28, 2017-12-31, 2017-12-01, 2017-01-01, 2017-12-25, 2017-11-23</code></p>
+<p class="alpha">B. <code>2017-11-28T00:00, 2017-12-31T00:00, 2017-12-01T00:00, 2017-01-01T00:00, 2017-12-25T00:00, 2017-11-23T00:00</code></p>
+<p class="alpha">C. <code>2017-11-28, 2017-12-31, 2018-01-01, 2017-01-01, 2017-12-25, 2017-11-23</code></p>
+<p class="alpha"><strong>D.</strong><code>2017-11-28T00:00, 2017-12-31T00:00, 2018-01-01T00:00, 2017-01-01T00:00, 2017-12-25T00:00, 2017-11-23T00:00</code></p>
+<p class="alpha"><strong>E.</strong><code>2017-11-28, 2017-12-31, 2018-01-01, 2018-01-01, 2017-12-25, 2017-11-23</code></p>
+<p class="que"><strong><a id="ch4ans12" href="ch4.xhtml#r_ch4ans12">12</a>.</strong>   If it is 19:12:53 on October 27, 2017, in the US/Pacific Zone (which is GMT-8:00, summer time), then what does the following code fragment produce? (Choose all that apply.)</p>
+<p class="pre"><img src="images/un245-02.jpg" alt="Images" /></p>
+<p class="alpha">A. <code>10:12:53 PM</code></p>
+<p class="alpha">B. <code>20:12:53</code></p>
+<p class="alpha">C. <code>19:12:53</code></p>
+<p class="alpha">D. <code>7:12:53 PM</code></p>
+<p class="alpha">E. <code>2017-10-27 10:12:53 PM</code></p>
+<h3 class="h3b" id="ch4lev2sec6"><span id="page_246" epub:type="pagebreak"></span><img src="images/aself.jpg" alt="Images" /> SELF TEST ANSWERS</h3>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans1" id="r_ch4ans1">1</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>F</strong> is correct. The string we are parsing has no time zone, so the parse will fail at runtime.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, D,</strong> and <strong>E</strong> are incorrect based on the above. (OCP Objective 7.2)</p>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans2" id="r_ch4ans2">2</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A, B,</strong> and<strong> E</strong> are correct. Each adds 1 hour and 5 minutes to <code>t1</code> to make a new <code>LocalTime</code> <code>t3</code>, which represents 10:05, the same time as <code>t2</code>. The <code>plus()</code> method takes an amount to add as a <code>long</code>, and a unit <strong>(A)</strong> or a <code>TemporalAmount</code> <strong>(E)</strong>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>C</strong> and <strong>D</strong> are incorrect. <strong>C</strong> adds only 1 hour to make 10 <code>AM</code> instead of 10:05 <code>AM</code>. <strong>D</strong> generated a compile error because <code>LocalTime</code> does not have a <code>plusDays()</code> method. (OCP Objective 7.1 and 7.3)</p>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans3" id="r_ch4ans3">3</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>E</strong> is correct. Period is the correct type to measure a period of time in days.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, D,</strong> and <strong>F</strong> are incorrect based on the above. (OCP Objective 7.1 and 7.3)</p>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans4" id="r_ch4ans4">4</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> and<strong> C</strong> are correct. In both cases, we’re creating an <code>Instant</code> from <code>nowzdt</code> and then creating a new <code>ZonedDateTime</code> from that <code>Instant</code>, representing the same time as <code>nowzdt</code>, in Berlin.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, D,</strong> and <strong>E</strong> are incorrect. <strong>A</strong> is incorrect because, although you can create a new <code>ZonedDateTime</code> from an existing <code>ZonedDateTime</code> with <code>from()</code>, you can’t change the zone when you do. <strong>D</strong> is incorrect because <code>withZoneId()</code> is not a valid method. <strong>E</strong> is almost correct, except that it is not precisely the same time as <code>nowzdt</code> because you’re calling the <code>now()</code> method again, though it may only be slightly different (perhaps only a few nanoseconds). (OCP Objective 7.2)</p>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans5" id="r_ch4ans5">5</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct. We first create a <code>ZonedDateTime</code> for the UTC time with zone “<code>Z</code>” (corresponding to GMT zone) and then create the equivalent <code>ZonedDateTime</code> for the San Juan, Argentina, zone.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, D,</strong> and <strong>E</strong> are incorrect. <strong>A</strong> is missing the time zone on the UTC time. <strong>B</strong> includes incorrect arguments to the <code>LocalDateTime.of()</code> method. <strong>D</strong> has the incorrect time zone on the UTC time. <strong>E</strong> has the incorrect type for <code>totalitySanJuan</code>. (OCP Objective 7.2)</p>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans6" id="r_ch4ans6">6</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A, C, D,</strong> and <strong>E</strong> are correct. The default <code>Locale</code> is irrelevant here since none of the choices use Italian. <strong>A</strong> is the default resource bundle. <strong>C</strong> and <strong>D</strong> use the language but not the country from the requested locale. <strong>E</strong> uses the exact match of the requested locale.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B</strong> is incorrect because the language code of <code>CA</code> does not match <code>en.</code> And <code>CA</code> isn’t a valid language code.<strong> F</strong> is incorrect because the language code <code>"fr"</code> does not match <code>en</code>. Even though the country code of <code>CA</code> does match, the language code is more important. (OCP Objectives 12.2 and 12.3)</p>
+<p class="que-q"><span id="page_247" epub:type="pagebreak"></span><strong><a href="ch4.xhtml#ch4ans7" id="r_ch4ans7">7</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct. As is, the code finds resource bundle <code>Train_en_US.properties</code>, which uses <code>Train_en.properties</code> as a parent. Choice <strong>D</strong> finds resource bundle <code>Train_en_UK.properties</code>, which uses <code>Train_en.properties</code> as a parent.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, E,</strong> and <strong>F</strong> are incorrect. <strong>A</strong> is incorrect because both the parent and child have the same property. In this scenario, the more specific one (child) gets used. <strong>B</strong> is incorrect because the default locale only gets used if the requested resource bundle can’t be found. <strong>C</strong> is incorrect because it finds the resource bundle <code>Train_en.properties</code>, which does not have any “train” key. <strong>E</strong> is incorrect because there is no “ride” key once we delete the parent. <strong>F</strong> is incorrect based on the above. (OCP Objectives 12.2 and 12.3)</p>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans8" id="r_ch4ans8">8</a>.</strong>   Answer:</p>
+<p class="pre"><img src="images/un247-01.jpg" alt="Images" /></p>
+<p class="alpha-no">Reminders: To create a <code>ZonedDateTime</code> with the <code>of()</code> method, you must include all portions of the date and time (including nanoseconds) and a zone. <code>DateTimeFormatter</code><br/><code>.ofLocalizedDateTime()</code> returns a locale-specific date-time formatter, and <code>withLocale()</code> returns a copy of this formatter with a new locale. (OCP Objectives 7.2 and 12.1)</p>
+<p class="que-q"><strong><a href="ch4.xhtml#ch4ans9" id="r_ch4ans9">9</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> and <strong>E</strong> are correct. When getting a key from a resource bundle, the key must be a string. The returned result must be a string or an object. While that object may happen to be an integer, the API is still <code>getObject()</code>. <strong>E</strong> will throw a ClassCastException since 456 is not a string, but it will compile.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, D,</strong> and <strong>F</strong> are incorrect because of the above. (OCP Objectives 12.2 and 12.3)</p>
+<p class="que-q1"><strong><a href="ch4.xhtml#ch4ans10" id="r_ch4ans10">10</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct; this string corresponds to the format shown in the output.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C,</strong> and <strong>E</strong> are incorrect. <strong>A</strong> uses <code>hh</code> for the hour, which will show <code>02</code> instead <code>14</code> (that is, a 12-hour format instead of a 24-hour format), and displays the <code>AM</code>/<code>PM</code> at the end, which is great if we’re using 12-hour format, but that’s not what we’re looking for. <strong>B</strong> results in 12-hour format instead of 24-hour format. <strong>C</strong> switches months and minutes. <strong>E</strong> requires a <span id="page_248" epub:type="pagebreak"></span><code>ZonedDateTime</code> instead of a <code>LocalDateTime</code>, and using this <code>String</code> will throw a runtime exception when we try to format <code>now</code> with this formatter. (OCP Objectives 7.1 and 7.2)</p>
+<p class="que-q1"><strong><a href="ch4.xhtml#ch4ans11" id="r_ch4ans11">11</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct because of the below.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, D,</strong> and <strong>E</strong> are incorrect. <strong>B</strong> and <strong>D</strong> show the time, and we are displaying <code>LocalDate</code> values that have no time associated with them. <strong>A</strong> has the incorrect value for <code>d3</code>, and <strong>E</strong> has the wrong value for <code>d4</code>. (OCP Objectives 7.1 and 7.3)</p>
+<p class="que-q1"><strong><a href="ch4.xhtml#ch4ans12" id="r_ch4ans12">12</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct. We first get the <code>zoneId</code> for “<code>US/Eastern"</code> time, which is GMT-5:00, and the locale to US. We then create an <code>Instant</code> for “now,” which is 19:12:53 on October 27, 2017 (7:12:53 PM PDT, which is 10:12:53 PM EDT). We then create a <code>ZonedDateTime</code> from the <code>Instant</code>, using the <code>zoneId</code> for <code>"US/Eastern"</code> and format it using <code>DateTimeFormatter.ofLocalizedTime()</code>, which turns the <code>ZonedDateTime</code> into a <code>LocalTime</code> (dropping the date and zone information) and display it in the <code>MEDIUM</code> format style for the US locale, resulting in <code>10:12:53 PM</code>. Format styles depend on local configuration, but we know this answer is correct because <strong>B, C,</strong> and <strong>D</strong> show the incorrect times, and <strong>E</strong> shows the date.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D,</strong> and <strong>E</strong> are incorrect. <strong>B, C,</strong> and <strong>D</strong> show the incorrect times, and <strong>E</strong> shows the date, which we dropped when we formatted <code>zdt</code> to a localized time. (OCP Objectives 7.2)</p>
+</section>
+</div>
+</body>
+</html>

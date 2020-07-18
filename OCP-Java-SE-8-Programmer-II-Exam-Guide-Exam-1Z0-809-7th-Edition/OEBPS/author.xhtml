@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pls="http://www.w3.org/2005/01/pronunciation-lexicon" xmlns:ssml="http://www.w3.org/2001/10/synthesis" xmlns:svg="http://www.w3.org/2000/svg">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCP Java SE 8 Programmer II Exam Guide (Exam 1Z0-809)</title>
+  <link type="text/css" rel="stylesheet" media="all" href="style.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="core.css" />
+</head>
+<body>
+  <div id="sbo-rt-content"><section epub:type="chapter">
+<h2 class="h2f" id="author"><span id="page_v" epub:type="pagebreak"></span><span class="black">ABOUT THE CONTRIBUTORS</span></h2>
+<h3 class="h3">About the Authors</h3>
+<p class="noindent"><strong>Kathy Sierra</strong> was a lead developer for the SCJP exam for Java 5 and Java 6. Kathy worked as a Sun “master trainer,” and in 1997, founded JavaRanch.com, the world’s largest Java community website. Her bestselling Java books have won multiple <em>Software Development Magazine</em> awards, and she is a founding member of Oracle’s Java Champions program.</p>
+<p class="indent">These days, Kathy is developing advanced training programs in a variety of domains (from horsemanship to computer programming), but the thread that ties all of her projects together is helping learners reduce cognitive load.</p>
+<p class="noindentt"><strong>Bert Bates</strong> was a lead developer for many of Sun’s Java certification exams, including the SCJP for Java 5 and Java 6. Bert was also one of the lead developers for Oracle’s OCA 7 and OCP 7 exams and a contributor to the OCP 8 exam. He is a forum moderator on JavaRanch.com and has been developing software for more than 30 years (argh!). Bert is the co-author of several best-selling Java books, and he’s a founding member of Oracle’s Java Champions program. Now that the book is done, Bert plans to go whack a few tennis balls around and once again start riding his beautiful Icelandic horse, Eyrraros fra Gufudal-Fremri.</p>
+<p class="noindentt"><strong>Elisabeth Robson</strong> has an MSc in Computer Science and was a software programmer and engineering manager at The Walt Disney Company for many years. Since 2012 she has been a freelance writer and instructor. She produces online training and has written four best-selling books, including <em>Head First Design Patterns </em>(O’Reilly).</p>
+<h4 class="h4">About the Technical Review Team</h4>
+<p class="noindent">This is the fifth edition of the book that we’ve cooked up. The first version we worked on was for Java 2. Then we updated the book for the SCJP 5, again for the SCJP 6, then for the OCA 7 and OCP 7 exams, and now for the OCA 8 and OCP 8 exams. Every step of the way, we were unbelievably fortunate to have fantastic JavaRanch.com-centric technical review teams at our sides. Over the course of the last 15 years, we’ve been “evolving” the book more than rewriting it. Many sections from our original work on the Java 2 book are still intact. On the following pages, we’d like to acknowledge the members of the various technical review teams who have saved our bacon over the years.<span id="page_vi" epub:type="pagebreak"></span></p>
+<h4 class="h4">About the Java 2 Technical Review Team</h4>
+<p class="noindent"><strong>Johannes de Jong</strong> has been the leader of our technical review teams forever and ever. (He has more patience than any three people we know.) For the Java 2 book, he led our biggest team ever. Our sincere thanks go out to the following volunteers who were knowledgeable, diligent, patient, and picky, picky, picky!</p>
+<p class="indent">Rob Ross, Nicholas Cheung, Jane Griscti, Ilja Preuss, Vincent Brabant, Kudret Serin, Bill Seipel, Jing Yi, Ginu Jacob George, Radiya, LuAnn Mazza, Anshu Mishra, Anandhi Navaneethakrishnan, Didier Varon, Mary McCartney, Harsha Pherwani, Abhishek Misra, and Suman Das.</p>
+<h4 class="h4">About the SCJP 5 Technical Review Team<span id="page_vii" epub:type="pagebreak"></span></h4>
+<p class="image-c"><img src="images/un0vii-01.jpg" alt="Images" /></p>
+<p class="cap-c">Andrew</p>
+<p class="image-c"><img src="images/un0vii-02.jpg" alt="Images" /></p>
+<p class="cap-c">Bill M.</p>
+<p class="image-c"><img src="images/un0vii-03.jpg" alt="Images" /></p>
+<p class="cap-c">Burk</p>
+<p class="image-c"><img src="images/un0vii-04.jpg" alt="Images" /></p>
+<p class="cap-c">Devender</p>
+<p class="image-c"><img src="images/un0vii-05.jpg" alt="Images" /></p>
+<p class="cap-c">Gian</p>
+<p class="image-c"><img src="images/un0vii-06.jpg" alt="Images" /></p>
+<p class="cap-c">Jef</p>
+<p class="image-c"><img src="images/un0vii-07.jpg" alt="Images" /></p>
+<p class="cap-c">Jeoren</p>
+<p class="image-c"><img src="images/un0vii-08.jpg" alt="Images" /></p>
+<p class="cap-c">Jim</p>
+<p class="image-c"><img src="images/un0vii-09.jpg" alt="Images" /></p>
+<p class="cap-c">Johannes</p>
+<p class="image-c"><img src="images/un0vii-10.jpg" alt="Images" /></p>
+<p class="cap-c">Kristin</p>
+<p class="image-c"><img src="images/un0vii-11.jpg" alt="Images" /></p>
+<p class="cap-c">Marcelo</p>
+<p class="image-c"><img src="images/un0vii-12.jpg" alt="Images" /></p>
+<p class="cap-c">Marilyn</p>
+<p class="image-c"><img src="images/un0vii-13.jpg" alt="Images" /></p>
+<p class="cap-c">Mark</p>
+<p class="image-c"><img src="images/un0vii-14.jpg" alt="Images" /></p>
+<p class="cap-c">Mikalai</p>
+<p class="image-c"><img src="images/un0vii-15.jpg" alt="Images" /></p>
+<p class="cap-c">Seema</p>
+<p class="image-c"><img src="images/un0vii-16.jpg" alt="Images" /></p>
+<p class="cap-c">Valentin</p>
+<p class="noindent">We don’t know who burned the most midnight oil, but we can (and did) count everybody’s edits—so in order of most edits made, we proudly present our Superstars.</p>
+<p class="indent">Our top honors go to <strong>Kristin Stromberg</strong>—every time you see a semicolon used correctly, tip your hat to Kristin. Next up is <strong>Bu</strong><strong>rk Huf</strong><strong>nagel</strong> who fixed more code than we care to admit. <strong>B</strong><strong>ill M</strong><strong>ietelski</strong> and <strong>Gian Franco Casula</strong> caught every kind of error we threw at them—awesome job, guys! <strong>Devender Thareja</strong> made sure we didn’t use too much slang, and <strong>Mark Spritzler</strong> kept the humor coming. <strong>Mikalai Zaikin</strong> and <strong>See</strong><strong>ma Man</strong><strong>ivannan</strong> made great catches every step of the way, and <strong>Marily</strong><strong>n de Q</strong><strong>ueiroz</strong> and <strong>Valentin Crettaz</strong> both put in another stellar performance (saving our butts yet again).</p>
+<p class="noindentt"><strong>Marcelo Ortega</strong>, <strong>Jef Cumps</strong> (another veteran), <strong>Andrew Monkhouse</strong>, and <strong>Jeroen Sterken</strong> rounded out our crew of Superstars—thanks to you all. <strong>Jim Yingst</strong> was a member of the Sun exam creation team, and he helped us write and review some of the twistier questions in the book (bwa-ha-ha-ha).</p>
+<p class="indent">As always, every time you read a clean page, thank our reviewers, and if you do catch an error, it’s most certainly because your authors messed up. And oh, one last thanks to <strong>Johannes</strong>. You rule, dude!</p>
+<h4 class="h4">About the SCJP 6 Technical Review Team<span id="page_viii" epub:type="pagebreak"></span></h4>
+<p class="image-c"><img src="images/un0viii-01.jpg" alt="Images" /></p>
+<p class="cap-c">Fred</p>
+<p class="image-c"><img src="images/un0viii-02.jpg" alt="Images" /></p>
+<p class="cap-c">Marc P.</p>
+<p class="image-c"><img src="images/un0viii-03.jpg" alt="Images" /></p>
+<p class="cap-c">Marc W.</p>
+<p class="image-c"><img src="images/un0viii-04.jpg" alt="Images" /></p>
+<p class="cap-c">Mikalai</p>
+<p class="image-c"><img src="images/un0viii-05.jpg" alt="Images" /></p>
+<p class="cap-c">Christophe</p>
+<p class="noindent">Since the upgrade to the Java 6 exam was like a small surgical strike we decided that the technical review team for this update to the book needed to be similarly fashioned. To that end, we hand-picked an elite crew of JavaRanch’s top gurus to perform the review for the Java 6 exam.</p>
+<p class="indent">Our endless gratitude goes to <strong>Mi</strong><strong>kalai Z</strong><strong>aikin</strong>. Mikalai played a huge role in the Java 5 book, and he returned to help us out again for this Java 6 edition. We need to thank Volha, Anastasia, and Daria for letting us borrow Mikalai. His comments and edits helped us make huge improvements to the book. Thanks, Mikalai!</p>
+<p class="noindentt"><strong>Marc Peabody</strong> gets special kudos for helping us out on a double header! In addition to helping us with Sun’s new SCWCD exam, Marc pitched in with a great set of edits for this book—you saved our bacon this winter, Marc! (BTW, we didn’t learn until late in the game that Marc, Bryan Basham, and Bert all share a passion for ultimate Frisbee!)</p>
+<p class="indent">Like several of our reviewers, not only does <strong>Fred Rosenberger</strong> volunteer copious amounts of his time moderating at JavaRanch, he also found time to help us out with this book. Stacey and Olivia, you have our thanks for loaning us Fred for a while.</p>
+<p class="noindentt"><strong>Marc Weber</strong> moderates at some of JavaRanch’s busiest forums. Marc knows his stuff and uncovered some really sneaky problems that were buried in the book. While we really appreciate Marc’s help, we need to warn you all to watch out—he’s got a Phaser!</p>
+<p class="indent">Finally, we send our thanks to <strong>Christophe Verre</strong>—if we can find him. It appears that Christophe performs his JavaRanch moderation duties from various locations around the globe, including France, Wales, and most recently Tokyo. On more than one occasion Christophe protected us from our own lack of organization. Thanks for your patience, Christophe! It’s important to know that these guys all donated their reviewer honorariums to JavaRanch! The JavaRanch community is in your debt.</p>
+<h4 class="h4">The OCA 7 and OCP 7 Team<span id="page_ix" epub:type="pagebreak"></span></h4>
+<h5 class="h5a">Contributing Authors</h5>
+<p class="image-c"><img src="images/un0ix-01.jpg" alt="Images" /></p>
+<p class="cap-c">Tom</p>
+<p class="image-c"><img src="images/un0ix-02.jpg" alt="Images" /></p>
+<p class="cap-c">Jeanne</p>
+<p class="noindent">The OCA 7 exam is primarily a useful repackaging of some of the objectives from the SCJP 6 exam. On the other hand, the OCP 7 exam introduced a vast array of brand-new topics. We enlisted several talented Java gurus to help us cover some of the new topics on the OCP 7 exam. Thanks and kudos to <strong>Tom McGinn</strong> for his fantastic work in creating the massive JDBC chapter. Several reviewers told us that Tom did an amazing job channeling the informal tone we use throughout the book. Next, thanks to <strong>Jeanne Boyarsky</strong>. Jeanne was truly a renaissance woman on this project. She contributed to several OCP chapters; she wrote some questions for the master exams; she performed some project management activities; and as if that wasn’t enough, she was one of our most energetic technical reviewers. Jeanne, we can’t thank you enough. Our thanks go to <strong>Matt Heimer</strong> for his excellent work on the concurrency chapter. A really tough topic, nicely handled! Finally, <strong>Roel De Nijs</strong> and <strong>Roberto Perillo</strong> made some nice contributions to the book <em>and</em> helped out on the technical review team—thanks, guys!</p>
+<h5 class="h5">Technical Review Team</h5>
+<p class="image-c"><img src="images/un0ix-03.jpg" alt="Images" /></p>
+<p class="cap-c">Roel</p>
+<p class="image-c"><img src="images/un0ix-04.jpg" alt="Images" /></p>
+<p class="cap-c">Mikalai</p>
+<p class="image-c"><img src="images/un0ix-05.jpg" alt="Images" /></p>
+<p class="cap-c">Vijitha</p>
+<p class="image-c"><img src="images/un0ix-06.jpg" alt="Images" /></p>
+<p class="cap-c">Roberto</p>
+<p class="noindent"><strong>Roel</strong>, what can we say? Your work as a technical reviewer is unparalleled. Roel caught so many technical errors, it made our heads spin. Between the printed book and all the material on the CD, we estimate that there are over 1,500 pages of “stuff” here. It’s huge! Roel grinded through page after page, never lost his focus, and made this book better in countless ways. Thank you, Roel!</p>
+<p class="indent">In addition to her other contributions, <strong>Jeanne</strong> provided one of the most thorough technical reviews we received. (We think she enlisted her team of killer robots to help her!)</p>
+<p class="indent">It seems like no K&amp;B book would be complete without help from our old friend <strong>Mikalai Zaikin</strong>. Somehow, between earning 812 different Java certifications, being a husband and father (thanks to <strong>Volha</strong>, <strong>Anastasia</strong>, <strong>Daria</strong>, and <strong>Ivan</strong>), and being a “theoretical fisherman” [sic], Mikalai made substantial contributions to the quality of the book; we’re honored that you helped us again, Mikalai.</p>
+<p class="indent">Next up, we’d like to thank <strong>Vijitha Kumara</strong>, JavaRanch moderator and tech reviewer extraordinaire. We had many reviewers help out during the long course of writing this book, but Vijitha was one of the few who stuck with us from <a href="ch1.xhtml#ch1">Chapter 1</a> all the way through the master exams and on to Chapter 15. Vijitha, thank you for your help and persistence!</p>
+<p class="indent">Finally, thanks to the rest of our review team: <strong>Roberto Perillo</strong> (who also wrote some killer exam questions), <strong>Jim Yingst</strong> (was this your fourth time?), other repeat offenders: <strong>Fred Rosenberger</strong>, <strong>Christophe Verre</strong>, <strong>Devaka Cooray</strong>, <strong>Marc Peabody</strong>, and newcomer <strong>Amit Ghorpade</strong>—thanks, guys!</p>
+<h4 class="h4">The OCP 8 Team<span id="page_x" epub:type="pagebreak"></span></h4>
+<p class="noindent">Approximately two-thirds of the OCP 8 exam’s objectives are the same as the OCP 7 exam, and about one-third are new topics focused on all of the amazing new features introduced in Java 8. This time around, our entire review team was composed of veterans. In addition, it’s about time that we give thanks to all of the folks on JavaRanch who took time to share errata with us. Because of our amazing xiireview team and the generosity of JavaRanchers (we know “CodeRanch”), this book was improved immensely.</p>
+<p class="indent">Between the printed book and the two final mock exams, this book has well over 900 pages of material. One way of looking at this book is that every page is a series of factual claims. It’s hard to estimate, but perhaps there are 20 such claims on every page. That means we’re making about 18,000 factual claims in this book! This makes us authors feel better about saying that our various reviewers found hundreds of errors or areas in which our explanations could have been better. Hundreds out of 18,000 isn’t too bad is it?</p>
+<p class="indent">When we’re in the mode of incorporating our reviewers’ feedback, we often have to make tough choices. We know that our job isn’t to restate the Java Language Spec. We have to make many decisions about how deeply to go into the topics on the exam. You should know that our reviewers constantly challenge us to go deeper. That’s a good thing. If you feel as though we haven’t covered a topic as deeply as you’d like or that we’ve oversimplified an explanation, the fault almost certainly lies with us authors, not with the reviewers!</p>
+<p class="indent">With all of that said, it’s time to thank the members of our amazing review team individually.</p>
+<h5 class="h5">Technical Review Team</h5>
+<p class="image-c"><img src="images/un00x-01.jpg" alt="Images" /></p>
+<p class="cap-c">Mikalai</p>
+<p class="image-c"><img src="images/un00x-02.jpg" alt="Images" /></p>
+<p class="cap-c">Campbell</p>
+<p class="image-c"><img src="images/un00x-03.jpg" alt="Images" /></p>
+<p class="cap-c">Paweł</p>
+<p class="image-c"><img src="images/un00x-04.jpg" alt="Images" /></p>
+<p class="cap-c">Frits</p>
+<p class="image-c"><img src="images/un00x-05.jpg" alt="Images" /></p>
+<p class="cap-c">Roberto</p>
+<p class="image-c"><img src="images/un00x-06.jpg" alt="Images" /></p>
+<p class="cap-c">Vijitha</p>
+<p class="image-c"><img src="images/un00x-07.jpg" alt="Images" /></p>
+<p class="cap-c">Tim</p>
+<p class="noindent"><strong>Mikalai</strong>, wow, wow, wow! This is the fourth time (at least?) that Mikalai Zaikin has been one of our reviewers. Mikalai is a real expert, and he pushes us and makes us think. Mikalai is first and foremost a family man (hooray!), but he’s also a geek, and—not satisfied with being only a Java expert—he also pursues other programming approaches as well. It wouldn’t surprise us at all if he was into functional programming and other such wackiness. You all have a huge debt to pay to <strong>Campbell</strong>. Campbell Ritchie is a JavaRanch moderator and another true expert. Campbell is passionate about Java, and his edits really taught us a thing or two. Thanks for all your time Campbell! <strong>Pawe</strong><strong>ł</strong><strong> Baczy</strong><strong>ń</strong><strong>ski</strong>, gave us a TON of good feedback. Paweł, send our <span id="page_xi" epub:type="pagebreak"></span>thanks to your wife and kids; we appreciate their patience! Our next thanks go to veteran reviewer and JavaRanch moderator <strong>Frits Walraven</strong>. Frits is a published mock-exam-question creator (awesome), husband, father, and serial Java certificate holder. Get some sleep, Frits! Once again, we were honored to have <strong>Roberto Perillo</strong> on our review team. This is at least the third time Roberto has helped out. Given what a thankless job this is, Roberto, we can’t thank you enough. Roberto is a dad, hooray, and from what we hear he plays a mean guitar. With over 4000 JavaRanch posts to his credit, moderator <strong>Vijitha Kumara</strong> proved once again to be “in it for the long haul!” In addition to traveling and community service, Vijitha was with us right to the final mock exam. Vijitha, thanks for all your help! Last but not least, our thanks go to yet another JavaRanch moderator <strong>Tim Cooke</strong>. Rumor has it that Tim’s cat Polly (an Erlang aficionado!?), was at Tim’s side throughout the editing process. This might explain some of the attitude that came through in Tim’s edits. Tim focused his energies on editing the new FP-ish additions to the exam. Tim, thanks so much for all of your help!<span id="page_xii" epub:type="pagebreak"></span></p>
+</section>
+</div>
+</body>
+</html>

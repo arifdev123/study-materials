@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pls="http://www.w3.org/2005/01/pronunciation-lexicon" xmlns:ssml="http://www.w3.org/2001/10/synthesis" xmlns:svg="http://www.w3.org/2000/svg">
+<head>
+  <meta charset="UTF-8" />
+  <title>8 Lambda Expressions and Functional Interfaces</title>
+  <link type="text/css" rel="stylesheet" media="all" href="style.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="core.css" />
+</head>
+<body>
+  <div id="sbo-rt-content"><section epub:type="chapter">
+<p class="image"><img src="images/common-01.jpg" alt="Images" /></p>
+<h2 class="h2p" id="ch8"><span id="page_489" epub:type="pagebreak"></span>8</h2>
+<h2 class="h2p1">Lambda Expressions and Functional Interfaces</h2>
+<p class="title-o"><span class="white">CERTIFICATION OBJECTIVES</span></p>
+<p class="toc-l">•       Create and Use Lambda Expressions</p>
+<p class="toc-l">•       Iterate Using forEach Methods of Streams and List</p>
+<p class="toc-l">•       Use Method References with Streams</p>
+<p class="toc-l">•       Use the Built-in Interfaces Included in the java.util.function Package such as Predicate, Consumer, Function, and Supplier</p>
+<p class="toc-l">•       Develop Code That Uses Primitive Versions of Functional Interfaces</p>
+<p class="toc-l">•       Develop Code That Uses Binary Versions of Functional Interfaces</p>
+<p class="toc-l">•       Develop Code That Uses the Unary­Operator Interface</p>
+<p class="toc-lq"><img src="images/tick.jpg" alt="Images" />    Two-Minute Drill</p>
+<p class="s-bull"><strong>Q&amp;A</strong>  Self Test</p>
+<p class="noindent-d"><span id="page_490" epub:type="pagebreak"></span><span class="dropcap">O</span>ne of the big new language features added in Java 8 is the lambda expression. We’ve already talked a bit about lambdas, introducing the basic syntax and the idea of functional interfaces. You’ve seen how to use a lambda expression to replace an inner class (e.g., a <code>Comparator</code>) and you’ve also seen how to pass a lambda expression—really, just a block of code—to methods that expect Comparators, like <code>Collections.sort()</code>. Those earlier tastes of lambda expressions probably left you with more questions than answers, and this chapter is where we dive into all those details. As with inner classes, you’ll need to know the syntax of lambda expressions and when you can use them like the back of your hand. You’ll also need to get familiar with a variety of functional interfaces so you can recognize them easily. Do that and you’ll sail through the lambda expressions part of the exam.</p>
+<h5 class="title-o"><span class="white">CERTIFICATION OBJECTIVE</span></h5>
+<h3 class="h3" id="ch8lev1sec1"><strong>Lambda Expression Syntax (OCP Objective 2.6)</strong></h3>
+<p class="noindent"><em>2.6   Create and use Lambda expressions.</em></p>
+<p class="indentt">You already know (a little) how lambda expressions can make your code more concise. Concise code is good, but only if it makes sense. And, let’s face it, lambda expression syntax can take some getting used to. Let’s take another look at the syntax and talk about the varieties of lambda expression syntax you might expect to see in the real world and on the exam.</p>
+<p class="indent">Imagine you’ve got a super simple interface, <code>DogQuerier</code>, with one abstract method, <code>test()</code> (remember that all interface methods are abstract unless they are declared default or static):</p>
+<p class="imageip"><img src="images/un490-01.jpg" alt="images" /></p>
+<p class="indent">We say that <code>DogQuerier</code> is a “functional interface”: it’s an interface with one abstract method.</p>
+<p class="indent">Later, you use an inner class to define an instance of a class that implements this interface:</p>
+<p class="imageip"><img src="images/un490-02.jpg" alt="images" /></p>
+<p class="noindent"><span id="page_491" epub:type="pagebreak"></span>Wait, scrap that—we can make the code much more concise by replacing that inner class with a lambda expression:</p>
+<p class="imageip"><img src="images/un491-01.jpg" alt="images" /></p>
+<p class="noindent">You use that lambda expression just like you’d use the instance of the inner class:</p>
+<p class="imageip"><img src="images/un491-02.jpg" alt="images" /></p>
+<p class="noindent">(assuming boi is a <code>Dog</code> with a <code>getAge()</code> method, of course).</p>
+<p class="indent">Think of a lambda expression as a shorthand way of writing an instance of a class that implements a functional interface. It looks a lot like a method (in fact, some call lambda expressions “anonymous methods“), but it’s a bit more than that; it’s more like an instance with everything but the method stripped away. The important part of the instance is the method (the rest can be inferred from the interface definition), so the lambda expression is the syntax of the instance that’s been boiled down to the bare essentials.</p>
+<p class="indent">To make the lambda expression, we copy the parameter of the <code>test()</code> method from the inner class, then write an arrow, and then copy the expression in the body of the test method, leaving out the <code>return</code> and the semicolon:</p>
+<p class="imageip"><img src="images/un491-03.jpg" alt="images" /></p>
+<p class="indent">The type of the lambda expression is <code>DogQuerier</code>. That’s the same as the type of the interface and the same as the type of the instance being created by the inner class.</p>
+<p class="imageip"><img src="images/un491-04.jpg" alt="images" /></p>
+<p class="noindent">And, of course, when we write the statement assigning the lambda to the instance variable, we end that statement with a semicolon. Now let’s look at some variations. Because the <code>test()</code> method has only one parameter, it’s perfectly legal to leave off the parentheses around the parameter and write the lambda like this instead:</p>
+<p class="imageip"><img src="images/un491-05.jpg" alt="images" /></p>
+<p class="noindent">If you have more than one parameter, however, you <em>must</em> use the parentheses.</p>
+<p class="indent"><span id="page_492" epub:type="pagebreak"></span>You might be wondering: how does the lambda “know” what <code>d</code>’s type is supposed to be? That can be inferred from the <code>DogQuerier</code> interface definition. However, there may be times when the type can’t be inferred and you will need to write it in. And, in this example, you can supply the type if you want to, but if you do, you’ll have to use the parentheses around the parameter:</p>
+<p class="imageip"><img src="images/un492-01.jpg" alt="images" /></p>
+<p class="indent">What about the return value’s type? That, too, can be inferred from the <code>DogQuerier</code> interface definition. And wait a sec, where’d that <code>return</code> go to anyway?</p>
+<p class="indent">The rule is, if there is only one expression in the lambda, then the value of that expression gets returned by default, and you don’t need a return. In fact, if you try to write</p>
+<p class="imageip"><img src="images/un492-02.jpg" alt="images" /></p>
+<p class="noindent">you’ll get a compile-time error:</p>
+<p class="imageip"><img src="images/un492-03.jpg" alt="images" /></p>
+<p class="indent">If you want to write <code>return</code>, then you’ll have to write the lambda like this:</p>
+<p class="imageip"><img src="images/un492-04.jpg" alt="images" /></p>
+<p class="indent">In other words, if the body of your lambda is anything more than an expression—that is, a statement or multiple statements—you’ll need to use the curly braces. Here’s an example of a lambda expression with multiple statements:</p>
+<p class="imageip"><img src="images/un492-05.jpg" alt="images" /></p>
+<p class="indent">To summarize, we can write the original <code>DogQuerier</code> instance as a lambda expression in the following ways, all of which are equivalent:</p>
+<p class="imageip"><img src="images/un492-06.jpg" alt="images" /></p>
+<p class="indent">Here’s the full code so you can test the <code>DogQuerier</code> lambda expression:</p>
+<p class="imageip"><img src="images/un492-07.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_493" epub:type="pagebreak"></span><img src="images/un493-01.jpg" alt="images" /></p>
+<p class="noindent">The output is</p>
+<p class="imageip"><img src="images/un493-02.jpg" alt="images" /></p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>Here are a few examples of invalid lambda expression syntax to watch out for:</em></strong></p>
+<p class="imageep"><img src="images/un493-03.jpg" alt="images" /></p>
+<p class="noindent"><strong><em>Needs parentheses around the argument.</em></strong></p>
+<p class="imageep"><img src="images/un493-04.jpg" alt="images" /></p>
+<p class="noindent"><strong><em>Needs { } around body of lambda and an ending ;</em></strong></p>
+<p class="imageep"><img src="images/un493-05.jpg" alt="images" /></p>
+<p class="noindent"><strong><em>Needs parentheses around the arguments.</em></strong></p>
+</div>
+<h4 class="h4" id="ch8lev2sec1">Passing Lambda Expressions to Methods</h4>
+<p class="noindent">Lambda expressions are easy to pass to methods. It’s a bit like passing a block of code to a method. To demonstrate, let’s add a class to our <code>Dogs</code> example:</p>
+<p class="imageip"><span id="page_494" epub:type="pagebreak"></span><img src="images/un494-01.jpg" alt="images" /></p>
+<p class="indent">The constructor for the <code>DogsPlay</code> class takes a <code>DogQuerier</code> instance. We can pass the <code>dq</code> instance we created with a lambda expression to <code>DogsPlay</code> like this:</p>
+<p class="imageip"><img src="images/un494-02.jpg" alt="images" /></p>
+<p class="noindent">Or we can pass a lambda expression directly:</p>
+<p class="imageip"><img src="images/un494-03.jpg" alt="images" /></p>
+<p class="indent">When we call <code>dp.doQuery()</code> and pass in a dog, the <code>test()</code> method of the <code>DogQuerier</code> gets called:</p>
+<p class="imageip"><img src="images/un494-04.jpg" alt="images" /></p>
+<p class="noindent">And we see the output:</p>
+<p class="imageip"><img src="images/un494-05.jpg" alt="images" /></p>
+<p class="indent">The lambda expression we’re passing to <code>DogsPlay</code> is simple; it has one <code>Dog</code> parameter and simply tests that dog’s age and returns true or false.</p>
+<h4 class="h4" id="ch8lev2sec2">Accessing Variables from Lambda Expressions</h4>
+<p class="noindent">What do you think happens if a lambda has a reference to another variable? While you can declare and use variables within the lambda expression, just like you would in the body of a method, the lambda is essentially just creating a nested block, so you can’t use the same variable name as you’ve used in the enclosing scope. So this is fine:</p>
+<p class="imageip"><img src="images/un494-06.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_495" epub:type="pagebreak"></span><img src="images/un495-01.jpg" alt="images" /></p>
+<p class="noindent">But this is not:</p>
+<p class="imageip"><img src="images/un495-02.jpg" alt="images" /></p>
+<p class="indent">A lambda expression “captures” variables from the enclosing scope, so you can access those variables in the body of the lambda, but those variables must be final or effectively final. An effectively final variable is a variable or parameter whose value isn’t changed after it is initialized. Let’s see what happens if we try to modify the number of cats in the lambda expression:</p>
+<p class="imageip"><img src="images/un495-03.jpg" alt="images" /></p>
+<p class="indent">If we try to change the value either in the lambda itself or elsewhere in the enclosing scope, we will get an error. We can <em>use</em> the value of <code>numCats</code>, but we can’t <em>change</em> it. So this will work:</p>
+<p class="imageip"><img src="images/un495-04.jpg" alt="images" /></p>
+<p class="indent">The value of the variable <code>numCats</code> is captured by the lambda so it can be used later when we invoke the lambda (by calling its <code>test()</code> method). Let’s see what happens when we pass a lambda with captured values to the <code>DogsPlay</code> constructor:</p>
+<p class="imageip"><span id="page_496" epub:type="pagebreak"></span><img src="images/un496-01.jpg" alt="images" /></p>
+<p class="indent">This works fine; the captured value for <code>numCats</code> is sent along with the lambda to <code>DogsPlay</code> and used when the lambda is invoked later when we call <code>doQuery()</code>. Here is the output:</p>
+<p class="imageip"><img src="images/un496-02.jpg" alt="images" /></p>
+<h5 class="title-o"><span class="white">CERTIFICATION OBJECTIVE</span></h5>
+<h3 class="h3" id="ch8lev1sec2"><strong>Functional Interfaces (OCP Objectives 3.5, 4.1, 4.2, 4.3, and 4.4)</strong></h3>
+<p class="noindent"><em>3.5   Iterate using forEach methods of Streams and List.</em></p>
+<p class="noindent"><em>4.1   Use the built-in interfaces included in the java.util.function package such as Predicate, Consumer, Function, and Supplier.</em></p>
+<p class="noindent"><em>4.2   Develop code that uses primitive versions of functional interfaces.</em></p>
+<p class="noindent"><em>4.3   Develop code that uses binary versions of functional interfaces.</em></p>
+<p class="noindent"><em>4.4   Develop code that uses the UnaryOperator interface.</em></p>
+<p class="indentt">Lambda expressions work by standing in for instances of classes that implement interfaces with one abstract method, so there is no confusion about which method the lambda is defining. As we’ve said before, we call these interfaces with one and only one abstract method “functional interfaces.” There’s nothing particularly special about them, except their relationship to lambda expressions. We can explicitly identify a functional interface using the <code>@FunctionalInterface</code> annotation, like this:</p>
+<p class="imageip"><img src="images/un496-03.jpg" alt="images" /></p>
+<p class="indent"><span id="page_497" epub:type="pagebreak"></span>This annotation is not required but can be helpful when you want to ensure you don’t inadvertently add methods to a functional interface that will then break other code. If you use the <code>DogQuerier</code> type to define a lambda expression and then later add another abstract method to this interface, without the <code>@FunctionalInterface</code> annotation, you’ll get a compiler error, “The target type of this expression must be a functional interface.” Yikes!</p>
+<p class="indent">By using the <code>@FunctionalInterface</code>, the compiler will warn you that adding an extra method won’t work and you can avoid the error. Seeing that annotation, you’ll be reminded that you created a functional interface for a reason, so you’ll know not to change it. You may not see <code>@FunctionalInterface</code> used on the exam, but you’ll definitely be expected to identify functional interfaces with or without this annotation.</p>
+<h4 class="h4" id="ch8lev2sec3">Built-in Functional Interfaces</h4>
+<p class="noindent">Functional interfaces turn out to be useful in all sorts of scenarios, some of which we’ll get into here and some in the next chapter. You’ve already seen one useful functional interface: the <code>Comparator</code>. In addition, with Java 8 we get a big collection of functional interfaces in the <code>java.util.function</code> package, where you’ll find <code>Predicate</code>, which you’ve also seen before, along with a variety of others. You will need to be familiar with them all.</p>
+<p class="indent">Looking at the list, you might be wondering why you need all these different kinds of functional interfaces? Well, you probably won’t ever need them all, but it’s nice to have them available to use when you need a functional interface and don’t want to define your own. As you’ll see, there are many more uses for these interfaces than you might think, and having those interfaces already defined can save you time and code when you just want a quick lambda expression and don’t want to bother with creating your own functional interface.</p>
+<h4 class="h4" id="ch8lev2sec4">What Makes an Interface Functional?</h4>
+<p class="noindent">We already said that a functional interface is an interface with one and only one abstract method. Let’s delve into this just a little more because it can get a bit tricky.</p>
+<p class="indent">Take a look at the Java 8 API documentation (<a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html">https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html</a>) for <code>java.util.function</code><code>.Predicate</code>, and you’ll find it has five methods: <code>and()</code>, <code>isEqual()</code>, <code>negate()</code>, <code>or()</code>, and <code>test()</code>. Every method except <code>test()</code> is declared as static or default, so it’s pretty easy to determine that <code>test()</code> is the single abstract method in this functional interface. And, indeed, if you look under “Abstract Methods” for this interface, you’ll see one method there, <code>test()</code>. Clearly, <code>Predicate</code> is a functional interface.</p>
+<p class="indent"><span id="page_498" epub:type="pagebreak"></span>Now, take a look at the documentation for <code>java.util.Comparator</code>. This has quite a few default and static methods, so click on “Abstract Methods” to narrow down your search for its one and only one abstract method. What do you see? Two methods: <code>compare()</code> and <code>equals()</code>. But we said this is a functional interface, so why are two abstract methods listed here? <code>equals()</code> is inherited from <code>Object</code>, and inherited public methods are not counted when you’re determining whether an interface is a functional interface. So even though <code>equals()</code> is abstract in <code>Comparator</code>, because it’s inherited, it doesn’t count. Tricky! Be ready to spot this on the exam.</p>
+<p class="indent">To sum up, here is the rule for functional interfaces: A functional interface is an interface that has one abstract method. Default methods don’t count; static methods don’t count; and methods inherited from Object don’t count.</p>
+<p class="indent">Oh, and just so you know, the single abstract method in a functional interface is called the “functional method.“</p>
+<h4 class="h4" id="ch8lev2sec5">Categories of Functional Interfaces</h4>
+<p class="noindent">You’ll find 43 functional interfaces in <code>java.util.function</code>, and they all fall into one of four categories: suppliers, consumers, predicates, or functions. Each functional interface has a single abstract method (the functional method) and sometimes static and default methods.</p>
+<p class="indent">The basic types of functional interfaces are <code>Supplier</code>, <code>Consumer</code>, <code>Predicate</code>, and <code>Function</code>.</p>
+<p class="noindentt"><strong>Suppliers</strong> Suppliers supply results. <code>java.util.function.Supplier</code>’s functional method, <code>get()</code>, never takes an argument, and it always returns something.</p>
+<p class="noindentt"><strong>Consumers</strong> Consumers consume values. <code>java.util.function.Consumer</code>’s functional method, <code>accept()</code>, always takes an argument and never returns anything.</p>
+<p class="noindentt"><strong>Predicates</strong> Predicates test things (and do logical operations). <code>java.util.function.Predicate</code>’s functional method, <code>test()</code>, takes a value, does a logical test, and returns true or false.</p>
+<p class="noindentt"><span id="page_499" epub:type="pagebreak"></span><strong>Functions </strong>You can think of functions as the most generic of the functional interfaces. <code>java.util.function.Function</code>’s functional method, <code>apply()</code>, takes an argument and returns a value.</p>
+<p class="indent">All of the functional interfaces in <code>java.util.function</code> are variations of suppliers, consumers, predicates, and functions. For example, <code>BooleanSupplier</code> is a supplier whose functional method supplies a boolean value. An <code>IntConsumer</code> is a consumer whose functional method takes an <code>int</code> value. And so on. Most of the variations are either to give you a way to provide more arguments (e.g., a <code>BiConsumer</code> that takes two arguments instead of one) or avoid autoboxing (e.g., <code>IntConsumer</code> and <code>BooleanSupplier</code>), which makes them more efficient. We’ll give a lot of examples in the next few sections, so you get a sense of how these work.</p>
+<p class="indent">When you first start working with functional interfaces, they can seem rather abstract. That’s because, on their own, they don’t really mean anything. What on earth is the point of having a <code>Function</code> interface with a method that takes a value and returns a value? That seems like the most generic thing in the world and rather pointless.</p>
+<p class="indent">Seeing these interfaces in use and using them yourself will help make them seem less abstract and more useful. One good way to see functional interfaces in use is to look at the Oracle API documentation for one of the interfaces and click on “USE” in the top navigation bar. This shows you how that functional interface is used in the rest of the JDK.</p>
+<h5 class="h5">Working with Suppliers</h5>
+<p class="indent">Let’s begin with a super simple supplier:</p>
+<p class="imageip"><img src="images/un499-01.jpg" alt="images" /></p>
+<p class="noindent">And in the output we see</p>
+<p class="imageip"><img src="images/un499-02.jpg" alt="images" /></p>
+<p class="noindent">We’ve made a <code>Supplier</code> whose functional method, <code>get()</code> returns an <code>Integer</code> object, <code>42</code>.</p>
+<p class="indent">Looking at the definition of <code>java.util.function.Supplier</code>, we can see that it’s defined like this:</p>
+<p class="imageip"><img src="images/un499-03.jpg" alt="images" /></p>
+<p class="noindent"><span id="page_500" epub:type="pagebreak"></span>And its functional method is <code>get()</code>, which returns a value of type <code>T</code>. So here <code>T</code> is a type parameter indicating the type of what’s returned from the functional method. We like the method detail from the documentation page where it describes what the <code>get()</code> method returns: “A result.” About as generic as you can get, right? This is why functional interfaces can feel so abstract when you first start working with them.</p>
+<p class="indent">Just to cement how the lambda expression is being used for <code>answerSupplier</code> in the code above, let’s take a look at how we might create a <code>Supplier</code> without using a lambda expression, so you can see one more time how we get to the lambda from, say, an inner class. Remember, <code>Supplier</code> is just an interface! So we can make an instance of a class implementing that interface the old-fashioned way, with an inner class, like this:</p>
+<p class="imageip"><img src="images/un500-01.jpg" alt="images" /></p>
+<p class="noindent">As you can see, using a lambda expression to stand in for this inner class is a whole lot shorter and easier. Hopefully by this point, you’ve got the hang of reading lambda expressions. From here on out, we’ll primarily use lambda expressions when implementing functional interfaces. That said, remember you might see a full-blown implementation of a functional interface on the exam.</p>
+<p class="indent">Okay, so a supplier that supplies <code>42</code> every time isn’t that interesting; let’s try another one:</p>
+<p class="imageip"><img src="images/un500-02.jpg" alt="images" /></p>
+<p class="noindent">Here we’ve got a supplier with multiple statements, so we’re using a slightly longer form of the lambda expression with curly braces to define a block of code and including a <code>return</code> statement to return the <code>String</code> that this supplier expects. In this case the <code>String</code> that’s returned is the system username.</p>
+<p class="indent">The key thing to note about both of these suppliers is they take no arguments and return an object. That’s what suppliers do.</p>
+<p class="noindentt"><span id="page_501" epub:type="pagebreak"></span><strong>IntSupplier</strong> Looking at <code>java.util.function</code>, we can see that there are some variations on supplier, including <code>IntSupplier</code>, <code>DoubleSupplier</code>, and <code>LongSupplier</code>. As you can guess, these supply an <code>int</code>, a <code>double</code>, and a <code>long</code>, respectively. These are there primarily to avoid autoboxing in case you want a primitive, rather than an object, back from the supplier. The functional method names of each of these is different and is not <code>get()</code>, so you’ll need to remember that for the exam. For example, the functional method of <code>IntSupplier</code> is <code>getAsInt()</code>, so we can use the following code to make a supplier that returns a new random <code>int</code> when you call the <code>getAsInt()</code> method:</p>
+<p class="imageip"><img src="images/un501-01.jpg" alt="images" /></p>
+<p class="indent">Notice that <code>IntSupplier</code> doesn’t use a type parameter, because the functional method returns a primitive. This avoids the autoboxing to <code>Integer</code> that we get with <code>Supplier&lt;Integer&gt;</code> (as in our <code>answerSupplier</code> above), which saves just a tiny bit of computation time (woo hoo!).</p>
+<p class="noindentt"><strong>What’s the Point of Supplier?</strong> At this stage, you might be asking yourself, What is the point of a supplier? After all we could just as easily write <code>42</code>, or <code>random.nextInt(50)</code>, or put the block of code into a regular method, instead of creating a lambda expression and then calling its functional method.</p>
+<p class="indent">Looking at how <code>Supplier</code>s are used in the JDK can give you a hint as to where and why they are useful. As an example we’ll take a look at the <code>java.util.logging</code><code>.Logger</code> class, which has been augmented with several methods that take <code>Supplier</code> as an argument. <code>Logger</code> is used to log messages for a system or application component, and you can set the logging level to determine what kinds of messages and how many messages to log. We can use the <code>log()</code> method to log a string if the log level is set, like this:</p>
+<p class="imageip"><img src="images/un501-02.jpg" alt="images" /></p>
+<p class="noindent">In this example, we do <em>not</em> see the current status string logged because the log level is set to <code>SEVERE</code> and our call to the <code>log()</code> method says only log the message if the level is set to <code>INFO</code> or below (logging levels are ordered with <code>SEVERE</code> at the highest level, and <code>INFO</code> is a couple of levels below that). If we write this instead</p>
+<p class="imageip"><span id="page_502" epub:type="pagebreak"></span><img src="images/un502-01.jpg" alt="images" /></p>
+<p class="noindent">then we will see the message.</p>
+<p class="indent">Now what if we need to do some expensive call to check the status of the system? Here we’ve hard-coded the status to a <code>String</code> but it’s more likely that the status is actually determined by, say, making a network call to see if a system is up or down. If we go ahead and compute the status before sending a string to the <code>log()</code> method, then we’ve potentially wasted time checking the status if the log level is not set high enough that we’ll actually log the status string. This is where <code>Supplier</code> comes in handy.</p>
+<p class="indent">A new <code>log()</code> method in <code>Logger</code> takes a level and a <code>Supplier&lt;String&gt;</code> rather than a <code>String</code>. Let’s see how we might use this. We’ll write some code that will determine the status of a system by sending a network request to a host to check to see if it’s up and running. Imagine this is part of a bigger program that does something useful with the data from the host (in this case, javaranch.com); perhaps it alerts you every time someone posts a new message.</p>
+<p class="indent">We want to log the status—that is, whether the host is up—when things are fine, but only if the logging level is set to <code>INFO</code> or below. We don’t want to bother checking the status and logging anything if the logging level is set to <code>SEVERE</code>. In that case, we only want to log messages that indicate things are really bad!</p>
+<p class="indent">And we want to log the status if things go wrong, pretty much no matter what the logging level is, so we’ll log the status if the level is set to <code>SEVERE</code> or below (and since <code>SEVERE</code> is the highest level, then we’ll <em>always</em> log the status if things go wrong).</p>
+<p class="indent">Here’s the code:</p>
+<p class="imageip"><img src="images/un502-02.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_503" epub:type="pagebreak"></span><img src="images/un503-01.jpg" alt="images" /></p>
+<p class="indent">The logger’s <code>log()</code> method takes the status <code>Supplier</code> and checks the log level. Because we’ve set the log level to <code>SEVERE</code> on line 5, in the <code>try</code> block, where we call the <code>log()</code> method with <code>Level.INFO</code>, the <code>log()</code> method won’t bother calling the <code>get()</code> method of the status <code>Supplier</code>, and so we avoid making that expensive network call. And, of course, in the <code>catch</code> block, we’re passing <code>Level.SEVERE</code> with the status <code>Supplier</code>, so if we end up in this <code>catch</code> block, we’ll always use the <code>Supplier</code>: the <code>log()</code> method will call the status <code>Supplier's</code> <code>get()</code> method, get the status (a <code>String</code>—look at the type parameter on the <code>Supplier</code>), and log it.</p>
+<p class="indent">Imagine if you were to always check the status to get the string to pass to <code>log()</code> instead. In that case, you’d be checking the status unnecessarily in the case where everything’s fine and the logging level is set to <code>SEVERE</code>.</p>
+<p class="indent">So using a <code>Supplier</code> here avoids that expensive operation when it’s unnecessary. We’re passing a block of code (the <code>Supplier</code>) that gets executed only if a certain condition applies. We don’t have to check that condition ourselves; <code>Logger</code> does it for us and then can call the <code>get()</code> method on the <code>Supplier</code> only if it needs to. (You can test the log status yourself by adding a</p>
+<p class="imageip"><img src="images/un503-02.jpg" alt="images" /></p>
+<p class="noindent">in the <code>try</code> block if you want).</p>
+<p class="indent">It’s no different than if you created your own <code>Supplier</code> interface with a <code>get()</code> method that could be called whenever a value is needed, but having these built-in functional interfaces that other parts of the JDK can use in situations like this makes life just a bit easier for you. And using lambda expressions to eliminate one more step (actually instantiating a class that implements that interface) reduces your work, helps make your code more concise, and (once you’re used to reading lambda expressions) easier to read.</p>
+<h5 class="h5"><span id="page_504" epub:type="pagebreak"></span>Working with Consumers</h5>
+<p class="noindent">You can think of consumers as the opposite of suppliers (like matter and antimatter, it helps keeps the universe balanced). Consumers accept one or more arguments and don’t return anything. So this lambda expression</p>
+<p class="imageip"><img src="images/un504-01.jpg" alt="images" /></p>
+<p class="noindent">implements the <code>java.util.function.Consumer</code> interface, which is defined like this:</p>
+<p class="imageip"><img src="images/un504-02.jpg" alt="images" /></p>
+<p class="noindent">The <code>Consumer</code>’s functional method is <code>accept()</code>, which takes an object of type <code>T</code> and returns nothing, so we use the <code>redOrBlue</code> consumer like this:</p>
+<p class="imageip"><img src="images/un504-03.jpg" alt="images" /></p>
+<p class="noindent">and see the output:</p>
+<p class="imageip"><img src="images/un504-04.jpg" alt="images" /></p>
+<p class="indent">As with suppliers, there are variations on consumers in the <code>java.util</code><code>.function</code> package. <code>IntConsumer</code>, <code>DoubleConsumer</code>, and <code>LongConsumer</code> do what you’d expect: their <code>accept()</code> methods take one primitive argument and avoid the autoboxing you get with <code>Consumer</code>.</p>
+<p class="indent">In addition to these, there’s <code>ObjIntConsumer</code>, <code>ObjDoubleConsumer</code>, and <code>ObjLongConsumer</code>, whose <code>accept()</code> methods take an object (type <code>T</code>) and an <code>int</code>, a <code>double</code>, or a <code>long</code>.</p>
+<p class="indent">And finally we have <code>BiConsumer</code>, which is similar, except that its <code>accept()</code> method takes two objects (types <code>T</code> and <code>U</code>, meaning the two objects don’t have to be of the same type). So the <code>BiConsumer</code> interface looks like this:</p>
+<p class="imageip"><img src="images/un504-05.jpg" alt="images" /></p>
+<p class="noindent">with one function method, <code>accept()</code>:</p>
+<p class="imageip"><img src="images/un504-06.jpg" alt="images" /></p>
+<p class="noindent"><span id="page_505" epub:type="pagebreak"></span>Here’s a good use for a <code>BiConsumer</code>:</p>
+<p class="imageip"><img src="images/un505-01.jpg" alt="images" /></p>
+<p class="indent">The <code>printEnv</code> <code>BiConsumer</code> is a lambda expression with two arguments that we are using to display a key and value from a <code>Map</code>. To use the <code>printEnv</code> consumer, we call its <code>accept()</code> method, passing in two strings, and see the result displayed in the console.</p>
+<p class="noindentt"><strong>ForEach</strong> Now is a good time to talk about the <code>forEach()</code> method that’s been added to the Java 8 <code>Iterable</code> interface. Why? Because <code>forEach()</code> expects a consumer. You’ll end up using <code>forEach()</code> a lot, as it’s a handy way to iterate through collections.</p>
+<p class="indent">Here’s how you use <code>forEach()</code> with a <code>Consumer</code> to iterate through a <code>List</code> and display each item in the list:</p>
+<p class="imageip"><img src="images/un505-02.jpg" alt="images" /></p>
+<p class="noindent">We could, of course, combine the last two of these lines, like this:</p>
+<p class="imageip"><img src="images/un505-03.jpg" alt="images" /></p>
+<p class="noindent">This consumer takes a <code>String</code> and just prints it.</p>
+<p class="indent">The kind of consumer <code>forEach()</code> expects depends on the type of collection you’re using. For example, when you iterate through <code>List</code>, you’re accessing one object at a time, so the consumer you’ll use is <code>Consumer</code> (that is, a consumer whose <code>accept()</code> method expects one argument, an object). And for <code>Map</code>, the consumer you’ll use is a <code>BiConsumer</code> (that is, a consumer whose <code>accept()</code> method expects two arguments, both objects). Let’s use the <code>BiConsumer</code> we created earlier, <code>printEnv</code>, with the <code>Map</code>’s <code>forEach()</code> method to display every key/value pair in the map:</p>
+<p class="imageip"><img src="images/un505-04.jpg" alt="images" /></p>
+<p class="imageip"><img src="images/un505-05.jpg" alt="images" /></p>
+<p class="noindent">This displays every key/value pair in the <code>Map</code> that you get from <code>System.getenv()</code>.</p>
+<p class="noindentt"><strong>Side Effects from Within Lambdas</strong> You already know that there are restrictions on modifying the value of variables from within lambda expressions. For instance, if you define a variable in the enclosing scope of a lambda expression, you can’t modify that variable from within the lambda:</p>
+<p class="imageip"><span id="page_506" epub:type="pagebreak"></span><img src="images/un506-01.jpg" alt="images" /></p>
+<p class="indent">This code will not compile because we’re trying to change the value of <code>username</code> from within the lambda expression. Remember that variables declared outside a lambda expression must be final or effectively final to be used within a lambda expression.</p>
+<p class="indent">However, we can cheat. Although we can’t modify a variable from within a lambda expression, we <em>can</em> modify a field of an object. If we want to use <code>forEach()</code> to iterate through a collection of objects to, say, find a value, we can’t return the value we find (because <code>forEach()</code> takes a consumer and the <code>accept()</code> method of a consumer is void), but we can change the field of an object from within the lambda to do effectively the same thing:</p>
+<p class="imageip"><img src="images/un506-02.jpg" alt="images" /></p>
+<p class="noindent"><span id="page_507" epub:type="pagebreak"></span>Note that this code will be less efficient than using a <code>for</code> loop iteration and breaking out of the iteration once the value is found. You might not ever need to do this, but now you know you can, just in case. In the next chapter on Streams, you’ll learn a better way to extract and collect values that doesn’t rely on side effects, as we’re doing here.</p>
+<p class="noindentt"><strong>andThen…</strong> andThen the murders began… Oh wait, no. This isn’t a crime thriller; it’s a Java book.</p>
+<p class="indent"><code>andThen()</code> is actually a default method of the <code>Consumer</code> interface that you can use to chain consumers together. Let’s imagine you have a <code>Dog</code> that can bark:</p>
+<p class="imageip"><img src="images/un507-01.jpg" alt="images" /></p>
+<p class="indent">Now let’s make some dogs and display them with <code>forEach()</code>:</p>
+<p class="imageip"><img src="images/un507-02.jpg" alt="images" /></p>
+<p class="noindent">When you run this, you’ll see</p>
+<p class="imageip"><img src="images/un507-03.jpg" alt="images" /></p>
+<p class="indent">Now let’s say we want to display the dog’s name <em>andThen</em> we want to have the dog bark. Can we do it with consumers? Yes! Here’s how:</p>
+<p class="imageip"><img src="images/un507-04.jpg" alt="images" /></p>
+<p class="noindent"><span id="page_508" epub:type="pagebreak"></span>Replace line 10 with this line and now you’ll see</p>
+<p class="imageip"><img src="images/un508-01.jpg" alt="images" /></p>
+<p class="indent">So how does this work? We’re passing a “composed <code>Consumer</code>” to the <code>forEach()</code> method of the dogs <code>ArrayList</code>. Let’s step through this.</p>
+<p class="indent">First, note that the <code>forEach()</code> method is calling the <code>accept()</code> method of the <code>Consumer</code> you’re passing in behind the scenes. So for each dog <code>d</code> in the list, <code>forEach()</code> is essentially doing this:</p>
+<p class="imageip"><img src="images/un508-02.jpg" alt="images" /></p>
+<p class="indent">When the <code>andThen()</code> method of the <code>Consumer</code> is called, it says, okay, now use that same dog object, <code>d</code>, that we just used in the first <code>Consumer</code> for the <code>accept()</code> method of the second <code>Consumer</code>. Note that we’ve written the second <code>Consumer</code> as an inline lambda (rather than as a separate declaration like we did for <code>displayName</code>)—but, of course, it works the same way. So the dog <code>d</code> whose name we just displayed is used in the second <code>Consumer</code>, and we call that dog’s <code>bark()</code> method, which simply displays <code>Woof!</code> in the console. And so the result we see is the dog’s name followed by <code>Woof!</code> for each of the dogs in the list.</p>
+<p class="indent">You might think that you could write both lambdas inline, like this:</p>
+<p class="imageip"><img src="images/un508-03.jpg" alt="images" /></p>
+<p class="noindent">But you can’t. You’ll get a compile error. You can, however, use named consumers for both:</p>
+<p class="imageip"><img src="images/un508-04.jpg" alt="images" /></p>
+<p class="indent">Most (but not all!) of the consumers in <code>java.util.function</code> have an <code>andThen()</code> method, and notice that the type of the consumer you pass to the <code>andThen()</code> method must match the type of the consumer used as the first operation. So you can chain a <code>Consumer</code> with a <code>Consumer</code> and a <code>BiConsumer</code> with a <code>BiConsumer</code>, but not a <code>Consumer</code> with a <code>BiConsumer</code>.</p>
+<h5 class="h5">Working with Predicates</h5>
+<p class="noindent">Remember earlier in this chapter we created a <code>DogQuerier</code> interface and used that interface to create an inner class and then a lambda expression.</p>
+<p class="indent"><span id="page_509" epub:type="pagebreak"></span>Our interface looked like this:</p>
+<p class="imageip"><img src="images/un509-01.jpg" alt="images" /></p>
+<p class="indent">This interface is a functional interface, with a functional method <code>test()</code>, so although we could create an instance using an inner class:</p>
+<p class="imageip"><img src="images/un509-02.jpg" alt="images" /></p>
+<p class="noindent">we realized we could create an instance much more concisely using a lambda expression like this:</p>
+<p class="imageip"><img src="images/un509-03.jpg" alt="images" /></p>
+<p class="indent">Well, take a look at <code>java.util.function.Predicate</code>, and the interface might look familiar:</p>
+<p class="imageip"><img src="images/un509-04.jpg" alt="images" /></p>
+<p class="indent"><code>Predicate</code> is a functional interface, with a functional method, <code>test()</code>, which returns a <code>boolean</code>, just like our <code>DogQuerier</code>. That means we can use the built-in <code>Predicate</code> interface in place of the <code>DogQuerier</code> interface (and get rid of the <code>DogQuerier</code> interface definition completely). Let’s do that:</p>
+<p class="imageip"><img src="images/un509-05.jpg" alt="images" /></p>
+<p class="noindent">Boi is 6, and Clover is 12, so we see <code>false</code> and <code>true</code> for the results, just like we did before with <code>DogQuerier</code>.</p>
+<p class="indent">Notice that one thing we must do to use <code>Predicate</code> in place of <code>DogQuerier</code> is add a type parameter to <code>Predicate</code>. Whereas we created <code>DogQuerier</code> to be specific to dogs, <code>Predicate</code> is a generic functional interface, so we have to provide a bit more information. The <code>T</code> argument defined in the <code>test()</code> method means we can pass any object to <code>Predicate</code>, so by adding a type parameter to <code>Predicate</code>, the predicate will know what type of argument to expect.</p>
+<p class="noindent"><span id="page_510" epub:type="pagebreak"></span>Let’s expand the example just a bit so we can experiment more with predicates.</p>
+<p class="imageip"><img src="images/un510-01.jpg" alt="images" /></p>
+<p class="indent">What we’ve done here is create a method <code>printDogIf()</code> that takes a list of dogs and a <code>Predicate</code>, and tests each dog in the list against the predicate to see if the dog should be displayed. We can then use this method to display all the dogs younger than 9 with one predicate and display all the dogs 9 or older with another.</p>
+<p class="indent">Running this code, we get the following output:</p>
+<p class="imageip"><span id="page_511" epub:type="pagebreak"></span><img src="images/un511-01.jpg" alt="images" /></p>
+<p class="indent">Now let’s check out how <code>Predicate</code>s are used in the JDK. One example is the <code>removeIf()</code> method of <code>ArrayList</code>, which takes a <code>Predicate</code> and removes an item from the <code>ArrayList</code> if the predicate’s <code>test()</code> method returns true for that item. So, we can remove all dogs whose names begin with “c” (sorry Charis and Clover!) like this:</p>
+<p class="imageip"><img src="images/un511-02.jpg" alt="images" /></p>
+<p class="noindent">And see that, indeed, Charis and Clover have been removed from the output:</p>
+<p class="imageip"><img src="images/un511-03.jpg" alt="images" /></p>
+<p class="noindentt"><strong>Predicate’s Default and Static Methods</strong> If you look at the <code>Predicate</code> interface in the <code>java.util.function</code> package, you’ll probably notice that <code>Predicate</code> has a few default methods and one static method. The default methods, <code>and()</code>, <code>or()</code>, and <code>negate()</code>, are there so you can chain predicates together, much like we did with consumers and the <code>andThen()</code> method. This can save you time creating new predicates that are logical combinations of predicates you already have. So, for instance, if we have a <code>Predicate</code> that tests to see if a dog’s age is 6, we can easily test for a dog not being age 6 with the <code>negate()</code> method:</p>
+<p class="imageip"><span id="page_512" epub:type="pagebreak"></span><img src="images/un512-01.jpg" alt="images" /></p>
+<p class="noindent">And we get the result false because Boi is, indeed, 6 years old:</p>
+<p class="imageip"><img src="images/un512-02.jpg" alt="images" /></p>
+<p class="indent">The <code>or()</code> and <code>and()</code> methods both take other predicates, so to chain them together you need two predicates. Let’s create predicates to see if a dog’s name is “boi” and the dog’s age is 6 and a third predicate that chains the first two together with <code>and()</code>:</p>
+<p class="imageip"><img src="images/un512-03.jpg" alt="images" /></p>
+<p class="indent">First, we test to see if Boi is named “boi” and is age 6, then we set Boi’s age to 7, and test again. We get the output:</p>
+<p class="imageip"><img src="images/un512-04.jpg" alt="images" /></p>
+<p class="indent">We can simplify the <code>nameAndAge</code> <code>Predicate</code> even further by writing</p>
+<p class="imageip"><img src="images/un512-05.jpg" alt="images" /></p>
+<p class="indent">This works! Remember, what this does is create a new <code>Predicate</code> that is the composition of two <code>Predicates</code>, <code>name</code> and <code>age</code>. So the result of calling the <code>and()</code> method on the <code>name</code> predicate with the argument <code>age</code> is a new <code>Predicate&lt;Dog&gt;</code> that <code>and</code>s the result of calling <code>name.test()</code> on a dog and <code>age.test()</code> on that same dog.</p>
+<p class="indent">The syntax for chaining can take a bit getting used to. Try writing a few of your own predicates, combining them with <code>and()</code>, <code>or()</code>, and <code>negate()</code>, to get the hang of it.</p>
+<p class="indent">The static method in <code>Predicate</code>, <code>isEqual()</code>, just gives you a way to test if one object equals another, using the same test as <code>equals()</code> uses when comparing two objects (that is, are they the same object?).</p>
+<p class="imageip"><img src="images/un512-06.jpg" alt="images" /></p>
+<p class="indent"><span id="page_513" epub:type="pagebreak"></span>One thing to note about <code>isEqual()</code> is this method is defined only on the predicates that take objects as arguments.</p>
+<p class="indent">Along with <code>Predicate</code>, you’ll find <code>BiPredicate</code>, <code>DoublePredicate</code>, <code>IntPredicate</code>, and <code>LongPredicate</code> in <code>java.util.function</code>. You can probably guess what these do. Yep, <code>BiPredicate</code>’s <code>test()</code> method takes two arguments, whereas <code>DoublePredicate</code>, <code>IntPredicate</code>, and <code>LongPredicate</code> each take one argument of a primitive type (to avoid autoboxing).</p>
+<p class="indent">Here’s a quick <code>IntPredicate</code> to demonstrate:</p>
+<p class="imageip"><img src="images/un513-01.jpg" alt="images" /></p>
+<p class="indent"><code>IntPredicate</code> is better than <code>Predicate&lt;Integer&gt;</code> for this example because the argument <code>i</code> doesn’t have to be converted from <code>Integer</code> to <code>int</code> before it’s tested. It’s a similar idea with <code>DoublePredicate</code> and <code>LongPredicate</code>.</p>
+<p class="noindentt"><strong>BiPredicate</strong> <code>BiPredicate</code> is just a variation on <code>Predicate</code> that allows you to pass in two objects for testing instead of one. Let’s say we have an <code>ArrayList</code> of books and we want to create a set of predicates that will determine if we should buy a book based on its name, its price, or its name <em>and</em> price together. Here’s how we might do that with <code>BiPredicate</code>:</p>
+<p class="imageip"><img src="images/un513-02.jpg" alt="images" /></p>
+<p class="indent">If we load up our books <code>ArrayList</code> with the following books:</p>
+<p class="imageip"><img src="images/un513-03.jpg" alt="images" /></p>
+<p class="noindent">then what we’ll see in the output when we run this code is</p>
+<p class="imageip"><img src="images/un513-04.jpg" alt="images" /></p>
+<p class="noindent">These are the books with Java in the title and a price less than $55.00.</p>
+<p class="noindentt"><strong>Caveat Time</strong> Of course, you don’t <em>need</em> <code>BiPredicate</code> lambda expressions to write this code; you could just write the test (does the name contain “Java” and is the price less than 55.00) in the <code>forEach</code> lambda expression. Likewise, we haven’t exactly needed many of the lambda expressions we’ve written in the simple examples throughout this chapter so far.</p>
+<p class="indent">The main reason to use lambda expressions is if you’ll end up using them in other ways too, and if having the code packaged up into lambdas will help make your code more concise and get you some code reuse (same reasons why you might use an inner class or even an external class). And, of course, if a method of a Java class, like the <code>Logger</code> <code>log()</code> example, requires a functional interface, like a <code>Supplier</code>, then that’s a great reason to use a lambda expression (although, again, you don’t <em>have</em> to—they are a convenience).</p>
+<p class="indent">A big caveat here is that although we’re showing lots of examples of building lambda expressions using the built-in functional interfaces so you get practice for the exam, once you’re back in the real world, think about whether you really need a lambda expression before you write one.</p>
+<h5 class="h5">Working with Functions</h5>
+<p class="noindent">We saved the most abstract of the functional interfaces from <code>java.util.function</code> for last. Aren’t you lucky? Of course, by now, we hope you’re feeling pretty solid about using functional interfaces.</p>
+<p class="indent">The purpose of the <code>apply()</code> functional method in the <code>Function</code> interface is to take one value and turn it into another. The two values don’t have to be the same type, so in the <code>Function</code> interface definition, we have two different type parameters, <code>T</code> (the type of the argument to <code>apply()</code>) and <code>R</code> (the type of the return value):</p>
+<p class="imageip"><span id="page_514" epub:type="pagebreak"></span><img src="images/un514-01.jpg" alt="images" /></p>
+<p class="indent">We can create an instance of <code>Function</code> to turn an <code>Integer</code> into a <code>String</code>:</p>
+<p class="imageip"><img src="images/un514-02.jpg" alt="images" /></p>
+<p class="noindent">If you run this code, you’ll see the output:</p>
+<p class="imageip"><span id="page_515" epub:type="pagebreak"></span><img src="images/un515-01.jpg" alt="images" /></p>
+<p class="indent">A <code>BiFunction</code> is similar except the <code>apply()</code> method takes two arguments and returns a value:</p>
+<p class="imageip"><img src="images/un515-02.jpg" alt="images" /></p>
+<p class="indent">In this example, the <code>BiFunction</code> <code>apply()</code> method takes two <code>String</code>s and returns a <code>String</code>, but you could pass two arguments of different types and return a value of a third type. What we see, of course, is</p>
+<p class="imageip"><img src="images/un515-03.jpg" alt="images" /></p>
+<p class="noindentt"><strong>Functions in the JDK</strong> Let’s use both a <code>Function</code> and a <code>BiFunction</code> in an example using the <code>Map</code> methods <code>computeIfAbsent()</code> and <code>replaceAll()</code>. These are two examples from the JDK where you’ll find <code>Function</code> and <code>BiFunction</code> used.</p>
+<p class="imageip"><img src="images/un515-04.jpg" alt="images" /></p>
+<p class="imageip"><img src="images/un516-01.jpg" alt="images" /></p>
+<p class="indent">The output is as follows:</p>
+<p class="imageip"><span id="page_516" epub:type="pagebreak"></span><img src="images/un516-02.jpg" alt="images" /></p>
+<p class="indent">We first use <code>computeIfAbsent()</code> to add a key and value to our <code>Map</code> of April winners if that key/value pair doesn’t yet exist in the <code>Map</code>.</p>
+<p class="indent"><code>computeIfAbsent()</code> takes a key and a <code>Function</code>. The <code>Function</code> provides a value to store in the <code>Map</code> for the key if a value for that key doesn’t yet exist. The argument in the <code>Function</code> lambda expression is the key, so you could create a value based on the key, but in this example, we’re keeping it super simple and just returning a <code>String</code>.</p>
+<p class="indent">Then we use the <code>replaceAll()</code> method to replace every value in the <code>Map</code> with the uppercase version of the old value. So where we have stored <code>Bob</code>, we’ll now be storing <code>BOB</code>.</p>
+<p class="indent"><code>replaceAll()</code> takes a <code>BiFunction</code>. The lambda expression we pass to <code>replaceAll()</code> has two arguments, a key, and the current value in the <code>Map</code>, and returns a new value to store in the <code>Map</code> for that key. In this example, we’re just returning the previous value in uppercase.</p>
+<p class="noindentt"><strong>More Functions</strong> <code>Function</code> has a couple of default methods and a static method in addition to its functional method, <code>apply()</code>: <code>andThen()</code>, <code>compose()</code>, and <code>identity()</code>. <code>andThen()</code> is similar to the <code>Consumer</code>’s <code>andThen()</code> method, applying <code>Functions</code> in sequence. <code>compose()</code> is the same except it applies the <code>Function</code>s in reverse order.</p>
+<p class="indent"><span id="page_517" epub:type="pagebreak"></span>And the static method in <code>Function</code> is <code>identity()</code>, which just returns its input argument:</p>
+<p class="imageip"><img src="images/un517-01.jpg" alt="images" /></p>
+<p class="noindent">Answer: 42. (Of course.)</p>
+<p class="indent">What on earth is an identity function used for? Imagine a scenario where you have defined a method that takes a <code>Function</code> as an argument that changes a value in a data structure. But in some cases, you don’t want that value to change. In those cases, pass the identity <code>Function</code> as an easy “do nothing” operation.</p>
+<p class="indent">Along with <code>Function</code> and <code>BiFunction</code>, as you might expect, you’ll also find <code>DoubleFunction</code> (<code>apply()</code> takes a <code>double</code> as an argument and returns an object), <code>IntFunction</code> (<code>apply()</code> takes an <code>int</code> as an argument and returns an object), and <code>LongFunction</code> (<code>apply()</code> takes a <code>long</code> as an argument and returns an object).</p>
+<p class="indent">Ah, but wait, there’s more! We also have <code>DoubleToIntFunction</code>, <code>DoubleToLongFunction</code>, <code>IntToDoubleFunction</code>, <code>IntToLongFunction</code>, <code>LongToDoubleFunction</code>, <code>LongToIntFunction</code>, <code>ToDoubleFunction</code>, <code>ToIntFunction</code>, <code>ToLongFunction</code>, <code>ToDoubleBiFunction</code>, <code>ToIntBiFunction</code>, and last but definitely not least, <code>ToLongBiFunction</code>.</p>
+<p class="indent">Oh, my goodness—the variations the JDK authors thought of when creating the functional interfaces. (It’s a wonder they didn’t think of 100 more.) We are pretty sure you can make a good guess at what these do. The main trick with these is that the functional method is not <code>apply()</code>; it’s a slight variation on <code>apply()</code>, so just keep that in the back of your mind.</p>
+<p class="indent">For instance, how about <code>IntToDoubleFunction</code>? The functional method is <code>applyAsDouble()</code>, and yes, it takes an <code>int</code> and returns a <code>double</code>, avoiding all that inefficient autoboxing. How about <code>ToIntFunction</code>? The <code>applyAsInt()</code> method takes an object and returns an <code>int</code>.</p>
+<p class="indent">Okay, we are sure you get the hang of it at this point, and we’ll leave you to the Java docs to find out more if you’re interested. For the exam, focus on <code>Function</code> and <code>BiFunction</code>, but be aware that these other variations exist and remember that there are variations in the functional method names that go with them.</p>
+<h5 class="h5">Working with Operators</h5>
+<p class="noindent">Finally (yes, really!), we have the operator variations on the functional interfaces. All the operators are, in fact, slightly modified versions of other functional interfaces. Let’s pick the one operator you should be familiar with for the exam, <code>UnaryOperator</code>, to look at, and you can explore the rest on your own.</p>
+<p class="indent"><code>UnaryOperator</code> extends the <code>Function</code> interface, so its functional method is also <code>apply()</code>. However, unlike <code>Function</code>, it requires that the type of the argument to <code>apply()</code> be the same as the type of the return value, so <code>UnaryOperator</code> is defined like this:</p>
+<p class="imageip"><span id="page_518" epub:type="pagebreak"></span><img src="images/un518-01.jpg" alt="images" /></p>
+<p class="indent">The <code>T</code><strong>,</strong> <code>T</code> in the <code>Function</code> type parameters is what tips you off that the type of the argument and return value must be the same. That’s why you only have to specify one type parameter for <code>UnaryOperator</code>:</p>
+<p class="imageip"><img src="images/un518-02.jpg" alt="images" /></p>
+<p class="indent">In this example, we’re defining a <code>log2</code> <code>UnaryOperator</code> that computes the log base 2 of a value. Log base 2 of 8.0 is 3.0 because 2 * 2 * 2 (3 times) is 8.</p>
+<p class="indent">Notice that you could, of course, use <code>Function&lt;Double, Double&gt;</code> instead…that’s essentially the same thing. <code>UnaryOperator</code> saves a little typing and makes it a bit clearer that you’re defining an operator that takes a value that is the same type as the return value…but that’s about it. It’s just a slightly restricted version of <code>Function</code>. And the same applies to the other operators in the package.</p>
+<p class="indent">Time to pat yourself on the back, take a break, and eat some cookies, because you made it through all of the functional interfaces in <code>java.util.function</code>. As long as you have a good sense of how to use them to create lambda expressions and how to use the core interfaces that we’ve covered here, you’ll be in solid shape.</p>
+<h5 class="title-o"><span class="white">CERTIFICATION OBJECTIVE</span></h5>
+<h3 class="h3" id="ch8lev1sec3"><strong>Method References (OCP Objective 3.8)</strong></h3>
+<p class="noindent"><em>3.8   Use method references with Streams.</em></p>
+<p class="indentt">You already know that a lambda expression is a shorthand way of writing an instance of a class that implements a functional interface. Believe it or not, there are a few circumstances when you can make your code even <em>more</em> concise by writing a shorthand for the lambda expression (yes, it’s a shorthand for the shorthand).</p>
+<p class="indent">Sometimes, the only thing a lambda expression does is call another method, for instance:</p>
+<p class="imageip"><span id="page_519" epub:type="pagebreak"></span><img src="images/un519-01.jpg" alt="images" /></p>
+<p class="noindent">Here we’re using a lambda expression to take a tree name, <code>t</code>, and pass it to <code>System.out.println()</code>. This code is already pretty short; can we shorten it even more? Yes! Apparently, the Java 8 authors like finding ways to avoid typing, so they invented the “method reference”:</p>
+<p class="imageip"><img src="images/un519-02.jpg" alt="images" /></p>
+<p class="indent">This method reference is a shorthand way of writing the lambda expression. But wait, where did the argument <code>t</code> go and don’t we need that? We know that <code>forEach()</code> takes a <code>Consumer</code>, and we know what it’s consuming is tree names, which are <code>String</code>s. And we know that <code>System.out.println()</code> takes a <code>String</code>. A lot can be inferred from this shorthand for the lambda expression. Here what’s inferred is that we want to call the <code>println()</code> method of <code>System.out</code>, passing in the <code>String</code> object that we have at hand via the <code>forEach()</code>. Of course, keep in mind, we can’t do anything fancy with how we print the tree name because we’re not specifying anything but the method to call on the tree name argument that the <code>Consumer</code> (the method reference) is getting behind the scenes.</p>
+<h4 class="h4" id="ch8lev2sec6">Kinds of Method References</h4>
+<p class="noindent">The <code>System.out::println</code> method reference is an example of a “method reference,” meaning we’re calling a method, <code>println()</code>, of <code>System.out</code>. You can create method references for your own methods, too:</p>
+<p class="imageip"><img src="images/un519-03.jpg" alt="images" /></p>
+<p class="noindent">For this code, we’ll see this output:</p>
+<p class="imageip"><span id="page_520" epub:type="pagebreak"></span><img src="images/un520-01.jpg" alt="images" /></p>
+<p class="indent">First, the tree names are printed using a lambda expression; then the tree names are printed using an <em>instance method reference</em> to <code>System.out.println()</code> and finally a longer string using a <em>static method reference</em> to our own static method, <code>printTreeStatic()</code>. A “static method reference” is a method reference to a static method. The method reference to <code>System.out.println()</code> is an “instance method reference”—that is, a reference to the <code>println()</code> instance method of <code>System.out</code>.</p>
+<p class="indent">Writing <code>::</code> instead of <code>.</code> in the method reference takes a little getting used to; you’ll find yourself typing a <code>.</code> instead of a <code>::</code> and then going back to fix it (at least we do!). What the method reference does here is make a <code>Consumer</code> that calls the method on the implicit argument that’s getting passed to that lambda behind the scenes.</p>
+<p class="indent">In addition to instance and static method references, there are a couple of other types of method references: method references for arbitrary objects and constructor method references. We’ll see some more examples of method references in the next chapter when we talk about streams.</p>
+<h3 class="h3-a" id="ch8lev1sec4"><strong>Write Your Own Functional Interface</strong></h3>
+<p class="noindent">Guess what, you already wrote your own functional interface. Remember <code>DogQuerier</code>? Yep, that’s the one:</p>
+<p class="imageip"><img src="images/un520-02.jpg" alt="images" /></p>
+<p class="indent">Of course, <code>DogQuerier</code> is all about <code>Dog</code>s. You then saw that <code>DogQuerier</code> is really just a <code>Dog</code> version of <code>Predicate</code>, which works on any type of object.</p>
+<p class="indent"><span id="page_521" epub:type="pagebreak"></span>You might want to write a functional interface that works on any type of object, too. Imagine, for instance, that you want an interface with a <code>test()</code> method that takes three objects and returns a <code>boolean</code>—a <code>TriPredicate</code> if you will. There is no <code>TriPredicate</code> in <code>java.util.function</code> (only <code>Predicate</code> and <code>BiPredicate</code>), so how about writing your own?</p>
+<p class="imageip"><img src="images/un521-01.jpg" alt="images" /></p>
+<p class="noindent">We’re specifying an interface with three type parameters: <code>T</code>, <code>U</code>, and <code>V</code>. The <code>test()</code> method takes three types of objects to test, and they can all be of differing types or all the same. Now let’s write a lambda expression of this type and test it out:</p>
+<p class="imageip"><img src="images/un521-02.jpg" alt="images" /></p>
+<p class="indent">We see this output:</p>
+<p class="imageip"><img src="images/un521-03.jpg" alt="images" /></p>
+<p class="indent">The trick to writing your own generic functional interfaces is having a good handle on generics. As long as you understand what a functional interface is and how to use generics to specify parameter and return types, you’re good to go.</p>
+<h4 class="h4" id="ch8lev2sec7">Functional Interface Overview</h4>
+<p class="noindent">As we’ve said, the <code>java.util.function</code> package has 43 different functional interfaces. You need to make sure you are familiar with the core interfaces: <code>Supplier</code>, <code>Consumer</code>, <code>Predicate</code>, and <code>Function</code>. In addition, you should understand the variations on these core interfaces—the primitive interfaces designed to avoid autoboxing, <span id="page_522" epub:type="pagebreak"></span>and the <code>Bi</code>-versions that allow you to pass two parameters to the functional methods rather than one. You don’t need to memorize all 43 interfaces, but you need to understand the patterns of the variations and their functional method names. We’ve listed the core interfaces, plus several variations, and their functional methods in <a href="ch8.xhtml#ch8tab1">Table 8-1</a>. In addition to the functional methods, you should be familiar with the default and static methods in the interfaces, such as <code>andThen()</code>, <code>and()</code>, <code>negate()</code>, <code>or()</code>, and so on. We don’t list those in <a href="ch8.xhtml#ch8tab1">Table 8-1</a>, so look at the online documentation for details beyond what we’ve covered in this chapter.</p>
+<p class="tabcap" id="ch8tab1"><span class="table"><strong>TABLE 8-1</strong></span> Functional Interfaces Covered on the Exam</p>
+<p class="imaget"><img src="images/tab08-01.jpg" alt="Images" /></p>
+<p class="indent">Note: You should review all the functional interfaces in <code>java.util.function</code> for variations on the functional interfaces covered in <a href="ch8.xhtml#ch8tab1">Table 8-1</a> and for details of the default and static methods of interfaces.</p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>You know that functional interfaces are just interfaces with one abstract method—the functional method. The interfaces in <a href="ch8.xhtml#ch8tab1">Table 8-1</a> have been added to the JDK to make it easier for you to write code, but as you know, there’s nothing particularly special about functional interfaces beyond their use in the JDK (as we saw with Logger).</em></strong></p>
+<p class="indent"><strong><em>There are a few functional interfaces already in the JDK, not listed in <code>java.util.function.</code> You’ve already seen one of these—Comparator—with its functional method, <code>compare()</code>. Another is <code>Comparable</code>, which is implemented by various types (like <code>String, LocalDateTime,</code> and so on) for sorting.</em></strong></p>
+<p class="indent"><strong><em>A third example is <code>Runnable</code>, which has a functional method, <code>run()</code>. So where you might have implemented a <code>Runnable</code> as an inner class before:</em></strong></p>
+<p class="imageep"><img src="images/un522-01.jpg" alt="images" /></p>
+<p class="noindent"><strong><em>you can now use a lambda expression instead:</em></strong></p>
+<p class="imageep"><img src="images/un522-02.jpg" alt="images" /></p>
+</div>
+<h3 class="h3b" id="ch8lev1sec5"><span id="page_523" epub:type="pagebreak"></span><span id="page_524" epub:type="pagebreak"></span>CERTIFICATION SUMMARY</h3>
+<hr/>
+<p class="noindent">We began this chapter by looking at what lambda expressions are, how to write lambda expressions, and when to write them. Lambdas are syntax shorthands for writing a class to implement a functional interface and then instantiating that class. With lambdas, you focus on the method that’s implementing the abstract method of the interface (remember, there’s only one, because the functional interfaces have only one abstract method) and eliminate the other syntax, so you end up with more concise code.</p>
+<p class="indent">The lambda syntax can take a little getting used to, but there aren’t too many rules to remember: you use an <code>-&gt;</code> symbol with parameters on the left and a method body on the right. One trick is that if a lambda expression is just one expression, you can even eliminate the <code>{</code> and <code>}</code> that usually go with a method body, like this:</p>
+<p class="imageip"><img src="images/un524-01.jpg" alt="images" /></p>
+<p class="indent"><span id="page_525" epub:type="pagebreak"></span>We talked about how you can think of lambdas as chunks of code that you pass around. We can pass an object to a method, and we can pass a lambda expression to a method. Remembering that a lambda represents an instance of a class that implements an interface can help you see how this works.</p>
+<p class="indent">When lambdas refer to variables from their enclosing scope, those variables are “captured” and so you can refer to them when applying a lambda later. The important key here, however, is that the variables must be final or effectively final.</p>
+<p class="indent">Then we delved into functional interfaces. A functional interface is simply an interface that has one abstract method—the functional method. Lambda expressions are related to functional interfaces because the type of a lambda expression is always a functional interface. Why? Because the method the lambda expression defines is the one and only functional method in that interface, so there is no confusion in the lambda expression syntax about which method you’re writing.</p>
+<p class="indent">The tricky part of functional interfaces is learning about the new interfaces defined in <code>java.util.function</code>. Forty-three new interfaces are there to help you shortcut the process of writing functional interfaces and also to provide a way for other JDK methods to accept objects of a functional interface type. The core functional interfaces are <code>Consumer</code>, <code>Supplier</code>, <code>Predicate</code>, and <code>Function</code>, and all the other functional interfaces in <code>java.util.function</code> are variations on these. We talked about a few examples in which new JDK methods, like the <code>Logger</code>’s <code>log()</code> method, can now take objects of one of the types in this package.</p>
+<p class="indent">As we covered the various functional interfaces, we looked at the functional methods defined for each one, like the <code>Predicate</code>’s <code>test()</code> method and the <code>Supplier</code>’s <code>get()</code> method, and some of the static and default methods included in some of the functional interfaces, too, like the <code>Consumer</code>’s <code>andThen()</code> method.</p>
+<p class="indent">We talked about operators, which are just slight variations on the other functional interfaces and have a restriction that the parameter type is the same as the return value type. So, if you define a <code>UnaryOperator</code> whose functional method takes an <code>Integer</code>, that operator method must return an <code>Integer</code> too.</p>
+<p class="indent">A lambda expression is a syntax shorthand to make your code more concise, and a method reference is a shorthand that can make your code even more concise in certain situations, such as when you’re just passing on an argument to another method. A common example for this is replacing a lambda expression that simply prints its argument:</p>
+<p class="imageip"><img src="images/un525-01.jpg" alt="images" /></p>
+<p class="noindent">with a method reference:</p>
+<p class="imageip"><img src="images/un525-02.jpg" alt="images" /></p>
+<p class="indent">Java can infer that you want to pass on the argument to the <code>Consumer</code> (which must have an argument; it’s a <code>Consumer</code>!) to the <code>System.out.println()</code> method. Again, this syntax takes some getting used to. You’ll see it again in the next chapter and get more practice with it.</p>
+<h3 class="h3b" id="ch8lev1sec6"><span id="page_526" epub:type="pagebreak"></span><img src="images/tick1.jpg" alt="Images" />TWO-MINUTE DRILL</h3>
+<p class="noindent">Here are some of the key points from this chapter.</p>
+<h4 class="h4">Create and Use Lambda Expressions (OCP Objective 2.6)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A lambda expression is a shorthand syntax for an instance of a class that implements a functional interface.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Use <code>-&gt;</code> to define a lambda expression with the arguments on the left and the body on the right of the arrow.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Typically, we leave off the types of a lambda’s arguments because they can be inferred from the functional interface definition.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If you have multiple parameters for a lambda, then you must surround them with parentheses.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If you have no parameters for a lambda, then you must use empty parentheses, ().</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If you specify the type of a parameter of a lambda, you must use parentheses.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If the body of a lambda expression has multiple statements, you must use curly braces.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Lambda expressions are often used in place of an inner class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If the body of a lambda expression simply evaluates an expression and returns a value, you can leave off the <code>return</code> keyword.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The type of the return value of a lambda expression is inferred from the functional interface definition.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  You can pass lambda expressions to methods, either by name or by writing them inline.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Lambda expressions capture variables from the enclosing scope if they are used within the body of the lambda.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  All captured variables in a lambda expression must be final or effectively final.</p>
+<h4 class="h4">Iterate Using forEach Methods of List (OCP Objective 3.5)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>forEach()</code> method in collection types, like <code>List</code>, takes a <code>Consumer</code> and allows you to easily iterate through the collection. The <code>Consumer</code>’s <code>accept()</code> method argument is the current object in the collection you are iterating over.</p>
+<h4 class="h4"><span id="page_527" epub:type="pagebreak"></span>Use the Built-in Interfaces Included in the java.util.function Package such as Predicate, Consumer, Function, and Supplier (OCP Objective 4.1)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A functional interface is an interface with one abstract method.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The single abstract method in a functional interface is called the functional method.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Functional interfaces can include any number of default and static methods in addition to the functional method.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Functional interfaces can redefine public methods from <code>Object</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Use <code>@FunctionalInterface</code> to annotate functional interfaces.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If you add a second abstract method to a functional interface annotated with <code>@FunctionalInterface</code>, you will get a compiler error: “Invalid ‘<code>@FunctionalInterface</code>’ annotation; [interface name] is not a functional interface.“</p>
+<h4 class="h4">Core Functional Interfaces (OCP Objectives 4.1, 4.2, 4.3, 4.4)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The JDK provides several built-in functional interfaces in <code>java.util.function</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  All of these functional interfaces fall into one of four categories: suppliers, consumers, predicates, or functions.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The basic functional interfaces from this package are <code>Supplier</code>, <code>Consumer</code>, <code>Predicate</code>, and <code>Function</code>.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  The functional method of <code>Supplier</code> is <code>get()</code>. It returns a value.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  The functional method of <code>Consumer</code> is <code>accept()</code>. It takes an argument and returns no value.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  The functional method of <code>Predicate</code> is <code>test()</code>. It takes an argument and returns a boolean.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  The functional method of <code>Function</code> is <code>apply()</code>. It takes an argument and returns a value.</p>
+<h4 class="h4">Using Functional Interfaces (OCP Objectives 4.1, 4.2, 4.3, 4.4)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  You can compose consumers with the <code>andThen()</code> default method.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Use the same type of consumer when composing two consumers together.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Perform logical tests with predicates using the default predicate methods <code>and()</code>, <code>or()</code>, and <code>negate()</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>Predicate</code>’s static <code>isEqual()</code> method returns <span id="page_528" epub:type="pagebreak"></span>a <code>Predicate</code> that tests to see if two objects are equal. Note that this method is only available in the <code>Predicate</code> interface, not the predicate variations in <code>java.util.function</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Compose <code>Function</code>s together with the methods <code>andThen()</code> and <code>compose()</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Check carefully to see which functional interfaces support which default and static methods.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>forEach()</code> method in collection types, like <code>List</code>, takes a <code>Consumer</code> and allows you to easily iterate through the collection. The <code>Consumer</code>’s <code>accept()</code> method argument is the current object in the collection you are iterating over.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>replaceAll()</code> method in collection types, like <code>List</code>, takes a <code>UnaryOperator</code> and allows you to replace items in the <code>List</code> with different values, ones that could be based on the current values or completely new values.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The built-in functional interfaces are conveniences so you don’t have to create your own.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The built-in functional interfaces are used in several ways in the Java 8 JDK, including with Streams (see <a href="ch9.xhtml#ch9">Chapter 9</a>).</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Creating your own functional interfaces is no different from creating any interface except you must make sure the interface has only one abstract method.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Brush up on generics (<a href="ch6.xhtml#ch6">Chapter 6</a>) to make sure you know how to create a functional interface with generic types.</p>
+<h4 class="h4">Develop Code That Uses Primitive Versions of Functional Interfaces (OCP Objective 4.2)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Some variations of functional interfaces in the <code>java.util.package</code> are meant to handle primitive values to avoid autoboxing.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>I</code><code>ntSupplier</code>’s functional method, <span id="page_529" epub:type="pagebreak"></span><code>getAsInt()</code>, takes no arguments and returns an <code>int</code>. This is to avoid autoboxing the result as <code>Integer</code>, in case you need a primitive.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Likewise, <code>DoubleSupplier</code>’s functional method, <code>getAsDouble()</code>, takes no arguments and returns a <code>double</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>I</code><code>ntConsumer</code>’s functional method, <code>accept()</code>, takes an <code>int</code> and does not return any value.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>I</code><code>ntPredicate</code>’s functional method, <code>test()</code>, takes an <code>int</code> and returns a <code>boolean</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>I</code><code>ntFunction</code>’s functional method, <code>apply()</code>, takes an <code>int</code> and returns an object value.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The functional method name in functional interfaces is not always the same (e.g., <code>IntSupplier</code> uses <code>getAsInt()</code> rather than <code>get()</code>, and <code>IntToLongFunction</code> uses <code>applyAsLong()</code> rather than <code>apply()</code>), so note the patterns of naming conventions for functional methods.</p>
+<h4 class="h4">Develop Code That Uses Binary Versions of Functional Interfaces (OCP Objective 4.3)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Some variations of functional interfaces in the <code>java.util.package</code> are meant to allow multiple arguments.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>B</code><code>iConsumer</code>’s functional method, <code>accept()</code>, takes two arguments and returns no value.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>B</code><code>iPredicate</code>’s functional method, <code>test()</code>, takes two arguments and returns a <code>boolean</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>B</code><code>iFunction</code>’s functional method, <code>apply()</code>, takes two arguments and returns a value.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>forEach()</code> method in the <code>Map</code> collection type takes a <code>BiConsumer</code>, and the arguments of the <code>accept()</code> method are the key and value of the current <code>Map</code> entry.</p>
+<h4 class="h4">Develop Code That Uses the UnaryOperator Interface (OCP Objective 4.4)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The operator functional interfaces in <code>java.util.function</code> are variations on the function interfaces (such as <code>Function</code>).</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Whereas <code>Function</code> takes a value of a type and returns a value of perhaps a different type, the <code>UnaryOperator</code> takes a value of a type and returns a value of that same type.</p>
+<h3 class="h3b" id="ch8lev1sec7"><span id="page_530" epub:type="pagebreak"></span><img src="images/qs.jpg" alt="Images" />SELF TEST</h3>
+<p class="noindentb">The following questions will help you measure your understanding of the material in this chapter. If you don’t get them all, go back and review and try again.</p>
+<p class="que"><strong><a id="ch8ans1" href="ch8.xhtml#r_ch8ans1">1</a>.</strong>   Which of these are functional interfaces? (Choose all that apply.)</p>
+<p class="quep"><img src="images/un0530-01.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch8ans2" href="ch8.xhtml#r_ch8ans2">2</a>.</strong>   Given the following interface:</p>
+<p class="imageqp"><img src="images/un530-05.jpg" alt="images" /></p>
+<p class="quep">Which of the following expressions are legal? (Choose all that apply.)</p>
+<p class="quep"><img src="images/un0530-02.jpg" alt="images" /></p>
+<p class="quep"><span id="page_531" epub:type="pagebreak"></span><img src="images/un0531-01.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch8ans3" href="ch8.xhtml#r_ch8ans3">3</a>.</strong>   Which of the following compiles correctly?</p>
+<p class="quep"><img src="images/un0531-02.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch8ans4" href="ch8.xhtml#r_ch8ans4">4</a>.</strong>   Given the code fragment:</p>
+<p class="imageqp"><img src="images/un531-07.jpg" alt="images" /></p>
+<p class="quep">Which method would you use for <code>computeTax()</code> so the code fragment prints <code>Total = 10.50?</code></p>
+<p class="quep"><img src="images/un0531-03.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch8ans5" href="ch8.xhtml#r_ch8ans5">5</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un531-12.jpg" alt="images" /></p>
+<p class="quep">and the code fragment:</p>
+<p class="imageqp"><span id="page_532" epub:type="pagebreak"></span><img src="images/un532-01.jpg" alt="images" /></p>
+<p class="quep">Which code fragment will sort the readings in ascending order by <code>value</code> and print the <code>value</code> of each reading?</p>
+<p class="quep"><img src="images/un0532-01.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch8ans6" href="ch8.xhtml#r_ch8ans6">6</a>.</strong>   Given the code fragments:</p>
+<p class="imageqp"><img src="images/un532-06.jpg" alt="images" /></p>
+<p class="quep">and</p>
+<p class="imageqp"><img src="images/un532-07.jpg" alt="images" /></p>
+<p class="quep"><span id="page_533" epub:type="pagebreak"></span>Which code fragment inserted at <code>XXXX</code> will cause a new <code>Human</code> object to be stored in the variable <code>joe</code>?</p>
+<p class="quep"><img src="images/un0533-01.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch8ans7" href="ch8.xhtml#r_ch8ans7">7</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un533-06.jpg" alt="images" /></p>
+<p class="quep">and the code fragment:</p>
+<p class="imageqp"><img src="images/un533-07.jpg" alt="images" /></p>
+<p class="quep">Which code fragment inserted at line <code>// L1</code> will print the names of only adults (those humans whose age is older than 17)?</p>
+<p class="quep"><img src="images/un0533-02.jpg" alt="images" /></p>
+<p class="quep"><span id="page_534" epub:type="pagebreak"></span><img src="images/un0534-01.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch8ans8" href="ch8.xhtml#r_ch8ans8">8</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un534-03.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   <code>"Longest bird name is length: 9"</code></p>
+<p class="alpha">B.   Compilation fails because of an error on line L5</p>
+<p class="alpha">C.   Compilation fails because of an error on line L3</p>
+<p class="alpha">D.   A runtime exception occurs on line L5</p>
+<p class="que"><strong><a id="ch8ans9" href="ch8.xhtml#r_ch8ans9">9</a>.</strong>   Given the following code fragment:</p>
+<p class="imageqp"><img src="images/un534-04.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   <code>405.91</code></p>
+<p class="alpha">B.   <code>405.91 405.98 406.14 406.48 406.2 406.03</code></p>
+<p class="alpha">C.   An exception is thrown at runtime</p>
+<p class="alpha">D.   Compilation fails</p>
+<p class="que1"><span id="page_535" epub:type="pagebreak"></span><strong><a id="ch8ans10" href="ch8.xhtml#r_ch8ans10">10</a>.</strong>   Given the code fragment:</p>
+<p class="imageqp"><img src="images/un535-01.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   <code>foo foo foo bar bar bar</code></p>
+<p class="alpha">B.   <code>foo foo foo bar</code></p>
+<p class="alpha">C.   <code>foo foo foo</code></p>
+<p class="alpha">D.   Compilation fails</p>
+<p class="que1"><strong><a id="ch8ans11" href="ch8.xhtml#r_ch8ans11">11</a>.</strong>   Given the code fragment:</p>
+<p class="imageqp"><img src="images/un535-02.jpg" alt="images" /></p>
+<p class="quep">Which fragment(s), inserted independently at <code>// L1</code>, produce the output? (Choose all that apply.)</p>
+<p class="imageqp"><code>fir cedar pine</code></p>
+<p class="alpha">A.   <code>UnaryOperator&lt;String&gt; convert = (t) -&gt; t.toLowerCase();</code></p>
+<p class="alpha">B.   <code>UnaryOperator&lt;String, String&gt; convert = (t) -&gt; t.toLowerCase();</code></p>
+<p class="alpha">C.   <code>Function&lt;String, String&gt; convert = (t) -&gt; t.toLowerCase();</code></p>
+<p class="alpha">D.   <code>Supplier&lt;String&gt; convert = (t) -&gt; t.toLowerCase();</code></p>
+<p class="que1"><strong><a id="ch8ans12" href="ch8.xhtml#r_ch8ans12">12</a>.</strong>   Given the code fragment:</p>
+<p class="imageqp"><img src="images/un535-08.jpg" alt="images" /></p>
+<p class="quep"><span id="page_536" epub:type="pagebreak"></span>Which fragment(s), inserted independently at <code>// L1</code>, produce the to-do items, both key and value, in the <code>Map</code>? (Choose all that apply.)</p>
+<p class="quep"><img src="images/un0536-01.jpg" alt="images" /></p>
+<p class="que1"><strong><a id="ch8ans13" href="ch8.xhtml#r_ch8ans13">13</a>.</strong>   Given the code fragments:</p>
+<p class="imageqp"><img src="images/un536-05.jpg" alt="images" /></p>
+<p class="quep">and</p>
+<p class="imageqp"><img src="images/un536-06.jpg" alt="images" /></p>
+<p class="quep">Which fragment(s), inserted independently at <code>// L1</code>, display the output consisting of the to-do item for Tuesday? (Choose all that apply.)</p>
+<p class="quep"><img src="images/un0536-02.jpg" alt="images" /></p>
+<p class="quep"><img src="images/un0537-01.jpg" alt="images" /></p>
+<p class="que1"><span id="page_537" epub:type="pagebreak"></span><strong><a id="ch8ans14" href="ch8.xhtml#r_ch8ans14">14</a>.</strong>   Given the code fragment:</p>
+<p class="imageqp"><img src="images/un537-04.jpg" alt="images" /></p>
+<p class="quep">Which fragment(s), inserted independently at <code>// L1</code>, produce the output (Choose all that apply.)</p>
+<p class="quep"><img src="images/un0537-02.jpg" alt="images" /></p>
+<h3 class="h3b" id="ch8lev2sec8"><span id="page_538" epub:type="pagebreak"></span><img src="images/aself.jpg" alt="Images" /> SELF TEST ANSWERS</h3>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans1" id="r_ch8ans1">1</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> and<strong> D</strong> are correct. For <strong>B</strong>, we just have one abstract method, so this is a functional interface. Although <strong>D</strong> includes the <code>equals()</code> method (implying that classes implementing this interface must implement an <code>equals()</code> method), this method doesn’t count because it’s inherited from <code>Object</code>. The default method <code>bloom()</code> is default and so doesn’t count; the method <code>pick()</code> is the functional method.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A</strong> is incorrect because the interface has no functional method (one abstract method). A default method is not a functional method. Likewise, <strong>C</strong> is incorrect because the interface has no functional method (one abstract method). A static method is not a functional method. (OCP Objective 4.1)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans2" id="r_ch8ans2">2</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A, B,</strong> and<strong> E</strong> are correct variations on writing lambda expressions.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> C</strong> and<strong> D</strong> are incorrect. <strong>C</strong> is invalid syntax for lambda expressions, with a return statement that’s not enclosed in <code>{ }</code>. <strong>D</strong> is incorrect because it has the wrong type for the lambda expression. (OCP Objective 2.6)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans3" id="r_ch8ans3">3</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> is correct. The lambda expression is a consumer, so only the type <code>Consumer</code> is correct for this lambda expression—the functional method takes an argument and returns nothing.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, C,</strong> and<strong> D</strong> are incorrect based on the above. (OCP Objective 4.1)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans4" id="r_ch8ans4">4</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> is correct. <code>computeTax()</code> is a method that takes two arguments, a <code>double</code> and a <code>UnaryOperator</code>, and returns a <code>double</code> value. We know that the lambda expression is a <code>UnaryOperator</code> because the functional method takes a <code>Double</code> and returns a <code>Double</code> (with autoboxing and autounboxing).</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, C,</strong> and<strong> D</strong> are incorrect. <strong>A</strong> could almost work because a <code>UnaryOperator</code> is a type of <code>Function</code>; however, a correct declaration of the <code>Function</code> would specify the type of both the argument and the return value, because unlike <code>UnaryOperator</code>, they are not necessarily the same type. (OCP Objective 4.4)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans5" id="r_ch8ans5">5</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct. The <code>sort()</code> method of the <code>List</code> requires a <code>Comparator</code>, which can be expressed as a lambda expression implementing the <code>compare()</code> functional method. This method must return a –1 or 1 (for items that are not equal) depending on the ordering; because we want ascending order, we test if object 1 is less than object 2 and return –1 if so; otherwise, 1 is returned to get ascending order. Because we are comparing the values of the <code>reading</code> objects, we use the <code>value</code> field of each <code>reading</code> object to make the comparison. In the <code>forEach</code>, we supply a <code>Consumer</code>, whose functional method takes a <code>reading</code> object and prints the <code>value</code> field of that <code>reading</code>. <strong>D</strong> properly supplies a <code>Consumer</code> to <code>forEach</code> that prints just the <code>value</code>s.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <span id="page_539" epub:type="pagebreak"></span><strong> A, B,</strong> and<strong> C</strong> are incorrect. <strong>A</strong> is incorrect because we don’t supply a <code>Consumer</code> for the <code>forEach</code>. <strong>B</strong> is incorrect because we are using invalid syntax for the method reference. Here we can’t use a method reference because we are printing the <code>reading</code> values, not the whole <code>reading</code> object, and so must specify more details about the argument to the <code>Consumer</code>’s functional method than allowed with a method reference, which is why <strong>C</strong> is incorrect. <strong>C</strong> prints the entire <code>reading</code> object, rather than just the <code>value</code>. (OCP Objectives 3.3, 3.5, and 4.1)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans6" id="r_ch8ans6">6</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> is correct. <code>human</code> is a <code>Supplier</code>, so its functional method is <code>get()</code>. Calling <code>get()</code> returns a new <code>Human</code> with the name Joe and the age 34.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, C, D,</strong> and<strong> E</strong> are incorrect based on the above. (OCP Objective 4.1)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans7" id="r_ch8ans7">7</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct. We know <code>printAdults</code> must be a <code>Consumer</code> that prints adults in the <code>people</code> <code>ArrayList</code>. The functional method of the <code>Consumer</code> will take a <code>Human</code> object. Then we must test that object to see if the <code>Human</code> is 18 or older, which we can do by defining a <code>Predicate</code> whose functional method returns true if the <code>Human</code>’s <code>age</code> is 18 or older. We use the <code>Predicate</code> by calling the function method, <code>test()</code>. If the <code>Human</code> passes the test, we print the <code>Human</code>’s <code>name</code>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B,</strong> and<strong> D</strong> are incorrect. <strong>A</strong> is incorrect because we haven’t defined the <code>printAdults</code> as a <code>Consumer</code>. <strong>B</strong> is incorrect because, although we are defining the <code>printAdults</code> <code>Consumer</code> in the body of the <code>Consumer</code>’s functional method, we are using the <code>Predicate</code> wrong. <strong>D</strong> can initially be tempting, but if you look carefully, the syntax is incorrect. Either we must implement the <code>Consumer</code> interface with an inner class or with a lambda expression. (OCP Objective 4.1)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans8" id="r_ch8ans8">8</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> is correct. The code does not compile because the variable <code>longest</code> from the lambda’s enclosing scope must be final or effectively final, and we are trying to change the value of <code>longest</code> within the lambda.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, C,</strong> and<strong> D</strong> are incorrect for the above reasons. (OCP Objective 2.6)</p>
+<p class="que-q"><strong><a href="ch8.xhtml#ch8ans9" id="r_ch8ans9">9</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct. The code does not compile because <code>readingsSupplier</code> is not being assigned a <code>Supplier</code>; rather it is being assigned a <code>List</code>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, B,</strong> and<strong> C</strong> are incorrect for the above reasons. (OCP Objective 4.1)</p>
+<p class="que-q1"><strong><a href="ch8.xhtml#ch8ans10" id="r_ch8ans10">10</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> is correct. In the last line of the code, we are first calling the <code>apply()</code> method of the <code>foo</code> <code>BiFunction</code> and then calling the <code>apply()</code> method of the <code>bar</code> <code>Function</code>. Looking at the first line of code, we see that <code>foo</code>’s <code>apply()</code> method is implemented by the lambda expression and takes two arguments, an <code>integer</code> <code>n</code> and a <code>String</code>. The method concatenates the <code>String</code> <code>n</code> times (with a space between) and then returns it. So by calling <code>apply()</code> with the arguments <code>3</code> and <code>"foo"</code>, the <code>String</code> <code>"foo foo foo"</code> is returned. Then we call the <code>apply()</code> method of <code>bar</code>. The <code>andThen()</code> method of the <code>foo</code> <code>BiFunction</code> passes the value returned from the first <code>BiFunction</code> to the <code>Function</code> whose <code>apply()</code> method is called, so <code>"foo foo foo"</code> gets passed to the <code>apply()</code> method of <code>bar</code>, which is implemented with a lambda expression and takes a <code>String</code>, concatenates <code>"bar"</code> to that <code>String</code>, and returns it, resulting in <code>"foo foo foo bar"</code>. (Note, too, this is an example of how you can combine a <code>BiFunction</code> with a <code>Function</code> using <code>andThen()</code>!)</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, C,</strong> and<strong> D</strong> are incorrect for the above reasons. (OCP Objectives 4.1 and 4.3)</p>
+<p class="que-q1"><span id="page_540" epub:type="pagebreak"></span><strong><a href="ch8.xhtml#ch8ans11" id="r_ch8ans11">11</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct. The <code>List</code> <code>replaceAll()</code> method takes a <code>UnaryOperator</code>. In this case, the <code>UnaryOperator</code>’s functional method takes a <code>String</code> and returns the lowercase value of that <code>String</code>. Because it’s a <code>UnaryOperator</code>, we need only specify one type parameter.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> B, C,</strong> and<strong> D</strong> are incorrect. <strong>B</strong> looks like it might be correct if you forget that <code>UnaryOperator</code> uses only one type parameter. <strong>C</strong> is tempting because a <code>UnaryOperator</code> is a type of <code>Function</code>, but <code>replaceAll()</code> specifies a <code>UnaryOperator</code> as an argument. <strong>D</strong> can’t work because a <code>Supplier</code>’s functional method does not take an argument. (OCP Objective 4.4)</p>
+<p class="que-q1"><strong><a href="ch8.xhtml#ch8ans12" id="r_ch8ans12">12</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct. To use <code>forEach()</code> with a <code>Map</code>, we need a <code>BiConsumer</code>, whose functional method takes two arguments, both <code>String</code>s.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, B,</strong> and<strong> C</strong> are incorrect for the above reasons. (OCP Objective 4.3)</p>
+<p class="que-q1"><strong><a href="ch8.xhtml#ch8ans13" id="r_ch8ans13">13</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct. To print the to-do item for Tuesday, we need to call the to-do list’s <code>checkTodoDay()</code> method, passing the list of to-dos and a <code>Predicate</code>. We can see in the body of the <code>checkTodoDay()</code> method that we call the <code>Predicate</code>’s <code>test()</code> method on the map key, which is the day, a <code>String</code>, and if the test passes, we display the value in the map. So the <code>Predicate</code> should test to see if the day is equal to <code>"tuesday"</code> and return true if it is.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A, B,</strong> and<strong> D</strong> are incorrect. <strong>A</strong> could work, but the syntax is incorrect (we should use <code>{ }</code> for statements in the body of the lambda) and will cause a compile error. <strong>B</strong> is incorrect because the <code>Predicate</code>’s <code>test()</code> method doesn’t take two values; it takes only one, the key (day). <strong>D</strong> is incorrect because the <code>test()</code> method is not valid for a <code>String</code>; we need <code>equals()</code> instead. (OCP Objective 4.1)</p>
+<p class="que-q1"><strong><a href="ch8.xhtml#ch8ans14" id="r_ch8ans14">14</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> and <strong>C</strong> are correct. To get a <code>double</code> value from a <code>DoubleSupplier</code>, you must use the <code>getAsDouble()</code> functional method.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong> A</strong> and<strong> D</strong> are incorrect. <strong>A</strong> and <strong>D</strong> are incorrectly using <code>get()</code> instead of <code>getAsDouble()</code>. (OCP Objective 4.2)</p>
+</section>
+</div>
+</body>
+</html>

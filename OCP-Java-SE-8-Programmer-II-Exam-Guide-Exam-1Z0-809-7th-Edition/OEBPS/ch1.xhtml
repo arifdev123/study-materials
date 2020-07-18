@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pls="http://www.w3.org/2005/01/pronunciation-lexicon" xmlns:ssml="http://www.w3.org/2001/10/synthesis" xmlns:svg="http://www.w3.org/2000/svg">
+<head>
+  <meta charset="UTF-8" />
+  <title>1 Declarations, Access Control, and Enums</title>
+  <link type="text/css" rel="stylesheet" media="all" href="style.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="core.css" />
+</head>
+<body>
+  <div id="sbo-rt-content"><section epub:type="chapter">
+<p class="image"><img src="images/common-01.jpg" alt="Images" /></p>
+<h2 class="h2p" id="ch1"><span id="page_1" epub:type="pagebreak"></span><strong>1</strong></h2>
+<h2 class="h2p1"><strong>Declarations, Access Control, and Enums</strong></h2>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVES</strong></span></p>
+<p class="toc-l">•       Declare Classes and Interfaces</p>
+<p class="toc-l">•       Declare Class Members</p>
+<p class="toc-l">•       Declare Constructors and Arrays</p>
+<p class="toc-l">•       Create static Class Members</p>
+<p class="toc-l">•       Use enums</p>
+<p class="toc-lq"><img src="images/tick.jpg" alt="Images" />     Two-Minute Drill</p>
+<p class="toc-q"><strong>Q&amp;A</strong>   Self Test</p>
+<p class="noindent-d"><span id="page_2" epub:type="pagebreak"></span><span class="dropcap"><strong>W</strong></span>e assume that most of our readers have earned their OCA 8 Java certification and are reading this book in pursuit of the OCP 8 Java certification. If that’s you, congratulations on earning your OCA 8! If you’re NOT pursuing an Oracle Java certification, we’d like to think you might still find this book helpful. Oracle’s certification exams are well regarded in the industry, and understanding the concepts in this book will make you a better Java programmer. But make no mistake, this book is REALLY focused on helping you pass the OCP 8.</p>
+<h3 class="h3" id="ch1lev1sec1"><strong>Java Class Design and Object Orientation: A Refresher</strong></h3>
+<p class="noindent">If you compare the exam objectives of the OCA 8 exam and the OCP 8 exam, you’ll notice some overlapping concepts. Specifically, many of the objectives in OCA 8 section 6 (Working with Methods and Encapsulation) and OCA 8 section 7 (Working with Inheritance) overlap heavily with the objectives in OCP 8 section 1 (Java Class Design) and OCP 8 section 2 (Advanced Java Class Design). This chapter is focused on most of those areas of conceptual overlap:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   1.2 Inheritance, visibility, and composition (HAS-A)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   1.6 The static keyword and init blocks</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   2.1 Abstract classes</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   2.2 The final keyword</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   2.4 Enums</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   2.5 Interfaces</p>
+<p class="noindent">You could consider this chapter a bit of a refresher from the OCA 8 exam, and if you feel really solid on the objectives listed above, you could consider skipping this chapter.</p>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch1lev1sec2"><strong>Define Classes and Interfaces (OCP Objectives 1.2, 2.1, and 2.2)</strong></h3>
+<p class="noindent"><em>1.2   Implement inheritance including visibility modifiers and composition.</em></p>
+<p class="noindent"><em>2.1   Develop code that uses abstract classes and methods.</em></p>
+<p class="noindent"><em>2.2   Develop code that uses the final keyword.</em></p>
+<h4 class="h4" id="ch1lev2sec1"><span id="page_3" epub:type="pagebreak"></span><strong>Class Declarations and Modifiers</strong></h4>
+<p class="noindent">The class declarations we’ll discuss in this section are limited to top-level classes. In addition to top-level classes, Java provides for another category of class known as <em>nested classes</em> or <em>inner classes</em>. Inner classes will be covered in <a href="ch7.xhtml#ch7">Chapter 7</a>. You’re going to love learning about inner classes. No, really. Seriously.</p>
+<p class="indentb">The following code is a bare-bones class declaration:</p>
+<p class="indentb"><code>class MyClass { }</code></p>
+<p class="noindent">This code compiles just fine, but you can also add modifiers before the class declaration. In general, modifiers fall into two categories:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Access modifiers (<code>public</code>, <code>protected</code>, <code>private</code>)</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   Nonaccess modifiers (including <code>strictfp</code>, <code>final</code>, and <code>abstract</code>)</p>
+<p class="indent">We’ll look at access modifiers first, so you’ll learn how to restrict or allow access to a class you create. Access control in Java is a little tricky because there are four access <em>controls</em> (levels of access) but only three access <em>modifiers</em>. The fourth access control level (called <em>default</em> or <em>package</em> access) is what you get when you don’t use any of the three access modifiers. In other words, <em>every</em> class, method, constructor, and instance variable you declare has an access <em>control,</em> whether you explicitly type one or not. Although all four access <em>controls</em> (which means all three <em>modifiers</em>) work for most method and variable declarations, a class can be declared with only <code>public</code> or <em>default</em> access; the other two access control levels don’t make sense for a class, as you’ll see.</p>
+<p class="text-icon"><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindent"><strong><em>Java is a package-centric language; the developers assumed that for good organization and name scoping, you would put all your classes into packages. They were right, and you should. Imagine this nightmare: Three different programmers, in the same company but working on different parts of a project, write a class named <strong><em>Utilities</em></strong>. If those three <strong><em>Utilities</em></strong> classes have not been declared in any explicit package and are in the classpath, you won’t have any way to tell the compiler or JVM which of the three you’re trying to reference. Oracle recommends that developers use reverse domain names, appended with division and/or project names. For example, if your domain name is <strong><em>geeksanonymous.com</em></strong> and you’re working on the client code for the TwelvePointOSteps program, you would name your package something like <strong><em>com.geeksanonymous.steps.client</em></strong>. That would essentially change the name of your class to <strong><em>com.geeksanonymous.steps.client.Utilities</em></strong>. You might still have name collisions within your company if you don’t come up with your own naming schemes, but you’re guaranteed not to collide with classes developed outside your company (assuming they follow Oracle’s naming convention, and if they don’t, well, Really Bad Things could happen).</em></strong></p>
+<h5 class="h5"><span id="page_4" epub:type="pagebreak"></span>Class Access</h5>
+<p class="noindent">What does it mean to access a class? When we say code from one class (class A) has access to another class (class B), it means class A can do one of three things:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Create an <em>instance</em> of class B.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <em>E</em><em>xtend</em> class B (in other words, become a subclass of class B).</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <em>A</em><em>ccess</em> certain methods and variables within class B, depending on the access control of those methods and variables.</p>
+<p class="indent">In effect, access means <em>visibility</em>. If class A can’t <em>see</em> class B, the access level of the methods and variables within class B won’t matter; class A won’t have any way to access those methods and variables.</p>
+<p class="noindentt"><strong>Default Access</strong> A class with default access has <em>no</em> modifier preceding it in the declaration! It’s the access control you get when you don’t type a modifier in the class declaration. Think of <em>default</em> access as <em>package</em>-level access, because a class with default access can be seen only by classes within the same package. For example, if class A and class B are in different packages, and class A has default access, class B won’t be able to create an instance of class A or even declare a variable or return type of class A. In fact, class B has to pretend that class A doesn’t even exist, or the compiler will complain. Look at the following source file:</p>
+<p class="pre"><img src="images/un004-01.jpg" alt="Images" /></p>
+<p class="noindent">Now look at the second source file:</p>
+<p class="pre"><img src="images/un004-02.jpg" alt="Images" /></p>
+<p class="indent">As you can see, the superclass (<code>Beverage</code>) is in a different package from the subclass (<code>Tea</code>). The <code>import</code> statement at the top of the <code>Tea</code> file is trying (fingers crossed) to import the <code>Beverage</code> class. The <code>Beverage</code> file compiles fine, but when we try to compile the <code>Tea</code> file, we get <em>something like</em> this:</p>
+<p class="pre"><img src="images/un004-03.jpg" alt="Images" /></p>
+<p class="noindent"><strong>Note: For various reasons, the error messages we show throughout this book might not match the error messages you get. Don’t worry, the real point is to understand when you’re apt to get an error of some sort.</strong></p>
+<p class="indent"><span id="page_5" epub:type="pagebreak"></span><code>Tea</code> won’t compile because its superclass, <code>Beverage</code>, has default access and is in a different package. You can do one of two things to make this work. You could put both classes in the same package, or you could declare <code>Beverage</code> as <code>public</code>, as the next section describes.</p>
+<p class="indent">When you see a question with complex logic, be sure to look at the access modifiers first. That way, if you spot an access violation (for example, a class in package A trying to access a default class in package B), you’ll know the code won’t compile so you don’t have to bother working through the logic. It’s not as if you don’t have anything better to do with your time while taking the exam. Just choose the “Compilation fails” answer and zoom on to the next question.</p>
+<h5 class="h5">Public Access</h5>
+<p class="noindent">A class declaration with the <code>public</code> keyword gives all classes from all packages access to the <code>public</code> class. In other words, <em>all</em> classes in the Java Universe (JU) have access to a <code>public</code> class. Don’t forget, though, that if a <code>public</code> class you’re trying to use is in a different package from the class you’re writing, you’ll still need to import the <code>public</code> class or use the fully qualified name.</p>
+<p class="indent">In the example from the preceding section, we may not want to place the subclass in the same package as the superclass. To make the code work, we need to add the keyword <code>public</code> in front of the superclass (<code>Beverage</code>) declaration, as follows:</p>
+<p class="pre"><img src="images/un005-01.jpg" alt="Images" /></p>
+<p class="indent">This changes the <code>Beverage</code> class so it will be visible to all classes in all packages. The class can now be instantiated from all other classes, and any class is now free to subclass (extend from) it—unless, that is, the class is also marked with the nonaccess modifier <code>final</code>. Read on.</p>
+<h5 class="h5">Other (Nonaccess) Class Modifiers</h5>
+<p class="noindent">You can modify a class declaration using the keyword <code>final</code>, <code>abstract</code>, or <code>strictfp</code>. These modifiers are in addition to whatever access control is on the class, so you could, for example, declare a class as both <code>public</code> and <code>final</code>. But you can’t always mix nonaccess modifiers. You’re free to use <code>strictfp</code> in combination with <code>final</code>, for example, but you must never, ever, ever mark a class as both <code>final</code> <em>and</em> <code>abstract</code>. You’ll see why in the next two sections.</p>
+<p class="indent">You won’t need to know how <code>strictfp</code> works, so we’re focusing only on modifying a class as <code>final</code> or <code>abstract</code>. For the exam, you need to know only that <code>strictfp</code> is a keyword and can be used to modify a class or a method, but never a variable. Marking a class as <code>strictfp</code> means that any method code in the class will conform strictly to the IEEE 754 standard rules for floating points. <span id="page_6" epub:type="pagebreak"></span>Without that modifier, floating points used in the methods might behave in a platform-dependent way. If you don’t declare a class as <code>strictfp</code>, you can still get <code>strictfp</code> behavior on a method-by-method basis by declaring a method as <code>strictfp</code>. If you don’t know the IEEE 754 standard, now’s not the time to learn it. You have, as they say, bigger fish to fry.</p>
+<h5 class="h5">Final Classes</h5>
+<p class="noindent">When used in a class declaration, the <code>final</code> keyword means the class can’t be subclassed. In other words, no other class can ever extend (inherit from) a <code>final</code> class, and any attempts to do so will result in a compiler error.</p>
+<p class="indent">So why would you ever mark a class <code>final</code>? After all, doesn’t that violate the whole OO notion of inheritance? You should make a <code>final</code> class only if you need an absolute guarantee that none of the methods in that class will ever be overridden. If you’re deeply dependent on the implementations of certain methods, then using <code>final</code> gives you the security that nobody can change the implementation out from under you.</p>
+<p class="indent">You’ll notice many classes in the Java core libraries are <code>final</code>. For example, the <code>String</code> class cannot be subclassed. Imagine the havoc if you couldn’t guarantee how a <code>String</code> object would work on any given system your application is running on! If programmers were free to extend the <code>String</code> class (and thus substitute their new <code>String</code> subclass instances where <code>java.lang.String</code> instances are expected), civilization—as we know it—could collapse. So use <code>final</code> for safety, but only when you’re certain that your <code>final</code> class has, indeed, said all that ever needs to be said in its methods. Marking a class <code>final</code> means, in essence, your class can’t ever be improved upon, or even specialized, by another programmer.</p>
+<p class="indent">There’s a benefit to having nonfinal classes in this scenario: Imagine that you find a problem with a method in a class you’re using, but you don’t have the source code. So you can’t modify the source to improve the method, but you can extend the class and override the method in your new subclass and substitute the subclass everywhere the original superclass is expected. If the class is <code>final</code>, though, you’re stuck.</p>
+<p class="indent">Let’s modify our <code>Beverage</code> example by placing the keyword <code>final</code> in the declaration:</p>
+<p class="pre"><img src="images/un006-01.jpg" alt="Images" /></p>
+<p class="indent">Now let’s try to compile the <code>Tea</code> subclass:</p>
+<p class="pre"><img src="images/un006-02.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_7" epub:type="pagebreak"></span>We get an error—something like this:</p>
+<p class="pre"><img src="images/un007-01.jpg" alt="Images" /></p>
+<p class="indent">In practice, you’ll almost never make a final class. A final class obliterates a key benefit of OO—extensibility. Unless you have a serious safety or security issue, assume that someday another programmer will need to extend your class. If you don’t, the next programmer forced to maintain your code will hunt you down and &lt;insert really scary thing&gt;.</p>
+<p class="noindentt"><strong>Abstract Classes</strong> An <code>abstract</code> class can never be instantiated. Its sole purpose, mission in life, <em>raison d’être,</em> is to be extended (subclassed). (Note, however, that you can compile and execute an <code>abstract</code> class, as long as you don’t try to make an instance of it.) Why make a class if you can’t make objects out of it? Because the class might be just too, well, <em>abstract</em>. For example, imagine you have a class <code>Car</code> that has generic methods common to all vehicles. But you don’t want anyone actually creating a generic abstract <code>Car</code> object. How would they initialize its state? What color would it be? How many seats? Horsepower? All-wheel drive? Or more importantly, how would it behave? In other words, how would the methods be implemented?</p>
+<p class="indent">No, you need programmers to instantiate actual car types such as <code>BMWBoxster</code> and <code>SubaruOutback</code>. We’ll bet the Boxster owner will tell you his car does things the Subaru can do “only in its dreams.” Take a look at the following <code>abstract</code> class:</p>
+<p class="pre"><img src="images/un007-02.jpg" alt="Images" /></p>
+<p class="indent">The preceding code will compile fine. However, if you try to instantiate a <code>Car</code> in another body of code, you’ll get a compiler error, something like this:</p>
+<p class="pre"><img src="images/un007-03.jpg" alt="Images" /></p>
+<p class="indent"><strong>Notice that the methods marked abstract</strong><strong> end in a semicolon rather than curly braces.</strong></p>
+<p class="indent"><span id="page_8" epub:type="pagebreak"></span>Look for questions with a method declaration that ends with a semicolon, rather than curly braces. If the method is in a class—as opposed to an interface—then both the method and the class must be marked <code>abstract</code>. You might get a question that asks how you could fix a code sample that includes a method ending in a semicolon, but without an <code>abstract</code> modifier on the class or method. In that case, you could either mark the method and class <code>abstract</code> or change the semicolon to code (like a curly brace pair). Remember if you change a method from <code>abstract</code> to nonabstract, don’t forget to change the semicolon at the end of the method declaration into a curly brace pair!</p>
+<p class="indent">We’ll look at <code>abstract</code> methods in more detail later in this objective, but always remember that if even a single method is <code>abstract</code>, the whole class must be declared <code>abstract</code>. One <code>abstract</code> method spoils the whole bunch. You can, however, put nonabstract methods in an <code>abstract</code> class. For example, you might have methods with implementations that shouldn’t change from <code>Car</code> type to <code>Car</code> type, such as <code>getColor()</code> or <code>setPrice()</code>. By putting nonabstract methods in an <code>abstract</code> class, you give all concrete subclasses (<em>concrete</em> just means <em>not abstract</em>) inherited method implementations. The good news there is that concrete subclasses get to inherit functionality and need to implement only the methods that define subclass-specific behavior.</p>
+<p class="indent">(By the way, if you think we misused <em>raison d’être</em> earlier, don’t send an e-mail. We’d like to see <em>you</em> work it into a programmer certification book.)</p>
+<p class="indent">Coding with <code>abstract</code> class types (including interfaces, discussed later in this chapter) lets you take advantage of <em>polymorphism</em> and gives you the greatest degree of flexibility and extensibility. You’ll learn more about polymorphism in <a href="ch2.xhtml#ch2">Chapter 2</a>.</p>
+<p class="indent">You can’t mark a class as both <code>abstract</code> and <code>final</code>. They have nearly opposite meanings. An <code>abstract</code> class must be subclassed, whereas a <code>final</code> class must not be subclassed. If you see this combination of <code>abstract</code> and <code>final</code> modifiers used for a class or method declaration, the code will not compile.</p>
+<p class="head-h" id="ch1exe1"><span class="white1">EXERCISE 1-1</span></p>
+<p class="border"></p>
+<h4 class="h4"><strong>Creating an Abstract Superclass and Concrete Subclass</strong></h4>
+<p class="noindent">The following exercise will test your knowledge of <code>public</code>, default, <code>final</code>, and <code>abstract</code> classes. Create an <code>abstract</code> superclass named <code>Fruit</code> and a concrete subclass named <code>Apple</code>. The superclass should belong to a package called <code>food</code>, and <span id="page_9" epub:type="pagebreak"></span>the subclass can belong to the default package (meaning it isn’t put into a package explicitly). Make the superclass <code>public</code> and give the subclass default access.</p>
+<p class="num">1.  Create the superclass as follows:</p>
+<p class="num-pre"><img src="images/un009-01.jpg" alt="Images" /></p>
+<p class="num">2.  Create the subclass in a separate file as follows:</p>
+<p class="num-pre"><img src="images/un009-02.jpg" alt="Images" /></p>
+<p class="num">3.  Create a directory called <code>food</code> off the directory in your classpath setting.</p>
+<p class="num">4.  Attempt to compile the two files. If you want to use the <code>Apple</code> class, make sure you place the <code>Fruit.class</code> file in the <code>food</code> subdirectory.</p>
+<p class="hr"></p>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch1lev1sec3"><strong>Use Interfaces (OCP Objective 2.5)</strong></h3>
+<p class="noindent"><em>2.5   Develop code that declares, implements, and/or extends interfaces and use the @Override annotation.</em></p>
+<h4 class="h4" id="ch1lev2sec2"><strong>Declaring an Interface</strong></h4>
+<p class="noindent">In general, when you create an interface, you’re defining a contract for <em>what</em> a class can do, without saying anything about <em>how</em> the class will do it.</p>
+<p class="indent"><strong>Note: As of Java 8, you can now also describe the <em>how,</em></strong><strong> but you usually won’t. Until we get to Java 8’s new interface-related features—</strong><strong>default</strong><strong> and static</strong><strong> methods—we will discuss interfaces from a traditional perspective, which is, again, defining a contract for <em>what</em></strong><strong> a class can do.</strong></p>
+<p class="indent">An interface is a contract. You could write an interface <code>Bounceable</code>, for example, that says in effect, “This is the <code>Bounceable</code> interface. Any concrete class type that implements this interface must agree to write the code for the <code>bounce()</code> and <code>setBounceFactor()</code> methods.“</p>
+<p class="indent">By defining an interface for <code>Bounceable</code>, any class that wants to be treated as a <code>Bounceable</code> thing can simply implement the <code>Bounceable</code> interface and provide code for the interface’s two methods.</p>
+<p class="indent"><span id="page_10" epub:type="pagebreak"></span>Interfaces can be implemented by any class and from any inheritance tree. This lets you take radically different classes and give them a common characteristic. For example, you might want both a <code>Ball</code> and a <code>Tire</code> to have bounce behavior, but <code>Ball</code> and <code>Tire</code> don’t share any inheritance relationship; <code>Ball</code> extends <code>Toy</code> whereas <code>Tire</code> extends only <code>java.lang.Object</code>. But by making both <code>Ball</code> and <code>Tire</code> implement <code>Bounceable</code>, you’re saying that <code>Ball</code> and <code>Tire</code> can be treated as “Things that can bounce,” which in Java translates to “Things on which you can invoke the <code>bounce()</code> and <code>setBounceFactor()</code> methods.” <a href="ch1.xhtml#ch1fig1">Figure 1-1</a> illustrates the relationship between interfaces and classes.</p>
+<p class="figcap" id="ch1fig1"><span class="figure"><strong>FIGURE 1-1</strong></span></p>
+<p class="figcap1">The relationship between interfaces and classes</p>
+<p class="imagef"><img src="images/fig01-01.jpg" alt="Images" /></p>
+<p class="indent">Think of an interface as a 100-percent <code>abstract</code> class. Like an <code>abstract</code> class, an interface defines abstract methods that take the following form:</p>
+<p class="pre"><img src="images/un010-01.jpg" alt="Images" /></p>
+<p class="indent">But although an <code>abstract</code> class can define both <code>abstract</code> and nonabstract methods, an interface <em>generally</em> has only <code>abstract</code> methods. Another way interfaces differ from <code>abstract</code> classes is that interfaces have very little flexibility <span id="page_11" epub:type="pagebreak"></span>in how the methods and variables defined in the interface are declared. These rules are strict:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   All interface methods are implicitly <code>public</code>. Unless declared as <code>default</code> or <code>static</code>, they are also implicitly <code>abstract</code>. In other words, you do not need to actually type the <code>public</code> or <code>abstract</code> modifiers in the method declaration, but the method is still always <code>public</code> and <code>abstract</code>.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   All variables defined in an interface must be <code>public</code>, <code>static</code>, and <code>final</code>—in other words, interfaces can declare only constants, not instance variables.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Interface methods cannot be marked <code>final</code>, <code>strictfp</code>, or <code>native</code>. (More on these modifiers later in the chapter.)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   An interface can <em>extend</em> one or more other interfaces.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   An interface cannot extend anything but another interface.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   An interface cannot implement another interface or class.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   An interface must be declared with the keyword <code>interface</code>.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   Interface types can be used polymorphically (see <a href="ch2.xhtml#ch2">Chapter 2</a> for more details).</p>
+<p class="indent">The following is a legal interface declaration:</p>
+<p class="pre"><img src="images/un011-01.jpg" alt="Images" /></p>
+<p class="indent">Typing in the <code>abstract</code> modifier is considered redundant; interfaces are implicitly abstract whether you type <code>abstract</code> or not. You just need to know that both of these declarations are legal and functionally identical:</p>
+<p class="pre"><img src="images/un011-02.jpg" alt="Images" /></p>
+<p class="noindent">The <code>public</code> modifier is required if you want the interface to have <code>public</code> rather than default access.</p>
+<p class="indent">We’ve looked at the interface declaration, but now we’ll look closely at the methods within an interface:</p>
+<p class="pre"><img src="images/un011-03.jpg" alt="Images" /></p>
+<p class="indent">Typing in the <code>public</code> and <code>abstract</code> modifiers on the methods is redundant, though, because all interface methods are implicitly <code>public</code> and <code>abstract</code>. <span id="page_12" epub:type="pagebreak"></span>Given that rule, you can see the following code is exactly equivalent to the preceding interface:</p>
+<p class="pre"><img src="images/un012-01.jpg" alt="Images" /></p>
+<p class="noindent">You must remember that all interface methods not declared <code>default</code> or <code>static</code> are <code>public</code> and <code>abstract</code> regardless of what you see in the interface definition.</p>
+<p class="indent">Look for interface methods declared with any combination of <code>public</code>, <code>abstract</code>, or no modifiers. For example, the following five method declarations, if declared within their own interfaces, are legal and identical!</p>
+<p class="pre"><img src="images/un012-02.jpg" alt="Images" /></p>
+<p class="indent">The following interface method declarations won’t compile:</p>
+<p class="pre"><img src="images/un012-03.jpg" alt="Images" /></p>
+<h4 class="h4" id="ch1lev2sec3"><strong>Declaring Interface Constants</strong></h4>
+<p class="noindent">You’re allowed to put constants in an interface. By doing so, you guarantee that any class implementing the interface will have access to the same constant. By placing the constants right in the interface, any class that implements the interface has direct access to the constants, just as if the class had inherited them.</p>
+<p class="indent">You need to remember one key rule for interface constants. They must always be</p>
+<p class="pre"><code>public static final</code></p>
+<p class="noindent">So that sounds simple, right? After all, interface constants are no different from any other publicly accessible constants, so they obviously must be declared <code>public</code>, <code>static</code>, and <code>final</code>. But before you breeze past the rest of this discussion, think about the implications: <strong>Because interface constants are defined in an interface, they don’t have to be <em>declared</em> as <code>public</code>, static , or <code>final</code>. They must be <code>public, static</code>, and <code>final</code>, but you don’t actually <span id="page_13" epub:type="pagebreak"></span>have to declare them that way.</strong> Just as interface methods are always <code>public</code> and <code>abstract</code> whether you say so in the code or not, any variable defined in an interface must be—and implicitly is—a <code>public</code> constant. See if you can spot the problem with the following code (assume two separate files):</p>
+<p class="pre"><img src="images/un013-01.jpg" alt="Images" /></p>
+<p class="indent">You can’t change the value of a constant! Once the value has been assigned, the value can never be modified. The assignment happens in the interface itself (where the constant is declared), so the implementing class can access it and use it, but as a read-only value. So the <code>BAR = 27</code> assignment will not compile.</p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>Look for interface definitions that define constants, but without explicitly using the required modifiers. For example, the following are all identical:</em></strong></p>
+<p class="noindentt"><img src="images/un013-02.jpg" alt="Images" /></p>
+<p class="noindentt"><strong><em>Any combination of the required (but implicit) modifiers is legal, as is using no modifiers at all! On the exam, you can expect to see questions you won’t be able to answer correctly unless you know, for example, that an interface variable is final and can never be given a value by the implementing (or any other) class.</em></strong></p>
+</div>
+<h4 class="h4" id="ch1lev2sec4"><span id="page_14" epub:type="pagebreak"></span><strong>Declaring <code>default</code> Interface Methods</strong></h4>
+<p class="noindent">As of Java 8, interfaces can include inheritable* methods with concrete implementations. (*The strict definition of “inheritance” has gotten a little fuzzy with Java 8; we’ll talk more about inheritance in the next chapter.) These concrete methods are called <code>default</code> methods. Later in the book (mostly in <a href="ch2.xhtml#ch2">Chapter 2</a>), we’ll talk a lot about the various OO-related rules that are impacted because of <code>default</code> methods. For now, we’ll just cover the simple declaration rules:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <code>default</code> methods are declared by using the <code>default</code> keyword. The <code>default</code> keyword can be used only with interface method signatures, not class method signatures.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <code>default</code> methods are <code>public</code> by definition, and the <code>public </code>modifier is optional.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <code>default</code> methods <strong>cannot</strong> be marked as <code>private</code>, <code>protected</code>, <code>static</code>, <code>final</code>, or <code>abstract</code>.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <code>default</code> methods must have a concrete method body.</p>
+<p class="indent">Here are some examples of legal and illegal <code>default</code> methods:</p>
+<p class="pre"><img src="images/un014-01.jpg" alt="Images" /></p>
+<h4 class="h4" id="ch1lev2sec5"><strong>Declaring <code>static</code> Interface Methods</strong></h4>
+<p class="noindent">As of Java 8, interfaces can include <code>static</code> methods with concrete implementations. As with interface <code>default</code> methods, there are OO implications that we’ll discuss later in the chapter.</p>
+<p class="indent"><span id="page_15" epub:type="pagebreak"></span>For now, we’ll focus on the basics of declaring and using <code>static</code> interface methods:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <code>static</code> interface methods are declared by using the <code>static</code> keyword.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <code>static</code> interface methods are public, by default, and the <code>public</code> modifier is optional.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <code>static</code> interface methods cannot be marked as <code>private</code>, <code>protected</code>, <code>final</code>, or <code>abstract</code>.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <code>static</code> interface methods must have a concrete method body.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   When invoking a <code>static</code> interface method, the method’s type (interface name) MUST be included in the invocation.</p>
+<p class="indent">Here are some examples of legal and illegal static interface methods and their use:</p>
+<p class="pre"><img src="images/un015-01.jpg" alt="Images" /></p>
+<p class="noindentb">which produces this output:</p>
+<p class="indent"><code>42</code></p>
+<p class="indentb"><code>42</code></p>
+<p class="noindent">Later, we’ll return to our discussion of default methods and static methods for interfaces.</p>
+<p class="title-o"><span id="page_16" epub:type="pagebreak"></span><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch1lev1sec4"><strong>Declare Class Members (OCP Objectives 1.2, 1.6, 2.1, and 2.2)</strong></h3>
+<p class="noindent"><em>1.2   Implement inheritance including visibility modifiers and composition.</em></p>
+<p class="noindent"><em>1.6   Develop code that uses static keyword on initialize blocks, variables, methods, and classes.</em></p>
+<p class="noindent"><em>2.1   Develop code that uses abstract classes and methods.</em></p>
+<p class="noindentb"><em>2.2   Develop code that uses the final keyword.</em></p>
+<p class="indent">We’ve looked at what it means to use a modifier in a class declaration, and now we’ll look at what it means to modify a method or variable declaration.</p>
+<p class="indent">Methods and instance (nonlocal) variables are collectively known as <em>members</em>. You can modify a member with both access and nonaccess modifiers, and you have more modifiers to choose from (and combine) than when you’re declaring a class.</p>
+<h4 class="h4" id="ch1lev2sec6"><strong>Access Modifiers</strong></h4>
+<p class="noindent">Because method and variable members are usually given access control in exactly the same way, we’ll cover both in this section.</p>
+<p class="indent">Whereas a <em>class</em> can use just two of the four access control levels (default or <code>public</code>), members can use all four:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <code>public</code></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <code>protected</code></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   default</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <code>private</code></p>
+<p class="indent">Default protection is what you get when you don’t type an access modifier in the member declaration. The default and <code>protected</code> access control types have almost identical behavior, except for one difference that we will mention later.</p>
+<p class="indent"><strong>Note: As of Java 8, the word default</strong><strong> can ALSO be used to declare certain methods in interfaces. When used in an interface’s method declaration, default</strong><strong> has a different meaning than what we are describing in this section of this chapter.</strong></p>
+<p class="indent"><span id="page_17" epub:type="pagebreak"></span>It’s crucial that you know access control inside and outside for the exam. There will be quite a few questions in which access control plays a role. Some questions test several concepts of access control at the same time, so not knowing one small part of access control could mean you blow an entire question.</p>
+<p class="indent">What does it mean for code in one class to have access to a member of another class? For now, ignore any differences between methods and variables. If class A has access to a member of class B, it means that class B’s member is visible to class A. When a class does not have access to another member, the compiler will slap you for trying to access something that you’re not even supposed to know exists!</p>
+<p class="indent">You need to understand two different access issues:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Whether method code in one class can <em>access</em> a member of another class</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   Whether a subclass can <em>inherit</em> a member of its superclass</p>
+<p class="indent">The first type of access occurs when a method in one class tries to access a method or a variable of another class, using the dot operator (<code>.</code>) to invoke a method or retrieve a variable. For example:</p>
+<p class="pre"><img src="images/un017-01.jpg" alt="Images" /></p>
+<p class="indent">The second type of access revolves around which, if any, members of a superclass a subclass can access through inheritance. We’re not looking at whether the subclass can, say, invoke a method on an instance of the superclass (which would just be an example of the first type of access). Instead, we’re looking at whether the subclass <em>inherits</em> a member of its superclass. Remember, if a subclass <em>inherits</em> a member, it’s exactly as if the subclass actually declared the member itself. In other words, if a subclass <em>inherits</em> a member, the subclass <em>has</em> the member. Here’s an example:</p>
+<p class="pre"><img src="images/un017-02.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_18" epub:type="pagebreak"></span><img src="images/un018-01.jpg" alt="Images" /></p>
+<p class="indent"><a href="ch1.xhtml#ch1fig2">Figure 1-2</a> compares a class inheriting a member of another class and accessing a member of another class using a reference of an instance of that class.</p>
+<p class="figcap" id="ch1fig2"><span class="figure"><strong>FIGURE 1-2</strong></span></p>
+<p class="figcap1">Comparison of inheritance vs. dot operator for member access</p>
+<p class="imagef"><img src="images/fig01-02.jpg" alt="Images" /></p>
+<p class="indent">Much of access control (both types) centers on whether the two classes involved are in the same or different packages. Don’t forget, though, that if class A <em>itself</em> can’t be accessed by class B, then no members within class A can be accessed by class B.</p>
+<p class="indent">You need to know the effect of different combinations of class and member access (such as a default class with a <code>public</code> variable). To figure this out, first look at the access level of the class. If the class itself will not be visible to another class, then none of the members will be visible either, even if the member is declared <code>public</code>. Once you’ve confirmed that the class is visible, then it makes sense to look at access levels on individual members.</p>
+<h5 class="h5">Public Members</h5>
+<p class="noindent">When a method or variable member is declared <code>public</code>, it means all other classes, regardless of the package they belong to, can access the member (assuming the class itself is visible).</p>
+<p class="indent">Look at the following source file:</p>
+<p class="pre"><img src="images/un018-02.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_19" epub:type="pagebreak"></span>Now look at the second file:</p>
+<p class="pre"><img src="images/un019-01.jpg" alt="Images" /></p>
+<p class="indent">As you can see, <code>Goo</code> and <code>Sludge</code> are in different packages. However, <code>Goo</code> can invoke the method in <code>Sludge</code> without problems because both the <code>Sludge</code> class and its <code>testIt()</code> method are marked <code>public</code>.</p>
+<p class="indent"><span id="page_20" epub:type="pagebreak"></span>For a subclass, if a member of its superclass is declared <code>public</code>, the subclass inherits that member regardless of whether both classes are in the same package:</p>
+<p class="pre"><img src="images/un020-01.jpg" alt="Images" /></p>
+<p class="noindent">The <code>Roo</code> class declares the <code>doRooThings()</code> member as <code>public</code>. So if we make a subclass of <code>Roo</code>, any code in that <code>Roo</code> subclass can call its own inherited <code>doRooThings()</code> method.</p>
+<p class="indent">Notice in the following code that the <code>doRooThings()</code> method is invoked without having to preface it with a reference:</p>
+<p class="pre"><img src="images/un020-02.jpg" alt="Images" /></p>
+<p class="indent">Remember, if you see a method invoked (or a variable accessed) without the dot operator (<code>.</code>), it means the method or variable belongs to the class where you see that code. It also means that the method or variable is implicitly being accessed using the <code>this</code> reference. So in the preceding code, the call to <code>doRooThings()</code> in the <code>Cloo</code> class could also have been written as <code>this.doRooThings()</code>. The reference <code>this</code> always refers to the currently executing object—in other words, the object running the code where you see the <code>this</code> reference. Because the <code>this</code> reference is implicit, you don’t need to preface your member access code with it, but it won’t hurt. Some programmers include it to make the code easier to read for new (or non) Java programmers.</p>
+<p class="indent">Besides being able to invoke the <code>doRooThings()</code> method on itself, code from some other class can call <code>doRooThings()</code> on a <code>Cloo</code> instance, as in the following:</p>
+<p class="pre"><img src="images/un020-03.jpg" alt="Images" /></p>
+<h5 class="h5"><span id="page_21" epub:type="pagebreak"></span>Private Members</h5>
+<p class="noindent">Members marked <code>private</code> can’t be accessed by code in any class other than the class in which the <code>private</code> member was declared. Let’s make a small change to the <code>Roo</code> class from an earlier example:</p>
+<p class="pre"><img src="images/un021-01.jpg" alt="Images" /></p>
+<p class="indent">The <code>doRooThings()</code> method is now <code>private</code>, so no other class can use it. If we try to invoke the method from any other class, we’ll run into trouble:</p>
+<p class="pre"><img src="images/un021-02.jpg" alt="Images" /></p>
+<p class="indent">If we try to compile <code>UseARoo</code>, we get a compiler error, something like this:</p>
+<p class="pre"><img src="images/un021-03.jpg" alt="Images" /></p>
+<p class="noindent">It’s as if the method <code>doRooThings()</code> doesn’t exist, and as far as any code outside of the <code>Roo</code> class is concerned, this is true. A <code>private</code> member is invisible to any code outside the member’s own class.</p>
+<p class="indent">What about a subclass that tries to inherit a <code>private</code> member of its superclass? When a member is declared <code>private</code>, a subclass can’t inherit it. For the exam, you need to recognize that a subclass can’t see, use, or even think about the <code>private</code> members of its superclass. You can, however, declare a matching method in the subclass. But regardless of how it looks, <strong><em>it is not an overriding method!</em></strong> It is simply a method that happens to have the same name as a <code>private</code> method (which you’re not supposed to know about) in the superclass. The rules of overriding do not apply, so you can make this newly declared-but-just-happens-to-match method declare new exceptions, or change the return type, or do anything else you want it to do.</p>
+<p class="pre"><img src="images/un021-04.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_22" epub:type="pagebreak"></span>The <code>doRooThings()</code> method is now off limits to all subclasses, even those in the same package as the superclass:</p>
+<p class="pre"><img src="images/un022-01.jpg" alt="Images" /></p>
+<p class="indent">If we try to compile the subclass <code>Cloo</code>, the compiler is delighted to spit out an error, something like this:</p>
+<p class="pre"><img src="images/un022-02.jpg" alt="Images" /></p>
+<p class="indent">Can a <code>private</code> method be overridden by a subclass? That’s an interesting question, but the answer is no. Because the subclass, as we’ve seen, cannot inherit a <code>private</code> method, it, therefore, cannot override the method—overriding depends on inheritance. We’ll cover the implications of this in more detail a little later in this chapter, but for now, just remember that a method marked <code>private</code> cannot be overridden. <a href="ch1.xhtml#ch1fig3">Figure 1-3</a> illustrates the effects of the <code>public</code> and <code>private</code> modifiers on classes from the same or different packages.</p>
+<p class="figcap" id="ch1fig3"><span class="figure"><strong>FIGURE 1-3</strong></span></p>
+<p class="figcap1">Effects of public and private access</p>
+<p class="imagef"><img src="images/fig01-03.jpg" alt="Images" /></p>
+<h5 class="h5">Protected and Default Members</h5>
+<p class="noindent">Note: Just a reminder, in the next several sections, when we use the word “default,” we’re talking about access control. We’re NOT talking about the new kind of Java 8 interface method that can be declared <code>default</code>.</p>
+<p class="indent">The <code>protected</code> and default access control levels are almost identical, but with one critical difference: a <em>default</em> member may be accessed only if the class accessing the member belongs to the same package, whereas a <code>protected</code> member can be accessed (through inheritance) by a subclass <strong><em>even if the subclass is in a different package</em></strong><em>.</em> Take a look at the following two classes:</p>
+<p class="pre"><img src="images/un022-03.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_23" epub:type="pagebreak"></span>In another source code file, you have the following:</p>
+<p class="pre"><img src="images/un023-01.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_24" epub:type="pagebreak"></span>As you can see, the <code>testIt()</code> method in the first file has <em>default</em> (think <em>package</em>-level) access. Notice also that class <code>OtherClass</code> is in a different package from the <code>AccessClass</code>. Will <code>AccessClass</code> be able to use the method <code>testIt()</code>? Will it cause a compiler error? Will Daniel ever marry Francesca? Stay tuned.</p>
+<p class="pre"><img src="images/un024-01.jpg" alt="Images" /></p>
+<p class="indent">From the preceding results, you can see that <code>AccessClass</code> can’t use the <code>OtherClass</code> method <code>testIt()</code> because <code>testIt()</code> has default access and <code>AccessClass</code> is not in the same package as <code>OtherClass</code>. So <code>AccessClass</code> can’t see it, the compiler complains, and we have no idea who Daniel and Francesca are.</p>
+<p class="indent">Default and protected behavior differ only when we talk about subclasses. If the <code>protected</code> keyword is used to define a member, any subclass of the class declaring the member can access it <em>through inheritance</em>. It doesn’t matter if the superclass and subclass are in different packages; the <code>protected</code> superclass member is still visible to the subclass (although visible only in a very specific way, as you’ll see a little later). This is in contrast to the default behavior, which doesn’t allow a subclass to access a superclass member unless the subclass is in the same package as the superclass.</p>
+<p class="indent">Whereas default access doesn’t extend any special consideration to subclasses (you’re either in the package or you’re not), the <code>protected</code> modifier respects the parent-child relationship, even when the child class moves away (and joins a new package). So when you think of <em>default</em> access, think <em>package</em> restriction. No exceptions. But when you think <code>protected</code>, think <em>package + kids</em>. A class with a <code>protected</code> member is marking that member as having package-level access for all classes, but with a special exception for subclasses outside the package.</p>
+<p class="indent">But what does it mean for a subclass-outside-the-package to have access to a superclass (parent) member? It means the subclass inherits the member. It does not, however, mean the subclass-outside-the-package can access the member using a reference to an instance of the superclass. In other words, <code>protected</code> = inheritance. <code>Protected</code> does not mean the subclass can treat the <code>protected</code> <span id="page_25" epub:type="pagebreak"></span>superclass member as though it were public. So if the subclass-outside-the-package gets a reference to the superclass (by, for example, creating an instance of the superclass somewhere in the subclass’s code), the subclass cannot use the dot operator on the superclass reference to access the <code>protected</code> member. To a subclass-outside-the-package, a <code>protected</code> member might as well be default (or even <code>private</code>), when the subclass is using a reference to the superclass.<strong> The subclass can see the protected</strong><strong> member only through inheritance.</strong></p>
+<p class="indent">Are you confused? Hang in there and it will all become clearer with the next batch of code examples.</p>
+<h5 class="h5">Protected Details</h5>
+<p class="noindent">Let’s take a look at a <code>protected</code> instance variable (remember, an instance variable is a member) of a superclass.</p>
+<p class="pre"><img src="images/un025-01.jpg" alt="Images" /></p>
+<p class="indent">The preceding code declares the variable <code>x</code> as <code>protected</code>. This makes the variable <em>accessible</em> to all other classes <em>inside</em> the certification package, as well as <em>inheritable</em> by any subclasses <em>outside</em> the package.</p>
+<p class="indent">Now let’s create a subclass in a different package and attempt to use the variable <code>x</code> (that the subclass inherits):</p>
+<p class="pre"><img src="images/un025-02.jpg" alt="Images" /></p>
+<p class="noindent">The preceding code compiles fine. Notice, though, that the <code>Child</code> class is accessing the <code>protected</code> variable through inheritance. Remember, any time we talk about a subclass having access to a superclass member, we could be talking about the subclass inheriting the member, not simply accessing the member through a reference to an instance of the superclass (the way any other nonsubclass would <span id="page_26" epub:type="pagebreak"></span>access it). Watch what happens if the subclass <code>Child</code> (outside the superclass’s package) tries to access a <code>protected</code> variable using a <code>Parent</code> class reference:</p>
+<p class="pre"><img src="images/un026-01.jpg" alt="Images" /></p>
+<p class="indent">The compiler is more than happy to show us the problem:</p>
+<p class="pre"><img src="images/un026-02.jpg" alt="Images" /></p>
+<p class="indent">So far, we’ve established that a <code>protected</code> member has essentially package-level or default access to all classes except for subclasses. We’ve seen that subclasses outside the package can inherit a <code>protected</code> member. Finally, we’ve seen that subclasses outside the package can’t use a superclass reference to access a protected member. <strong><em>For a subclass outside the package, the protected member can be accessed only through inheritance.</em></strong></p>
+<p class="indent">But there’s still one more issue we haven’t looked at: What does a <code>protected</code> member look like to other classes trying to use the subclass-outside-the-package to get to the subclass’s inherited <code>protected</code> superclass member? For example, using our previous <code>Parent</code>/<code>Child</code> classes, what happens if some other class—<code>Neighbor</code>, say—in the same package as the <code>Child</code> (subclass) has a reference to a <code>Child</code> instance and wants to access the member variable <code>x</code>? In other words, how does that <code>protected</code> member behave once the subclass has inherited it? Does it maintain its <code>protected</code> status, such that classes in the <code>Child</code>’s package can see it?</p>
+<p class="indent">No! Once the subclass-outside-the-package inherits the <code>protected</code> member, that member (as inherited by the subclass) becomes private to any code outside the subclass, with the exception of subclasses of the subclass. So if class <code>Neighbor</code> instantiates a <code>Child</code> object, then even if class <code>Neighbor</code> is in the same package as class <code>Child</code>, class <code>Neighbor</code> won’t have access to the <code>Child</code>’s inherited <span id="page_27" epub:type="pagebreak"></span>(but <code>protected</code>) variable <code>x</code>. <a href="ch1.xhtml#ch1fig4">Figure 1-4</a> illustrates the effect of <code>protected</code> access on classes and subclasses in the same or different packages.</p>
+<p class="figcap" id="ch1fig4"><span class="figure"><strong>FIGURE 1-4</strong></span></p>
+<p class="figcap1">Effects of <code>protected</code> access</p>
+<p class="imagef"><img src="images/fig01-04.jpg" alt="Images" /></p>
+<p class="indent">Whew! That wraps up <code>protected</code>, the most misunderstood modifier in Java. Again, it’s used only in very special cases, but you can count on it showing up on the exam. Now that we’ve covered the <code>protected</code> modifier, we’ll switch to default member access, a piece of cake compared to <code>protected</code>.</p>
+<h5 class="h5"><span id="page_28" epub:type="pagebreak"></span>Default Details</h5>
+<p class="noindent">Let’s start with the default behavior of a member in a superclass. We’ll modify the <code>Parent</code>’s member <code>x</code> to make it default:</p>
+<p class="pre"><img src="images/un028-01.jpg" alt="Images" /></p>
+<p class="indent">Notice we didn’t place an access modifier in front of the variable <code>x</code>. Remember, if you don’t type an access modifier before a class or member declaration, the access control is default, which means package level. We’ll now attempt to access the default member from the <code>Child</code> class that we saw earlier.</p>
+<p class="indent">When we try to compile the <code>Child.java</code> file, we get an error something like this:</p>
+<p class="pre"><img src="images/un028-02.jpg" alt="Images" /></p>
+<p class="noindent">The compiler gives an error as when a member is declared as <code>private</code>. The subclass <code>Child</code> (in a different package from the superclass <code>Parent</code>) can’t see or use the default superclass member <code>x</code>! Now, what about default access for two classes in the same package?</p>
+<p class="pre"><img src="images/un028-03.jpg" alt="Images" /></p>
+<p class="noindent">And in the second class you have the following:</p>
+<p class="pre"><img src="images/un028-04.jpg" alt="Images" /></p>
+<p class="indent">The preceding source file compiles fine, and the class <code>Child</code> runs and displays the value of <code>x</code>. Just remember that default members are visible to subclasses only if those subclasses are in the same package as the superclass.</p>
+<h5 class="h5"><span id="page_29" epub:type="pagebreak"></span>Local Variables and Access Modifiers</h5>
+<p class="noindent">Can access modifiers be applied to local variables? NO!</p>
+<p class="indent">There is never a case where an access modifier can be applied to a local variable, so watch out for code like the following:</p>
+<p class="pre"><img src="images/un029-01.jpg" alt="Images" /></p>
+<p class="indent">You can be certain that any local variable declared with an access modifier will not compile. In fact, there is only one modifier that can ever be applied to local variables—<code>final</code>.</p>
+<p class="indent">That about does it for our discussion on member access modifiers. <a href="ch1.xhtml#ch1tab1">Table 1-1</a> shows all the combinations of access and visibility; you really should spend some time with it. Next, we’re going to dig into the other (nonaccess) modifiers that you can apply to member declarations.</p>
+<p class="tabcap" id="ch1tab1"><span class="table"><strong>TABLE 1-1</strong></span> Determining Access to Class Members</p>
+<p class="imaget"><img src="images/tab01-01.jpg" alt="Images" /></p>
+<h4 class="h4" id="ch1lev2sec7"><strong>Nonaccess Member Modifiers</strong></h4>
+<p class="noindent">We’ve discussed member access, which refers to whether code from one class can invoke a method (or access an instance variable) from another class. That still leaves a boatload of other modifiers you can use on member declarations. Two you’re already familiar with—<code>final</code> and <code>abstract</code>—because we applied them to class declarations earlier in this chapter. But we still have to take a quick look at <code>transient</code> and <code>synchronized</code>, and then a long look at the Big One, <code>static</code>, much later in the chapter.</p>
+<p class="indent"><span id="page_30" epub:type="pagebreak"></span>We’ll look first at modifiers applied to methods, followed by a look at modifiers applied to instance variables. We’ll wrap up this section with a look at how <code>static</code> works when applied to variables and methods.</p>
+<h5 class="h5">Final Methods</h5>
+<p class="noindent">The <code>final</code> keyword prevents a method from being overridden in a subclass and is often used to enforce the API functionality of a method. For example, the <code>Thread</code> class has a method called <code>isAlive()</code> that checks whether a thread is still active. If you extend the <code>Thread</code> class, though, there is really no way that you can correctly implement this method yourself (it uses native code, for one thing), so the designers have made it <code>final</code>. Just as you can’t subclass the <code>String</code> class (because we need to be able to trust in the behavior of a String object), you can’t override many of the methods in the core class libraries. This can’t-be-overridden restriction provides for safety and security, but you should use it with great caution. Preventing a subclass from overriding a method stifles many of the benefits of OO, including extensibility through polymorphism. A typical <code>final</code> method declaration looks like this:</p>
+<p class="pre"><img src="images/un030-01.jpg" alt="Images" /></p>
+<p class="indent">It’s legal to extend <code>SuperClass</code>, since the <em>class</em> isn’t marked <code>final</code>, but we can’t override the <code>final</code> <em>method</em> <code>showSample()</code>, as the following code attempts to do:</p>
+<p class="pre"><img src="images/un030-02.jpg" alt="Images" /></p>
+<p class="indent">Attempting to compile the preceding code gives us something like this:</p>
+<p class="pre"><img src="images/un030-03.jpg" alt="Images" /></p>
+<h5 class="h5"><span id="page_31" epub:type="pagebreak"></span>Final Arguments</h5>
+<p class="noindent">Method arguments are the variable declarations that appear in between the parentheses in a method declaration. A typical method declaration with multiple arguments looks like this:</p>
+<p class="pre"><code>public Record getRecord(int fileNumber, int recNumber) {}</code></p>
+<p class="indent">Method arguments are essentially the same as local variables. In the preceding example, the variables <code>fileNumber</code> and <code>recNumber</code> will both follow all the rules applied to local variables. This means they can also have the modifier <code>final</code>:</p>
+<p class="pre"><code>public Record getRecord(int fileNumber, final int recNumber) {}</code></p>
+<p class="noindent">In this example, the variable <code>recNumber</code> is declared as <code>final</code>, which, of course, means it can’t be modified within the method. In this case, “modified” means reassigning a new value to the variable. In other words, a <code>final</code> parameter must keep the same value as the argument had when it was passed into the method. In the case of reference variables, what this means is that you might be able to change the values in the object the <code>final</code> reference variable refers to, but you CANNOT force the <code>final</code> reference variable to refer to a different object.</p>
+<h5 class="h5">Abstract Methods</h5>
+<p class="noindent">An <code>abstract</code> method is a method that’s been <em>declared</em> (as <code>abstract</code>) but not <em>implemented</em>. In other words, the method contains no functional code. And if you recall from the earlier section “Abstract Classes,” an <code>abstract</code> method declaration doesn’t even have curly braces, but instead closes with a semicolon. In other words, <em>it has no method body</em>. You mark a method <code>abstract</code> when you want to force subclasses to provide the implementation. For example, if you write an <code>abstract</code> class <code>Car</code> with a method <code>goUpHill()</code>, you might want to force each subtype of <code>Car</code> to define its own <code>goUpHill()</code> behavior, specific to that particular type of car.</p>
+<p class="pre"><code>public abstract void showSample();</code></p>
+<p class="indent">Notice that the <code>abstract</code> method ends with a semicolon instead of curly braces. <strong>It is illegal to have even a single <code>abstract</code></strong><strong> method in a class that is not explicitly declared <code>abstract</code></strong><strong>!</strong> Look at the following illegal class:</p>
+<p class="pre"><img src="images/un031-04.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_32" epub:type="pagebreak"></span>The preceding class will produce the following error if you try to compile it:</p>
+<p class="pre"><img src="images/un032-01.jpg" alt="Images" /></p>
+<p class="indent">You can, however, have an <code>abstract</code> class with no <code>abstract</code> methods. The following example will compile fine:</p>
+<p class="pre"><img src="images/un032-02.jpg" alt="Images" /></p>
+<p class="indent">In the preceding example, <code>goodMethod()</code> is not <code>abstract</code>. Three different clues tell you it’s not an <code>abstract</code> method:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   The method is not marked <code>abstract</code>.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   The method declaration includes curly braces, as opposed to ending in a semicolon. In other words, the method has a method body.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   The method <strong>might</strong> provide actual implementation code inside the curly braces.</p>
+<p class="indent">Any class that extends an <code>abstract</code> class must implement all <code>abstract</code> methods of the superclass, unless the subclass is <em>also</em> <code>abstract</code>. The rule is this:</p>
+<p class="noindent"><strong>The first concrete subclass of an abstract</strong><strong> class must implement <em>all</em> abstract</strong><strong> methods of the superclass.</strong></p>
+<p class="indent"><em>Concrete</em> just means nonabstract, so if you have an <code>abstract</code> class extending another <code>abstract</code> class, the <code>abstract</code> subclass doesn’t need to provide implementations for the inherited <code>abstract</code> methods. Sooner or later, though, somebody’s going to make a nonabstract subclass (in other words, a class that can be instantiated), and that subclass will have to implement all the <code>abstract</code> methods from up the inheritance tree. The following example demonstrates an inheritance tree with two <code>abstract</code> classes and one concrete class:</p>
+<p class="pre"><img src="images/un032-03.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_33" epub:type="pagebreak"></span><img src="images/un033-01.jpg" alt="Images" /></p>
+<p class="indent">So how many methods does class <code>Mini</code> have? Three. It inherits both the <code>getType()</code> and <code>doCarThings()</code> methods because they’re <code>public</code> and concrete (nonabstract). But because <code>goUpHill()</code> is <code>abstract</code> in the superclass <code>Vehicle</code> and is never implemented in the <code>Car</code> class (so it remains <code>abstract</code>), it means class <code>Mini</code>—as the first concrete class below <code>Vehicle</code>—must implement the <code>goUpHill()</code> method. In other words, class <code>Mini</code> can’t pass the buck (of <code>abstract</code> method implementation) to the next class down the inheritance tree, but class <code>Car</code> can, because <code>Car</code>, like <code>Vehicle</code>, is <code>abstract</code>. <a href="ch1.xhtml#ch1fig5">Figure 1-5</a> illustrates the effects of the <code>abstract</code> modifier on concrete and <code>abstract</code> subclasses.</p>
+<p class="figcap" id="ch1fig5"><span class="figure"><strong>FIGURE 1-5</strong></span></p>
+<p class="figcap1">The effects of the <code>abstract</code> modifier on concrete and <code>abstract</code> subclasses</p>
+<p class="imagef"><img src="images/fig01-05.jpg" alt="Images" /></p>
+<p class="indent">Look for concrete classes that don’t provide method implementations for <code>abstract</code> methods of the superclass. The following code won’t compile:</p>
+<p class="pre"><img src="images/un033-02.jpg" alt="Images" /></p>
+<p class="indent">Class B won’t compile because it doesn’t implement the inherited <code>abstract</code> method <code>foo()</code>. Although the <code>foo(int i)</code> method in class B might appear to be an implementation of the superclass’s <code>abstract</code> method, it is simply an overloaded method (a method using the same identifier, but different arguments), so it doesn’t fulfill the requirements for implementing the superclass’s <code>abstract</code> method. We’ll look at the differences between overloading and overriding in detail in <a href="ch2.xhtml#ch2">Chapter 2</a>.</p>
+<p class="indent">A method can never, ever, ever be marked as both <code>abstract</code> and <code>final</code>, or both <code>abstract</code> and <code>private</code>. Think about it—<code>abstract</code> methods must be implemented (which essentially means overridden by a subclass), whereas <code>final</code> and <code>private</code> methods cannot ever be overridden by a subclass. Or to phrase <span id="page_34" epub:type="pagebreak"></span>it another way, an <code>abstract</code> designation means the superclass doesn’t know anything about how the subclasses should behave in that method, whereas a <code>final</code> designation means the superclass knows everything about how all subclasses (however far down the inheritance tree they may be) should behave in that method. The <code>abstract</code> and <code>final</code> modifiers are virtually opposites. Because <code>private</code> methods cannot even be seen by a subclass (let alone inherited), they, too, cannot be overridden, so they, too, cannot be marked <code>abstract</code>.</p>
+<p class="indent">Finally, you need to know that—for top-level classes—the <code>abstract</code> modifier can never be combined with the <code>static</code> modifier. We’ll cover <code>static</code> methods 36later in this objective, but for now just remember that the following would be illegal:</p>
+<p class="pre"><code>abstract static void doStuff();</code></p>
+<p class="noindent"><span id="page_35" epub:type="pagebreak"></span>And it would give you an error that should be familiar by now:</p>
+<p class="pre"><img src="images/un035-01.jpg" alt="Images" /></p>
+<h5 class="h5">Synchronized Methods</h5>
+<p class="noindent">The <code>synchronized</code> keyword indicates that a method can be accessed by only one thread at a time. In <a href="ch10.xhtml#ch10">Chapter 10</a>, we’ll study the <code>synchronized</code> keyword extensively, but for now…all we’re concerned with is knowing that the <code>synchronized</code> modifier can be applied only to methods—not variables, not classes, just methods. A typical <code>synchronized</code> declaration looks like this:</p>
+<p class="pre"><code>public synchronized Record retrieveUserInfo(int id) { }</code></p>
+<p class="indent">You should also know that the <code>synchronized</code> modifier can be matched with any of the four access control levels (which means it can be paired with any of the three access modifier keywords).</p>
+<h5 class="h5">Methods with Variable Argument Lists (var-args)</h5>
+<p class="noindent">Java allows you to create methods that can take a variable number of arguments. Depending on where you look, you might hear this capability referred to as “variable-length argument lists,” “variable arguments,” “var-args,” “varargs,” or our personal favorite (from the department of obfuscation), “variable arity parameters.” They’re all the same thing, and we’ll use the term “var-args” from here on out.</p>
+<p class="indent">As a bit of background, we’d like to clarify how we’re going to use the terms “argument” and “parameter” throughout this book.</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>a</strong><strong>rguments</strong> The things you specify between the parentheses when you’re <em>invoking</em> a method:</p>
+<p class="num-pre"><img src="images/un035-02.jpg" alt="Images" /></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>p</strong><strong>arameters</strong> The things in the <em>method’s signature</em> that indicate what the method must receive when it’s invoked:</p>
+<p class="num-pre"><img src="images/un035-03.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_36" epub:type="pagebreak"></span>Let’s review the declaration rules for var-args:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>V</strong><strong>ar-arg type</strong> When you declare a var-arg parameter, you must specify the type of the argument(s) this parameter of your method can receive. (This can be a primitive type or an object type.)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>B</strong><strong>asic syntax</strong> To declare a method using a var-arg parameter, you follow the type with an ellipsis (<code>...</code>), a space (preferred but optional), and then the name of the array that will hold the parameters received.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>O</strong><strong>ther parameters</strong> It’s legal to have other parameters in a method that uses a var-arg.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>V</strong><strong>ar-arg limits The var-arg must be the last parameter in the method’s signature, and you can have only one var-arg in a method.</strong></p>
+<p class="indent">Let’s look at some legal and illegal var-arg declarations:</p>
+<p class="noindentt"><strong>Legal:</strong></p>
+<p class="noindent"><img src="images/un036-01.jpg" alt="Images" /></p>
+<p class="noindentt"><strong>Illegal:</strong></p>
+<p class="noindent"><img src="images/un036-02.jpg" alt="Images" /></p>
+<h4 class="h4" id="ch1lev2sec8"><strong>Constructor Declarations</strong></h4>
+<p class="noindent">In Java, objects are constructed. Every time you make a new object, at least one constructor is invoked. Every class has a constructor, although if you don’t create one explicitly, the compiler will build one for you. There are tons of rules concerning constructors, and we’re saving our detailed discussion for <a href="ch2.xhtml#ch2">Chapter 2</a>. For now, let’s focus on the basic declaration rules. Here’s a simple example:</p>
+<p class="pre"><img src="images/un036-03.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_37" epub:type="pagebreak"></span>The first thing to notice is that constructors look an awful lot like methods. A key difference is that a constructor can’t ever, ever, ever, have a return type…ever! Constructor declarations can, however, have all of the normal access modifiers, and they can take arguments (including var-args), just like methods. The other BIG RULE to understand about constructors is that they must have the same name as the class in which they are declared. Constructors can’t be marked <code>static</code> (they are, after all, associated with object instantiation), and they can’t be marked <code>final</code> or <code>abstract</code> (because they can’t be overridden). Here are some legal and illegal constructor declarations:</p>
+<p class="pre"><img src="images/un037-01.jpg" alt="Images" /></p>
+<h4 class="h4" id="ch1lev2sec9"><strong>Variable Declarations</strong></h4>
+<p class="noindent">There are two types of variables in Java:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>P</strong><strong>rimitives</strong> A primitive can be one of eight types: <code>char</code>, <code>boolean</code>, <code>byte</code>, <code>short</code>, <code>int</code>, <code>long</code>, <code>double</code>, or <code>float</code>. Once a primitive has been declared, its primitive type can never change, although in most cases its value can change.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>R</strong><strong>eference variables</strong> A reference variable is used to refer to (or access) an object. A reference variable is declared to be of a specific type, and that type can never be changed. A reference variable can be used to refer to any object of the declared type or of a <em>subtype</em> of the declared type (a compatible type). We’ll talk a lot more about using a reference variable to refer to a subtype in <a href="ch2.xhtml#ch2">Chapter 2</a>, when we discuss polymorphism.</p>
+<h5 class="h5"><span id="page_38" epub:type="pagebreak"></span>Declaring Primitives and Primitive Ranges</h5>
+<p class="noindent">Primitive variables can be declared as class variables (statics), instance variables, method parameters, or local variables. You can declare one or more primitives, of the same primitive type, in a single line. Here are a few examples of primitive variable declarations:</p>
+<p class="pre"><img src="images/un038-01.jpg" alt="Images" /></p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>On previous versions of the exam, you needed to know how to calculate ranges for all the Java primitives. For the current exam, you can skip some of that detail, but it’s still important to understand that for the integer types the sequence from small to big is byte, short, int, and long, and that doubles are bigger than floats.</em></strong></p>
+<p class="indent"><strong><em>You will also need to know that the number types (both integer and floatingpoint types) are all signed and how that affects their ranges.</em></strong></p>
+</div>
+<p class="indent">First, let’s review the concepts.</p>
+<p class="indent">All six number types in Java are made up of a certain number of 8-bit bytes and are <em>signed,</em> meaning they can be negative or positive. The leftmost bit (the most significant digit) is used to represent the sign, where a 1 means negative and 0 means positive, as shown in <a href="ch1.xhtml#ch1fig6">Figure 1-6</a>. The rest of the bits represent the value, using two’s complement notation.</p>
+<p class="figcap" id="ch1fig6"><span class="figure"><strong>FIGURE 1-6</strong></span></p>
+<p class="figcap1">The sign bit for a byte</p>
+<p class="imagef"><img src="images/fig01-06.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_39" epub:type="pagebreak"></span><a href="ch1.xhtml#ch1tab2">Table 1-2</a> shows the primitive types with their sizes and ranges. <a href="ch1.xhtml#ch1fig6">Figure 1-6</a> shows that with a byte, for example, there are 256 possible numbers (or 2<sup>8</sup>). Half of these are negative, and half – 1 are positive. The positive range is one less than the negative range because the number 0 is stored as a positive binary number. We use the formula –2<sup>(bits−1)</sup> to calculate the negative range, and we use 2<sup>(bits−1)</sup> – 1 for the positive range. Again, if you know the first two columns of this table, you’ll be in good shape for the exam.</p>
+<p class="tabcap" id="ch1tab2"><span class="table"><strong>TABLE 1-2</strong></span> Ranges of Numeric Primitives</p>
+<p class="imaget"><img src="images/tab01-02.jpg" alt="Images" /></p>
+<p class="indent">Determining the range for floating-point numbers is complicated, but luckily you don’t need to know these for the exam (although you are expected to know that a double holds 64 bits and a float 32).</p>
+<p class="indent">There is not a range of <code>boolean</code> values; a <code>boolean</code> can be only <code>true</code> or <code>false</code>. If someone asks you for the bit depth of a <code>boolean</code>, look them straight in the eye and say, “That’s virtual-machine dependent.” They’ll be impressed.</p>
+<p class="indent">The <code>char</code> type (a character) contains a single, 16-bit Unicode character. Although the extended ASCII set known as ISO Latin<code>-</code>1 needs only 8 bits (256 different characters), a larger range is needed to represent characters found in languages other than English. Unicode characters are actually represented by unsigned 16-bit integers, which means 2<sup>16</sup> possible values, ranging from 0 to 65535 (2<sup>16</sup> – 1). Remember from the OCA 8 exam that because a <code>char</code> is really an integer type, it can be assigned to any number type large enough to hold 65535 (which means anything larger than a <code>short</code>; although both <code>chars</code> and <code>shorts</code> are 16-bit types, remember that a <code>short</code> uses 1 bit to represent the sign, so fewer positive numbers are acceptable in a short).</p>
+<h5 class="h5"><span id="page_40" epub:type="pagebreak"></span>Declaring Reference Variables</h5>
+<p class="noindent">Reference variables can be declared as static variables, instance variables, method parameters, or local variables. You can declare one or more reference variables, of the same type, in a single line:</p>
+<p class="pre"><img src="images/un040-01.jpg" alt="Images" /></p>
+<h5 class="h5">Instance Variables</h5>
+<p class="noindent">Instance variables are defined inside the class, but outside of any method, and are initialized only when the class is instantiated. Instance variables are the fields that belong to each unique object. For example, the following code defines fields (instance variables) for the name, title, and manager for employee objects:</p>
+<p class="pre"><img src="images/un040-02.jpg" alt="Images" /></p>
+<p class="indent">The preceding <code>Employee</code> class says that each employee instance will know its own name, title, and manager. In other words, each instance can have its own unique values for those three fields. For the exam, you need to know that instance variables</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Can use any of the four access <em>levels</em> (which means they can be marked with any of the three access <em>modifiers</em>)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Can be marked <code>final</code></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Can be marked <code>transient</code></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Cannot be marked <code>abstract</code></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Cannot be marked <code>synchronized</code></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Cannot be marked <code>strictfp</code></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Cannot be marked <code>native</code></p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   Cannot be marked <code>static</code> because then they’d become class variables</p>
+<p class="indent"><span id="page_41" epub:type="pagebreak"></span><a href="ch1.xhtml#ch1fig7">Figure 1-7</a> compares the way in which modifiers can be applied to methods versus variables.</p>
+<p class="figcap" id="ch1fig7"><span class="figure"><strong>FIGURE 1-7</strong></span></p>
+<p class="figcap1">Comparison of modifiers on variables vs. methods</p>
+<p class="imagef"><img src="images/fig01-07.jpg" alt="Images" /></p>
+<h5 class="h5">Local (Automatic/Stack/Method) Variables</h5>
+<p class="noindent">A local variable is a variable declared within a method. That means the variable is not just initialized within the method, but also declared within the method. Just as the local variable starts its life inside the method, it’s also destroyed when the method has completed. Local variables are always on the stack, not the heap. Although the value of the variable might be passed into, say, another method that then stores the value in an instance variable, the variable itself lives only within the scope of the method.</p>
+<p class="indent">Just don’t forget that while the local variable is on the stack, if the variable is an object reference, the object itself will still be created on the heap. There is no such thing as a stack object, only a stack variable. You’ll often hear programmers use the phrase “local object,” but what they really mean is “locally declared reference variable.” So if you hear programmers use that expression, you’ll know that they’re just too lazy to phrase it in a technically precise way. You can tell them we said that—unless they know where we live.</p>
+<p class="indent">Local variable declarations can’t use most of the modifiers that can be applied to instance variables, such as <code>public</code> (or the other access modifiers), <code>transient</code>, <code>volatile</code>, <code>abstract</code>, or <code>static</code>, but as you saw earlier, local variables can <span id="page_42" epub:type="pagebreak"></span>be marked <code>final</code>. Remember, before a local variable can be <em>used</em>, it must be <em>initialized</em> with a value. For instance:</p>
+<p class="pre"><img src="images/un042-01.jpg" alt="Images" /></p>
+<p class="indent">Typically, you’ll initialize a local variable in the same line in which you declare it, although you might still need to reassign it later in the method. The key is to remember that a local variable must be initialized before you try to use it. The compiler will reject any code that tries to use a local variable that hasn’t been assigned a value because—unlike instance variables—local variables don’t get default values.</p>
+<p class="indent">A local variable can’t be referenced in any code outside the method in which it’s declared. In the preceding code example, it would be impossible to refer to the variable <code>count</code> anywhere else in the class except within the scope of the method <code>logIn()</code>. Again, that’s not to say that the value of <code>count</code> can’t be passed out of the method to take on a new life. But the variable holding that value, <code>count</code>, can’t be accessed once the method is complete, as the following illegal code demonstrates:</p>
+<p class="pre"><img src="images/un042-02.jpg" alt="Images" /></p>
+<p class="indent">It is possible to declare a local variable with the same name as an instance variable. It’s known as <em>shadowing</em>, as the following code demonstrates:</p>
+<p class="pre"><img src="images/un042-03.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_43" epub:type="pagebreak"></span>The preceding code produces the following output:</p>
+<p class="pre"><img src="images/un043-01.jpg" alt="Images" /></p>
+<p class="indent">Why on Earth (or the planet of your choice) would you want to do that? Normally, you won’t. But one of the more common reasons is to name a parameter with the same name as the instance variable to which the parameter will be assigned.</p>
+<p class="indent">The following (wrong) code is trying to set an instance variable’s value using a parameter:</p>
+<p class="pre"><img src="images/un043-02.jpg" alt="Images" /></p>
+<p class="indent">So you’ve decided that—for overall readability—you want to give the parameter the same name as the instance variable its value is destined for, but how do you resolve the naming collision? Use the keyword <code>this</code>. The keyword <code>this</code> always, always, always refers to the object currently running. The following code shows <code>this</code> in action:</p>
+<p class="pre"><img src="images/un043-03.jpg" alt="Images" /></p>
+<h5 class="h5">Array Declarations</h5>
+<p class="noindent">In Java, arrays are objects that store multiple variables of the same type or variables that are all subclasses of the same type. Arrays can hold either primitives or object references, but an array itself will always be an object on the heap, even if the array is declared to hold primitive elements. In other words, there is no such thing as a primitive array, but you can make an array of primitives.</p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indentb"><strong><em>For the exam, you need to know three things:</em></strong></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong><em>How to make an array reference variable (declare)</em></strong></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong><em>How to make an array object (construct)</em></strong></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <strong><em>How to populate the array with elements (initialize)</em></strong></p>
+</div>
+<p class="text-icon"><span id="page_44" epub:type="pagebreak"></span><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindentb"><strong>Arrays are efficient, but many times you’ll want to use one of the Collection types from java.util (including <strong><em>HashMap</em></strong>, <strong><em>ArrayList</em></strong>, and <strong><em>TreeSet</em></strong>). Collection classes offer more flexible ways to access an object (for insertion, deletion, reading, and so on) and, unlike arrays, can expand or contract dynamically as you add or remove elements. There are Collection types for a wide range of needs. Do you need a fast sort? A group of objects with no duplicates? A way to access a name-value pair? Java provides a wide variety of Collection types to address these situations, and <a href="ch6.xhtml#ch6">Chapter 6</a> discusses Collections in more detail.</strong></p>
+<p class="indent">Arrays are declared by stating the type of elements the array will hold (an object or a primitive), followed by square brackets to either side of the identifier.</p>
+<p class="noindent"><strong>Declaring an Array of Primitives:</strong></p>
+<p class="pre"><img src="images/un044-01.jpg" alt="Images" /></p>
+<p class="noindent"><strong>Declaring an Array of Object References:</strong></p>
+<p class="pre"><img src="images/un044-02.jpg" alt="Images" /></p>
+<p class="text-icon"><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindentb"><strong>When declaring an array reference, you should always put the array brackets immediately after the declared type, rather than after the identifier (variable name). That way, anyone reading the code can easily tell that, for example, <strong><em>key</em></strong> is a reference to an <strong><em>int</em></strong> array object, not an <strong><em>int</em></strong> primitive.</strong></p>
+<p class="indent">We can also declare multidimensional arrays, which are, in fact, arrays of arrays. This can be done in the following manner:</p>
+<p class="pre"><img src="images/un044-03.jpg" alt="Images" /></p>
+<p class="noindent">The first example is a three-dimensional array (an array of arrays of arrays), and the second is a two-dimensional array. Notice in the second example, we have one <span id="page_45" epub:type="pagebreak"></span>square bracket before the variable name and one after. This is perfectly legal to the compiler, proving once again that just because it’s legal doesn’t mean it’s right.</p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indentb"><strong><em>It is never legal to include the size of the array in your declaration. Yes, we know you can do that in some other languages, which is why you might see a question or two that include code similar to the following:</em></strong></p>
+<p class="noindentb"><code>int[5] scores;</code></p>
+<p class="noindent"><strong><em>The preceding code won’t compile. Remember, the JVM doesn’t allocate space until you actually instantiate the array object. That’s when size matters.</em></strong></p>
+</div>
+<h5 class="h5">Final Variables</h5>
+<p class="noindent">Declaring a variable with the <code>final</code> keyword makes it impossible to reassign that variable once it has been initialized with an explicit value (notice we said “explicit” rather than “default“). For primitives, this means that once the variable is assigned a value, the value can’t be altered. For example, if you assign 10 to the <code>int</code> variable <code>x</code>, then <code>x</code> is going to stay 10, forever. So that’s straightforward for primitives, but what does it mean to have a <code>final</code> object reference variable? A reference variable marked <code>final</code> can never be reassigned to refer to a different object. The data within the object can be modified, but the reference variable cannot be changed. In other words, a <code>final</code> reference still allows you to modify the state of the object it refers to, but you can’t modify the reference variable to make it refer to a different object. Burn this in: there are no <code>final</code> objects, only <code>final</code> references.</p>
+<p class="indent">We’ve now covered how the <code>final</code> modifier can be applied to classes, methods, and variables. <a href="ch1.xhtml#ch1fig8">Figure 1-8</a> highlights the key points and differences of the various applications of <code>final</code>.<span id="page_46" epub:type="pagebreak"></span></p>
+<p class="figcap" id="ch1fig8"><span class="figure"><strong>FIGURE 1-8</strong></span></p>
+<p class="figcap1">Effect of <code>final</code> on variables, methods, and classes</p>
+<p class="imagef"><img src="images/fig01-08.jpg" alt="Images" /></p>
+<h5 class="h5">Transient Variables</h5>
+<p class="noindent">If you mark an instance variable as <code>transient</code>, you’re telling the JVM to skip (ignore) this variable when you attempt to serialize the object containing it. Serialization is one of Java’s coolest features; it lets you save (sometimes called “flatten“) an object by writing its state (in other words, the value of its instance variables) to a special type of I/O stream. With serialization, you can save an object <span id="page_47" epub:type="pagebreak"></span>to a file or even ship it over a wire for reinflating (deserializing) at the other end in another JVM. In <a href="ch5.xhtml#ch5">Chapter 5</a>, we’ll do a deep dive into serialization.</p>
+<h5 class="h5">Static Variables and Methods</h5>
+<p class="noindent"><strong>Note: The discussion of static in this section DOES NOT include the new static</strong><strong> interface method discussed earlier in this chapter. Don’t you just love how the Java 8 folks reused important Java terms?</strong></p>
+<p class="indentb">The <code>static</code> modifier is used to create variables and methods that will exist independently of any instances created for the class. All <code>static</code> members exist before you ever make a new instance of a class, and there will be only one copy of a <code>static</code> member regardless of the number of instances of that class. In other words, all instances of a given class share the same value for any given <code>static</code> variable. We’ll cover <code>static</code> members in great detail in the next chapter.</p>
+<p class="noindentb"><strong>Things you can mark as static</strong><strong>:</strong></p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Methods</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Variables</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   A class nested within another class, but not within a method</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   Initialization blocks</p>
+<p class="noindent"><strong>Things you can’t mark as static</strong><strong>:</strong></p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Constructors (makes no sense; a constructor is used only to create instances)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Classes (unless they are nested)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Interfaces (unless they are nested)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Method local inner classes (not on the OCA 8 exam)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Inner class methods and instance variables (not on the OCA 8 exam)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Local variables</p>
+<p class="title-o"><span id="page_48" epub:type="pagebreak"></span><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch1lev1sec5"><strong>Declare and Use enums (OCP Objective 2.4)</strong></h3>
+<p class="noindent"><em>2.4   Use enumerated types including methods, and constructors in an enum type.</em></p>
+<h4 class="h4" id="ch1lev2sec10"><strong>Declaring enums</strong></h4>
+<p class="noindent">Java lets you restrict a variable to having one of only a few predefined values—in other words, one value from an enumerated list. (The items in the enumerated list are called, surprisingly, <code>enum</code>s.)</p>
+<p class="indent">Using <code>enum</code>s can help reduce the bugs in your code. For instance, imagine you’re creating a commercial-coffee-establishment application, and in your coffee shop application, you might want to restrict your <code>CoffeeSize</code> selections to <code>BIG</code>, <code>HUGE</code>, and <code>OVERWHELMING</code>. If you let an order for a LARGE or a GRANDE slip in, it might cause an error. <code>enum</code>s to the rescue. With the following simple declaration, you can guarantee that the compiler will stop you from assigning anything to a <code>CoffeeSize</code> except <code>BIG</code>, <code>HUGE</code>, or <code>OVERWHELMING</code>:</p>
+<p class="pre"><code>enum CoffeeSize { BIG, HUGE, OVERWHELMING };</code></p>
+<p class="indent">From then on, the only way to get a <code>CoffeeSize</code> will be with a statement something like this:</p>
+<p class="pre"><code>CoffeeSize cs = CoffeeSize.BIG;</code></p>
+<p class="indent">It’s not required that <code>enum</code> constants be in all caps, but, borrowing from the Oracle code convention that constants are named in caps, it’s a good idea.</p>
+<p class="indent">The basic components of an <code>enum</code> are its constants (that is, <code>BIG</code>, <code>HUGE</code>, and <code>OVERWHELMING</code>), although in a minute you’ll see that there can be a lot more to an <code>enum</code>. <code>enum</code>s can be declared as their own separate class or as a class member; however, they must not be declared within a method!</p>
+<p class="indent">Here’s an example declaring an <code>enum</code> <em>outside</em> a class:</p>
+<p class="pre"><img src="images/un048-03.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_49" epub:type="pagebreak"></span><img src="images/un049-01.jpg" alt="Images" /></p>
+<p class="noindent">The preceding code can be part of a single file (or, in general, enum classes can exist in their own file like <code>CoffeeSize.java</code>). But remember, in this case the file must be named <code>CoffeeTest1.java</code> because that’s the name of the <code>public</code> class in the file. The key point to remember is that an <code>enum</code> that isn’t enclosed in a class can be declared with only the <code>public</code> or default modifier, just like a non-inner class. Here’s an example of declaring an <code>enum</code> <em>inside</em> a class:</p>
+<p class="pre"><img src="images/un049-02.jpg" alt="Images" /></p>
+<p class="indent">The key points to take away from these examples are that <code>enum</code>s can be declared as their own class or enclosed in another class, and that the syntax for accessing an <code>enum</code>’s members depends on where the <code>enum</code> was declared.</p>
+<p class="indent">The following is NOT legal:</p>
+<p class="pre"><img src="images/un049-03.jpg" alt="Images" /></p>
+<p class="indent">To make it more confusing for you, the Java language designers made it optional to put a semicolon at the end of the <code>enum</code> declaration (when no other declarations for this <code>enum</code> follow):</p>
+<p class="pre"><img src="images/un049-04.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_50" epub:type="pagebreak"></span>So what gets created when you make an <code>enum</code>? The most important thing to remember is that <code>enum</code>s are not <code>String</code>s or <code>int</code>s! Each of the enumerated <code>CoffeeSize</code> values is actually an instance of <code>CoffeeSize</code>. In other words, <code>BIG</code> is of type <code>CoffeeSize</code>. Think of an <code>enum</code> as a kind of class that looks something (but not exactly) like this:</p>
+<p class="pre"><img src="images/un050-01.jpg" alt="Images" /></p>
+<p class="indent">Notice how each of the enumerated values, <code>BIG</code>, <code>HUGE</code>, and <code>OVERWHELMING</code>, is an instance of type <code>CoffeeSize</code>. They’re represented as <code>static</code> and <code>final</code>, which, in the Java world, is thought of as a constant. Also notice that each <code>enum</code> value knows its index or position—in other words, the order in which <code>enum</code> values are declared matters. You can think of the <code>CoffeeSize enum</code>s as existing in an array of type <code>CoffeeSize</code>, and as you’ll see in a later chapter, you can iterate through the values of an <code>enum</code> by invoking the <code>values()</code> method on any <code>enum</code> type.</p>
+<h5 class="h5">Declaring Constructors, Methods, and Variables in an enum</h5>
+<p class="noindent">Because an <code>enum</code> really is a special kind of class, you can do more than just list the enumerated constant values. You can add constructors, instance variables, methods, and something really strange known as a <em>constant specific class body</em>. To understand why you might need more in your <code>enum</code>, think about this scenario: Imagine you want to know the actual size, in ounces, that map to each of the three <code>CoffeeSize</code> constants. For example, you want to know that <code>BIG</code> is 8 ounces, <code>HUGE</code> is 10 ounces, and <code>OVERWHELMING</code> is a whopping 16 ounces.</p>
+<p class="indent"><span id="page_51" epub:type="pagebreak"></span>You could make a lookup table using some other data structure, but that would be a poor design and hard to maintain. The simplest way is to treat your <code>enum</code> values (<code>BIG</code>, <code>HUGE</code>, and <code>OVERWHELMING</code>) as objects, each of which can have its own instance variables. Then you can assign those values at the time the <code>enum</code>s are initialized by passing a value to the <code>enum</code> constructor. This takes a little explaining, but first look at the following code:</p>
+<p class="pre"><img src="images/un051-01.jpg" alt="Images" /></p>
+<p class="noindent">Note: Every <code>enum</code> has a static method, <code>values()</code>, that returns an array of the <code>enum</code>’s values in the order they’re declared.</p>
+<p class="indent"><span id="page_52" epub:type="pagebreak"></span>The key points to remember about <code>enum</code> constructors are</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   You can NEVER invoke an <code>enum</code> constructor directly. The <code>enum</code> constructor is invoked automatically with the arguments you define after the constant value. For example, <code>BIG(8)</code> invokes the <code>CoffeeSize</code> constructor that takes an <code>int</code>, passing the <code>int</code> literal 8 to the constructor. (Behind the scenes, of course, you can imagine that <code>BIG</code> is also passed to the constructor, but we don’t have to know—or care—about the details.)</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   You can define more than one argument to the constructor, and you can overload the <code>enum</code> constructors, just as you can overload a normal class constructor. We discuss constructors in much more detail in <a href="ch2.xhtml#ch2">Chapter 2</a>. To initialize a <code>CoffeeSize</code> with both the number of ounces and, say, a lid type, you’d pass two arguments to the constructor as <code>BIG(8, "A")</code>, which means you have a constructor in <code>CoffeeSize</code> that takes both an <code>int</code> and a <code>String</code>.</p>
+<p class="indent">And, finally, you can define something really strange in an <code>enum</code> that looks like an anonymous inner class. It’s known as a <em>constant specific class body,</em> and you use it when you need a particular constant to override a method defined in the <code>enum</code>.</p>
+<p class="indent">Imagine this scenario: you want <code>enum</code>s to have two methods—one for ounces and one for lid code (a <code>String</code>). Now imagine that most coffee sizes use the same lid code, <code>"B"</code>, but the <code>OVERWHELMING</code> size uses type <code>"A"</code>. You can define a <code>getLidCode()</code> method in the <code>CoffeeSize enum</code> that returns <code>"B"</code>, but then you need a way to override it for <code>OVERWHELMING</code>. You don’t want to do some hard-to-maintain <code>if/then</code> code in the <code>getLidCode()</code> method, so the best approach might be to somehow have the <code>OVERWHELMING</code> constant override the <code>getLidCode()</code> method.</p>
+<p class="indent">This looks strange, but you need to understand the basic declaration rules:</p>
+<p class="pre"><img src="images/un052-01.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_53" epub:type="pagebreak"></span><img src="images/un053-01.jpg" alt="Images" /></p>
+<h3 class="h3b" id="ch1lev1sec6">CERTIFICATION SUMMARY</h3>
+<hr/>
+<p class="noindentt">After absorbing the material in this chapter, you should be familiar with some of the nuances of the Java language. You may also be experiencing confusion around why you ever wanted to take this exam in the first place. That’s normal at this point. If you hear yourself asking, “What was I thinking?” just lie down until it passes. We would like to tell you that it gets easier…that this was the toughest chapter and it’s all downhill from here.</p>
+<p class="indent">Let’s briefly review what you’ll need to know for the exam:</p>
+<p class="indent">You now have a good understanding of access control as it relates to classes, methods, and variables. You’ve looked at how access modifiers (<code>public</code>, <code>protected</code>, and <code>private</code>) define the access control of a class or member.</p>
+<p class="indent">You learned that <code>abstract</code> classes can contain both <code>abstract</code> and nonabstract methods, but that if even a single method is marked <code>abstract</code>, the class must be marked <code>abstract</code>. Don’t forget that a concrete (nonabstract) subclass of an <code>abstract</code> class must provide implementations for all the <code>abstract</code> methods of the superclass, but that an <code>abstract</code> class does not have to implement the <code>abstract</code> methods from its superclass. An <code>abstract</code> subclass can “pass the buck” to the first concrete subclass.</p>
+<p class="indent">We covered interface implementation. Remember that interfaces can extend another interface (even multiple interfaces) and that any class that implements an interface must implement all methods from all the interfaces in the inheritance tree of the interface the class is implementing.</p>
+<p class="indent"><span id="page_54" epub:type="pagebreak"></span>You’ve also looked at the other modifiers, including <code>static</code>, <code>final</code>, <code>abstract</code>, <code>synchronized</code>, and so on. You’ve learned how some modifiers can never be combined in a declaration, such as mixing <code>abstract</code> with either <code>final</code> or <code>private</code>.</p>
+<p class="indent">Keep in mind that there are no <code>final</code> objects in Java, unless you go out of your way to develop your class to create “immutable objects,” which is a design approach we’ll discuss in <a href="ch2.xhtml#ch2">Chapter 2</a>. A reference variable marked <code>final</code> can never 56be changed, but the object it refers to can be modified. You’ve seen that <code>final</code> applied to methods means a subclass can’t override them, and when applied to a class, the <code>final</code> class can’t be subclassed.</p>
+<p class="indent">Methods can be declared with a var-arg parameter (which can take from zero to many arguments of the declared type), but that you can have only one var-arg per method, and it must be the method’s last parameter.</p>
+<p class="indent">Remember that although the values of nonfinal variables can change, a reference variable’s type can never change.</p>
+<p class="indent">You also learned that arrays are objects that contain many variables of the same type. Arrays can also contain other arrays.</p>
+<p class="indent">Remember what you’ve learned about <code>static</code> variables and methods, especially that <code>static</code> members are per-class as opposed to per-instance. Don’t forget that a <code>static</code> method can’t directly access an instance variable from the class it’s in because it doesn’t have an explicit reference to any particular instance of the class.</p>
+<p class="indent">Finally, we covered <code>enum</code>s. An <code>enum</code> is a safe and flexible way to implement constants. Because they are a special kind of class, <code>enum</code>s can be declared very simply, or they can be quite complex—including such attributes as methods, variables, constructors, and a special type of inner class called a constant specific class body.</p>
+<p class="indent">Before you hurl yourself at the practice test, spend some time with the following optimistically named “Two-Minute Drill.” Come back to this particular drill often, as you work through this book and especially when you’re doing that last-minute cramming. Because—and here’s the advice you wished your mother had given you before you left for college—it’s not what you know, it’s when you know it.</p>
+<p class="indent">For the exam, knowing what you can’t do with the Java language is just as important as knowing what you can do. Give the sample questions a try! They’re very similar to the difficulty and structure of the real exam questions and should be an eye opener for how difficult the exam can be. Don’t worry if you get a lot of them wrong. If you find a topic that you are weak in, spend more time reviewing and studying. Many programmers need two or three serious passes through a chapter (or an individual objective) before they can answer the questions confidently.</p>
+<h3 class="h3b" id="ch1lev1sec7"><span id="page_55" epub:type="pagebreak"></span><img src="images/tick1.jpg" alt="Images" /> TWO-MINUTE DRILL</h3>
+<p class="noindentt">Remember that in this chapter, when we talk about classes, we’re referring to non-inner classes, in other words, <em>top-level</em> classes.</p>
+<h5 class="h5">Class Access Modifiers (OCP Objective 1.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  There are three access modifiers: <code>public</code>, <code>protected</code>, and <code>private</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  There are four access levels: <code>public</code>, <code>protected</code>, default, and <code>private</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Classes can have only <code>public</code> or default access.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A class with default access can be seen only by classes within the same package.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A class with <code>public</code> access can be seen by all classes from all packages.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Class visibility revolves around whether code in one class can</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  Create an instance of another class</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  Extend (or subclass) another class</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  Access methods and variables of another class</p>
+<h5 class="h5">Class Modifiers (Nonaccess) (OCP Objectives 1.2, 2.1, and 2.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Classes can also be modified with <code>final</code>, <code>abstract</code>, or <code>strictfp</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A class cannot be both <code>final</code> and <code>abstract</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>final</code> class cannot be subclassed.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>abstract</code> class cannot be instantiated.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A single <code>abstract</code> method in a class means the whole class must be <code>abstract</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>abstract</code> class can have both <code>abstract</code> and nonabstract methods.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The first concrete class to extend an <code>abstract</code> class must implement all of its <code>abstract</code> methods.</p>
+<h5 class="h5"><span id="page_56" epub:type="pagebreak"></span>Interface Implementation (OCP Objectives 1.2, 2.1, 2.2, and 2.5)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Usually, interfaces are contracts for what a class can do, but they say nothing about the way in which the class must do it.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Interfaces can be implemented by any class from any inheritance tree.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Usually, an interface is like a 100-percent <code>abstract</code> class and is implicitly abstract whether or not you type the <code>abstract</code> modifier in the declaration.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Usually interfaces have only <code>abstract</code> methods.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Interface methods are, by default, <code>public</code> and usually <code>abstract</code>—explicit declaration of these modifiers is optional.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Interfaces can have constants, which are always implicitly <code>public</code>, <code>static</code>, and <code>final</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Interface constant declarations of <code>public</code>, <code>static</code>, and <code>final</code> are optional in any combination.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  As of Java 8, interfaces can have concrete methods declared as either <code>default</code> or <code>static</code>.</p>
+<p class="noindent">Note: This section uses some concepts that we HAVE NOT yet covered. Don’t panic: once you’ve read through the entire book, this section will make sense as a reference.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A legal nonabstract implementing class has the following properties:</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  It provides concrete implementations for the interface’s methods.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  It must follow all legal override rules for the methods it implements.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  It must not declare any new checked exceptions for an implementation method.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  It must not declare any checked exceptions that are broader than the exceptions declared in the interface method.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  It may declare runtime exceptions on any interface method implementation regardless of the interface declaration.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  It must maintain the exact signature (allowing for covariant returns) and return type of the methods it implements (but does not have to declare the exceptions of the interface).</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A class implementing an interface can itself be <code>abstract</code>.</p>
+<p class="bull-image"><span id="page_57" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>abstract</code>-implementing class does not have to implement the interface methods (but the first concrete subclass must).</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A class can extend only one class (no multiple inheritance), but it can implement many interfaces.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Interfaces can extend one or more other interfaces.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Interfaces cannot extend a class or implement a class or interface.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  When taking the exam, verify that interface and class declarations are legal before verifying other code logic.</p>
+<h5 class="h5">Member Access Modifiers (OCP Objective 1.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Methods and instance (nonlocal) variables are known as “members.“</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Members can use all four access levels: <code>public</code>, <code>protected</code>, default, and <code>private</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Member access comes in two forms:</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  Code in one class can access a member of another class.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  A subclass can inherit a member of its superclass.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If a class cannot be accessed, its members cannot be accessed.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Determine class visibility before determining member visibility.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>public</code> members can be accessed by all other classes, even in other packages.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If a superclass member is <code>public</code>, the subclass inherits it—regardless of package.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Members accessed without the dot operator (<code>.</code>) must belong to the same class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>this.</code> always refers to the currently executing object.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>this.aMethod()</code> is the same as just invoking <code>aMethod()</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>private</code> members can be accessed only by code in the same class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>private</code> members are not visible to subclasses, so <code>private</code> members cannot be inherited.</p>
+<p class="bull-image"><span id="page_58" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  Default and <code>protected</code> members differ only when subclasses are involved:</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  Default members can be accessed only by classes in the same package.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>protected</code> members can be accessed by other classes in the same package, plus subclasses regardless of package.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>protected</code> = package + kids (kids meaning subclasses).</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  For subclasses outside the package, the <code>protected</code> member can be accessed only through inheritance; a subclass outside the package cannot access a <code>protected</code> member by using a reference to a superclass instance. (In other words, inheritance is the only mechanism for a subclass outside the package to access a <code>protected</code> member of its superclass.)</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>protected</code> member inherited by a subclass from another package is not accessible to any other class in the subclass package, except for the subclass’s own subclasses.</p>
+<h5 class="h5">Local Variables (OCP Objective 2.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Local (method, automatic, or stack) variable declarations cannot have access modifiers.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>final</code> is the only modifier available to local variables.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Local variables don’t get default values, so they must be initialized before use.</p>
+<h5 class="h5">Other Modifiers—Members (OCP Objectives 2.1 and 2.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>final</code> methods cannot be overridden in a subclass.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>abstract</code> methods are declared with a signature, a return type, and an optional <code>throws</code> clause, but they are not implemented.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>abstract</code> methods end in a semicolon—no curly braces.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Three ways to spot a nonabstract method:</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  The method is not marked <code>abstract</code>.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  The method has curly braces.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  The method <strong>MIGHT</strong> have code between the curly braces.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The first nonabstract (concrete) class to extend an <code>abstract</code> class must implement all of the <code>abstract</code> class’s <code>abstract</code> methods.</p>
+<p class="bull-image"><span id="page_59" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>synchronized</code> modifier applies only to methods and code blocks.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>synchronized</code> methods can have any access control and can also be marked <code>final</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>abstract</code> methods must be implemented by a subclass, so they must be inheritable. For that reason</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>abstract</code> methods cannot be <code>private</code>.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>abstract</code> methods cannot be <code>final</code>.</p>
+<h5 class="h5">Methods with var-args (OCP Objective 1.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Methods can declare a parameter that accepts from zero to many arguments, a so-called var-arg method.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A var-arg parameter is declared with the syntax <code>type... name</code>, for instance: <code>doStuff(int... x) { }</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A var-arg method can have only one var-arg parameter.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  In methods with normal parameters and a var-arg, the var-arg must come last.</p>
+<h5 class="h5">Constructors (OCP Objectives 1.2 and 2.4)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Constructors must have the same name as the class</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Constructors can have arguments, but they cannot have a return type.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Constructors can use any access modifier (even <code>private</code>!).</p>
+<h5 class="h5">Variable Declarations (OCP Objectives 2.1 and 2.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Instance variables can</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  Have any access control</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  Be marked <code>final</code> or <code>transient</code></p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Instance variables can’t be <code>abstract</code> or <code>synchronized</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  It is legal to declare a local variable with the same name as an instance variable; this is called “shadowing.“</p>
+<p class="bull-image"><span id="page_60" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  <code>final</code> variables have the following properties:</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>final</code> variables cannot be reassigned once assigned a value.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>final</code> reference variables cannot refer to a different object once the object has been assigned to the <code>final</code> variable.</p>
+<p class="bull-image1"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>final</code> variables must be initialized before the constructor completes.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  There is no such thing as a <code>final</code> object. An object reference marked <code>final</code> does NOT mean the object itself can’t change.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>transient</code> modifier applies only to instance variables.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The <code>volatile</code> modifier applies only to instance variables.</p>
+<h5 class="h5">Array Declarations (OCP Objective 1.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Arrays can hold primitives or objects, but the array itself is always an object.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  When you declare an array, the brackets can be to the left or to the right of the variable name.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  It is never legal to include the size of an array in the declaration.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An array of objects can hold any object that passes the IS-A (or <code>instanceof</code>) test for the declared type of the array. For example, if <code>Horse</code> extends <code>Animal</code>, then a <code>Horse</code> object can go into an <code>Animal</code> array.</p>
+<h5 class="h5">Static Variables and Methods (OCP Objective 1.6)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  They are not tied to any particular instance of a class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  No class instances are needed in order to use <code>static</code> members of the class or interface.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  There is only one copy of a <code>static</code> variable/class and all instances share it.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>static</code> methods do not have direct access to nonstatic members.</p>
+<h5 class="h5">enums (OCP Objective 2.4)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>enum</code> specifies a list of constant values assigned to a type.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>enum</code> is NOT a <code>String</code> or an <code>int</code>; an <code>enum</code> constant’s type is the <code>enum</code> type. For example, <code>SUMMER</code> and <code>FALL</code> are of the <code>enum</code> type <code>Season</code>.</p>
+<p class="bull-image"><span id="page_61" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>enum</code> can be declared outside or inside a class, but NOT in a method.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An <code>enum</code> declared outside a class must NOT be marked <code>static</code>, <code>final</code>, <code>abstract</code>, <code>protected</code>, or <code>private</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>enum</code>s can contain constructors, methods, variables, and constant specific class bodies.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>enum</code> constants can send arguments to the <code>enum</code> constructor, using the syntax <code>BIG(8)</code>, where the <code>int</code> literal 8 is passed to the <code>enum</code> constructor.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>enum</code> constructors can have arguments and can be overloaded.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>enum</code> constructors can NEVER be invoked directly in code. They are always called automatically when an <code>enum</code> is initialized.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The semicolon at the end of an <code>enum</code> declaration is optional. These are legal:</p>
+<p class="num-pre"><img src="images/un061-01.jpg" alt="Images" /></p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>MyEnum.values()</code> returns an array of <code>MyEnum</code>’s values.</p>
+<h3 class="h3b" id="ch1lev1sec8"><span id="page_62" epub:type="pagebreak"></span><img src="images/qs.jpg" alt="Images" /> SELF TEST</h3>
+<p class="noindent">The following questions will help measure your understanding of the material presented in this chapter. Read all the choices carefully, as there may be more than one correct answer. Choose all correct answers for each question. Stay focused.</p>
+<p class="indentb">If you have a rough time with these at first, don’t beat yourself up. Be positive. Repeat nice affirmations to yourself: “I am smart enough to understand <code>enum</code>s,” and “OK, so that other guy knows <code>enum</code>s better than I do, but I bet he can’t &lt;insert something you <em>are</em> good at&gt; like me.“</p>
+<p class="que"><strong><a id="ch1ans1" href="ch1.xhtml#r_ch1ans1">1</a>.</strong>   Which are true? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong> “X extends Y” is correct if and only if X is a class and Y is an interface</p>
+<p class="alpha"><strong>B.</strong> “X extends Y” is correct if and only if X is an interface and Y is a class</p>
+<p class="alpha"><strong>C.</strong> “X extends Y” is correct if X and Y are either both classes or both interfaces</p>
+<p class="alpha"><strong>D.</strong> “X extends Y” is correct for all combinations of X and Y being classes and/or interfaces</p>
+<p class="que"><strong><a id="ch1ans2" href="ch1.xhtml#r_ch1ans2">2</a>.</strong>   Given:</p>
+<p class="alpha"><img src="images/un062-01.jpg" alt="Images" /></p>
+<p class="alpha-no">Which are true? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong> As the code stands, the output is <code>bang</code></p>
+<p class="alpha"><strong>B.</strong> As the code stands, the output is <code>sh-bang</code></p>
+<p class="alpha"><strong>C.</strong> As the code stands, compilation fails</p>
+<p class="alpha"><strong>D.</strong> If line A is uncommented, the output is <code>bang bang</code></p>
+<p class="alpha"><strong>E.</strong> If line A is uncommented, the output is <code>sh-bang bang</code></p>
+<p class="alpha"><strong>F.</strong> If line A is uncommented, compilation fails</p>
+<p class="que"><span id="page_63" epub:type="pagebreak"></span><strong><a id="ch1ans3" href="ch1.xhtml#r_ch1ans3">3</a>.</strong>   Given:</p>
+<p class="num-pre"><img src="images/un063-01.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result?</p>
+<p class="alpha"><strong>A.</strong> <code>woof burble</code></p>
+<p class="alpha"><strong>B.</strong> Multiple compilation errors</p>
+<p class="alpha"><strong>C.</strong> Compilation fails due to an error on line 2</p>
+<p class="alpha"><strong>D.</strong> Compilation fails due to an error on line 3</p>
+<p class="alpha"><strong>E.</strong> Compilation fails due to an error on line 4</p>
+<p class="alpha"><strong>F.</strong> Compilation fails due to an error on line 9</p>
+<p class="que"><strong><a id="ch1ans4" href="ch1.xhtml#r_ch1ans4">4</a>.</strong>   Given two files:</p>
+<p class="num-pre"><img src="images/un063-02.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong> <code>5 6 7</code></p>
+<p class="alpha"><strong>B.</strong> <code>5</code> followed by an exception</p>
+<p class="alpha"><strong>C.</strong> Compilation fails with an error on line 7</p>
+<p class="alpha"><strong>D.</strong> Compilation fails with an error on line 8</p>
+<p class="alpha"><strong>E.</strong> Compilation fails with an error on line 9</p>
+<p class="alpha"><strong>F.</strong> Compilation fails with an error on line 10</p>
+<p class="que"><span id="page_64" epub:type="pagebreak"></span><strong><a id="ch1ans5" href="ch1.xhtml#r_ch1ans5">5</a>.</strong>   Given:</p>
+<p class="num-pre"><img src="images/un064-01.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong> Compilation succeeds</p>
+<p class="alpha"><strong>B.</strong> Compilation fails with an error on line 1</p>
+<p class="alpha"><strong>C.</strong> Compilation fails with an error on line 3</p>
+<p class="alpha"><strong>D.</strong> Compilation fails with an error on line 5</p>
+<p class="alpha"><strong>E.</strong> Compilation fails with an error on line 7</p>
+<p class="alpha"><strong>F.</strong> Compilation fails with an error on line 9</p>
+<p class="que"><strong><a id="ch1ans6" href="ch1.xhtml#r_ch1ans6">6</a>.</strong>   Given:</p>
+<p class="num-pre"><img src="images/un064-02.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong> <code>TUE</code></p>
+<p class="alpha"><strong>B.</strong> <code>WED</code></p>
+<p class="alpha"><strong>C.</strong> The output is unpredictable</p>
+<p class="alpha"><strong>D.</strong> Compilation fails due to an error on line 4</p>
+<p class="alpha"><strong>E.</strong> Compilation fails due to an error on line 6</p>
+<p class="alpha"><strong>F.</strong> Compilation fails due to an error on line 8</p>
+<p class="alpha"><strong>G.</strong> Compilation fails due to an error on line 9</p>
+<p class="que"><span id="page_65" epub:type="pagebreak"></span><strong><a id="ch1ans7" href="ch1.xhtml#r_ch1ans7">7</a>.</strong>   Given:</p>
+<p class="num-pre"><img src="images/un065-01.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result?</p>
+<p class="alpha"><strong>A.</strong> <code>13</code></p>
+<p class="alpha"><strong>B.</strong> Compilation fails due to multiple errors</p>
+<p class="alpha"><strong>C.</strong> Compilation fails due to an error on line 6</p>
+<p class="alpha"><strong>D.</strong> Compilation fails due to an error on line 7</p>
+<p class="alpha"><strong>E.</strong> Compilation fails due to an error on line 11</p>
+<p class="que"><strong><a id="ch1ans8" href="ch1.xhtml#r_ch1ans8">8</a>.</strong>   Given:</p>
+<p class="num-pre"><img src="images/un065-02.jpg" alt="Images" /></p>
+<p class="alpha-no">Which are true? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong> The class <code>Tablet</code> will NOT compile</p>
+<p class="alpha"><strong>B.</strong> The interface <code>Gadget</code> will NOT compile</p>
+<p class="alpha"><strong>C.</strong> The output will be <code>plug in show book</code></p>
+<p class="alpha"><strong>D.</strong> The <code>abstract</code> class <code>Electronic</code> will NOT compile</p>
+<p class="alpha"><strong>E.</strong> The class <code>Tablet</code> CANNOT both extend and implement</p>
+<p class="que"><span id="page_66" epub:type="pagebreak"></span><strong><a id="ch1ans9" href="ch1.xhtml#r_ch1ans9">9</a>.</strong>   Given:</p>
+<p class="num-pre"><img src="images/un066-01.jpg" alt="Images" /></p>
+<p class="alpha-no">Which lines of code—inserted independently at <code>insert code here</code>—will compile? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong> <code>public static m1() {;}</code></p>
+<p class="alpha"><strong>B.</strong> <code>default void m2() {;}</code></p>
+<p class="alpha"><strong>C.</strong> <code>abstract int m3();</code></p>
+<p class="alpha"><strong>D.</strong> <code>final short m4() {return 5;}</code></p>
+<p class="alpha"><strong>E.</strong> <code>default long m5();</code></p>
+<p class="alpha"><strong>F.</strong> <code>static void m6() {;}</code></p>
+<h3 class="h3b" id="ch1lev2sec11"><span id="page_67" epub:type="pagebreak"></span><img src="images/aself.jpg" alt="Images" /> SELF TEST ANSWERS</h3>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans1" id="r_ch1ans1">1</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A</strong> is incorrect because classes implement interfaces, they don’t extend them. <strong>B</strong> is incorrect because interfaces only “inherit from” other interfaces. <strong>D</strong> is incorrect based on the preceding rules. (OCP Objectives 1.2 and 2.5)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans2" id="r_ch1ans2">2</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> and <strong>F</strong> are correct. Since <code>Rocket.blastOff()</code> is <code>private</code>, it can’t be overridden, and it is invisible to class <code>Shuttle</code>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, C, D,</strong> and <strong>E</strong> are incorrect based on the above. (OCP Objective 1.2 and 1.3)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans3" id="r_ch1ans3">3</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct; <code>enum</code>s can have constructors and variables.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D, E,</strong> and <strong>F</strong> are incorrect; these lines all use correct syntax. (OCP Objective 2.4)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans4" id="r_ch1ans4">4</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> and <strong>E</strong> are correct. Variable <code>a</code> has default access, so it cannot be accessed from outside the package. Variable <code>b</code> has protected access in <code>pkgA</code>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C,</strong> and <strong>F</strong> are incorrect based on the above information. (OCP Objective 1.2)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans5" id="r_ch1ans5">5</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct; all of these are legal declarations.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D, E,</strong> and <strong>F</strong> are incorrect based on the above information. (OCP Objectives 1.2, 2.1, and 2.5)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans6" id="r_ch1ans6">6</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> is correct. Every <code>enum</code> comes with a <code>static values()</code> method that returns an array of the <code>enum</code>’s values in the order in which they are declared in the <code>enum</code>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, C, D, E, F,</strong> and <strong>G</strong> are incorrect based on the above information. (OCP Objectives 1.6 and 2.4)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans7" id="r_ch1ans7">7</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct. The <code>countGold()</code> method cannot be invoked from a static context.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C,</strong> and <strong>E</strong> are incorrect based on the above information. (OCP Objective 1.6)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans8" id="r_ch1ans8">8</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct. By default, an interface’s methods are <code>public</code> so the <code>Tablet.doStuff</code> method must be public, too. The rest of the code is valid.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D,</strong> and <strong>E</strong> are incorrect based on the above. (OCP Objectives 1.2 and 2.5)</p>
+<p class="que-q"><strong><a href="ch1.xhtml#ch1ans9" id="r_ch1ans9">9</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B, C,</strong> and <strong>F</strong> are correct. As of Java 8, interfaces can have <code>default</code> and <code>static</code> methods.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, D,</strong> and <strong>E</strong> are incorrect. <strong>A</strong> has no return type; <strong>D</strong> cannot have a method body; and <strong>E</strong> needs a method body. (OCP Objective 2.5)<span id="page_68" epub:type="pagebreak"></span></p>
+</section>
+</div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pls="http://www.w3.org/2005/01/pronunciation-lexicon" xmlns:ssml="http://www.w3.org/2001/10/synthesis" xmlns:svg="http://www.w3.org/2000/svg">
+<head>
+  <meta charset="UTF-8" />
+  <title>3 Assertions and Java Exceptions</title>
+  <link type="text/css" rel="stylesheet" media="all" href="style.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="core.css" />
+</head>
+<body>
+  <div id="sbo-rt-content"><section epub:type="chapter">
+<p class="image"><img src="images/common-01.jpg" alt="Images" /></p>
+<h2 class="h2p" id="ch3"><span id="page_169" epub:type="pagebreak"></span><strong>3</strong></h2>
+<h2 class="h2p1"><strong>Assertions and Java Exceptions</strong></h2>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVES</strong></span></p>
+<p class="toc-l">•       Use try-catch and throw Statements</p>
+<p class="toc-l">•       Use catch, Multi-catch, and finally Clauses</p>
+<p class="toc-l">•       Use Autoclose Resources with a try-with-resources Statement</p>
+<p class="toc-l">•       Create Custom Exceptions and Auto-closeable Resources</p>
+<p class="toc-l">•       Test Invariants by Using Assertions</p>
+<p class="toc-lq"><img src="images/tick.jpg" alt="Images" />     Two-Minute Drill</p>
+<p class="toc-q"><strong>Q&amp;A</strong>   Self Test</p>
+<p class="noindent-d"><span id="page_170" epub:type="pagebreak"></span><span class="dropcap"><strong>T</strong></span>he assertion mechanism gives you a way to do testing and debugging checks on conditions you expect to smoke out while developing, when you don’t want the runtime overhead associated with exception handling.</p>
+<p class="indent">When you do need to use exception handling, you can take advantage of two features added to exception handling in Java 7. First, multi-<code>catch</code> gives you a way of dealing with two or more exception types at once, and second, <code>try</code>-with-resources lets you close your resources very easily.</p>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch3lev1sec1"><strong>Working with the Assertion Mechanism (OCP Objective 6.5)</strong></h3>
+<p class="noindentb"><em>6.5   Test invariants by using assertions.</em></p>
+<p class="indent">You know you’re not supposed to make assumptions, but you can’t help it when you’re writing code. You put them in comments:</p>
+<p class="pre"><img src="images/un170-01.jpg" alt="Images" /></p>
+<p class="indent">Assertions let you test your assumptions during development, without the expense (in both your time and program overhead) of writing exception handlers, <span id="page_171" epub:type="pagebreak"></span>for exceptions that you assume will never happen once the program is out of development and fully deployed.</p>
+<p class="indent">For the OCP 8 exam, you’re expected to know the basics of how assertions work, including how to enable them, how to use them, and how <em>not</em> to use them.</p>
+<h4 class="h4" id="ch3lev2sec1"><strong>Assertions Overview</strong></h4>
+<p class="noindent">Suppose you assume that a number passed into a method (say, <code>methodA()</code>) will never be negative. While testing and debugging, you want to validate your assumption, but you don’t want to have to strip out <code>print</code> statements, runtime exception handlers, or <code>if/else</code> tests when you’re done with development. But leaving any of those in is, at the least, a performance hit. Assertions to the rescue! Check out the following code:</p>
+<p class="pre"><img src="images/un171-01.jpg" alt="Images" /></p>
+<p class="indent">Because you’re so certain of your assumption, you don’t want to take the time (or program performance hit) to write exception-handling code. And at runtime, you don’t want the <code>if/else</code> either because if you do reach the <code>else</code> condition, it means your earlier logic (whatever was running prior to this method being called) is flawed.</p>
+<p class="indent">Assertions let you test your assumptions during development, but the assertion code basically evaporates when the program is deployed, leaving behind no overhead or debugging code to track down and remove. Let’s rewrite <code>methodA()</code> to validate that the argument was not negative:</p>
+<p class="pre"><img src="images/un171-02.jpg" alt="Images" /></p>
+<p class="indent">Not only do assertions make code stay cleaner and tighter, but also, because assertions are inactive unless specifically “turned on” (enabled), the code will run as though it were written like this:</p>
+<p class="pre"><img src="images/un171-03.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_172" epub:type="pagebreak"></span>Assertions work quite simply. You always assert that something is <code>true</code>. If it is, no problem. Code keeps running. But if your assertion turns out to be wrong (<code>false</code>), then a stop-the-world <code>AssertionError</code> is thrown (which you should never, ever handle!) right then and there, so you can fix whatever logic flaw led to the problem.</p>
+<p class="indent">Assertions come in two flavors: <em>really simple</em> and <em>simple,</em> as follows:</p>
+<p class="noindent">Really simple:</p>
+<p class="pre"><img src="images/un172-01.jpg" alt="Images" /></p>
+<p class="noindent">Simple:</p>
+<p class="pre"><img src="images/un172-02.jpg" alt="Images" /></p>
+<p class="indent">The difference between the two is that the simple version adds a second expression separated from the first (boolean expression) by a colon—this expression’s string value is added to the stack trace. Both versions throw an immediate <code>AssertionError</code>, but the simple version gives you a little more debugging help, whereas the really simple version tells you only that your assumption was false.</p>
+<p class="text-icon"><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindent"><strong>Assertions are typically enabled when an application is being tested and debugged, but disabled when the application is deployed. The assertions are still in the code, although ignored by the JVM, so if you do have a deployed application that starts misbehaving, you can always choose to enable assertions in the field for additional testing.</strong></p>
+<h5 class="h5">Assertion Expression Rules</h5>
+<p class="noindent">Assertions can have either one or two expressions, depending on whether you’re using the “simple” or the “really simple.” The first expression (we’ll call it expression1) must always result in a <code>boolean</code> value! Follow the same rules you use for <code>if</code> and <code>while</code> tests. The whole point is to assert <code>aTest</code>, which means you’re asserting that <code>aTest</code> is <code>true</code>. If it is <code>true</code>, no problem. If it’s not <code>true</code>, however, then your assumption was wrong and you get an <code>AssertionError</code>.</p>
+<p class="indent">The second expression (expression2), used only with the simple version of an <code>assert</code> statement, can be anything that results in a value. Remember, the second <span id="page_173" epub:type="pagebreak"></span>expression is used to generate a <code>String</code> message that displays in the stack trace to give you a little more debugging information. It works much like <code>System.out<br/>.println()</code> in that you can pass it a primitive or an object and it will convert it into a <code>String</code> representation. It must resolve to a value!</p>
+<p class="indent">The following code lists legal and illegal expressions for both parts of an <code>assert</code> statement. Remember, expression2 (the value to print in the stack trace) is used only with the simple <code>assert</code> statement; the second expression exists solely to give you a little more debugging detail:</p>
+<p class="pre"><img src="images/un173-01.jpg" alt="Images" /></p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+<div class="side1">
+<p class="indent"><strong><em>If you see the word "expression" in a question about assertions and the question doesn’t specify whether it means expression1 (the boolean test) or expression2 (the value to print in the stack trace), always assume the word "expression" refers to expression1, the boolean test. For example, consider the following question:</em></strong></p>
+<p class="indentb"><strong><em>Exam Question: An <code>assert</code> expression must result in a <code>boolean</code> value, true or false?</em></strong></p>
+<p class="noindent"><strong><em>Assume that the word "expression" refers to expression1 of an assert, so the question statement is correct. If the statement were referring to expression2, however, the statement would be incorrect because expression2 can be anything that results in a value, not just a <code>boolean</code>.</em></strong></p>
+</div>
+</div>
+<h4 class="h4" id="ch3lev2sec2"><span id="page_174" epub:type="pagebreak"></span><strong>Using Assertions</strong></h4>
+<p class="noindent">If you want to use assertions, the first step is to put them in your code. Next, every time you run your code, you can choose whether to enable the assertions or not.</p>
+<h5 class="h5">Running with Assertions</h5>
+<p class="noindent">Here’s where it gets cool. Once you’ve written your assertion-aware code, you can choose to enable or disable your assertions at runtime! The first thing to remember is that at runtime assertions are <strong>disabled by default</strong>.</p>
+<h5 class="h5">Enabling Assertions at Runtime</h5>
+<p class="noindent">You enable assertions at runtime with a command like this:</p>
+<p class="pre"><code>java -ea com.geeksanonymous.TestClass</code></p>
+<p class="noindent">or</p>
+<p class="pre"><code>java -enableassertions com.geeksanonymous.TestClass</code></p>
+<p class="noindent">The preceding command-line switches tell the JVM to run with assertions enabled.</p>
+<h5 class="h5">Disabling Assertions at Runtime</h5>
+<p class="noindent">You must also know the command-line switches for disabling assertions:</p>
+<p class="pre"><code>java -da com.geeksanonymous.TestClass</code></p>
+<p class="noindent">or</p>
+<p class="pre"><code>java -disableassertions com.geeksanonymous.TestClass</code></p>
+<p class="indent">Because assertions are disabled by default, using the disable switches might seem unnecessary. Indeed, using the switches the way we do in the preceding example just gives you the default behavior (in other words, you get the same result, regardless of whether you use the disabling switches). But…you can also selectively enable and disable assertions in such a way that they’re enabled for some classes and/or packages and disabled for others while a particular program is running.</p>
+<h5 class="h5">Selective Enabling and Disabling</h5>
+<p class="noindent">The command-line switches for assertions can be used in various ways:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>W</strong><strong>ith no arguments (as in the preceding examples)</strong> Enables or disables assertions in all classes, except for the system classes.</p>
+<p class="bull"><span id="page_175" epub:type="pagebreak"></span><img class="inline" src="images/box.jpg" alt="Images" />   <strong>With a package name</strong> Enables or disables assertions in the package specified and in any packages below this package in the same directory hierarchy (more on that in a moment).</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <strong>W</strong><strong>ith a class name</strong> Enables or disables assertions in the class specified.</p>
+<p class="indent">You can combine switches to, say, disable assertions in a single class but keep them enabled for all others as follows:</p>
+<p class="pre"><code>java -ea  -da:com.geeksanonymous.Foo</code></p>
+<p class="noindent">The preceding command line tells the JVM to enable assertions in general, but disable them in the class <code>com.geeksanonymous.Foo</code>. You can do the same selectivity for a package as follows:</p>
+<p class="pre"><code>java -ea -da:com.geeksanonymous...</code></p>
+<p class="indent">The preceding command line tells the JVM to enable assertions in general, but disable them in the package <code>com.geeksanonymous</code> and all of its subpackages! You may not be familiar with the term “subpackages,” since that term wasn’t used much prior to assertions. A subpackage is any package in a subdirectory of the named package. For example, look at the following directory tree:</p>
+<p class="pre"><img src="images/un175-03.jpg" alt="Images" /></p>
+<p class="indent">This tree lists three directories:</p>
+<p class="pre"><img src="images/un175-04.jpg" alt="Images" /></p>
+<p class="indent">The subpackage of <code>com.geeksanonymous</code> is the <code>twelvesteps</code> package. Remember that in Java, the <code>com.geeksanonymous.twelvesteps</code> package is treated as a completely distinct package that has no relationship with the packages above it (in this example, the <code>com.geeksanonymous</code> package), except they just happen to share a couple of directories. <a href="ch3.xhtml#ch3tab1">Table 3-1</a> lists examples of command-line switches for enabling and disabling assertions.<span id="page_176" epub:type="pagebreak"></span></p>
+<p class="tabcap" id="ch3tab1"><span class="table"><strong>TABLE 3-1</strong></span> Assertion Command-Line Switches</p>
+<p class="imaget"><img src="images/tab03-01.jpg" alt="Images" /></p>
+<h4 class="h4" id="ch3lev2sec3"><strong>Using Assertions Appropriately</strong></h4>
+<p class="noindent">Not all legal uses of assertions are considered appropriate. As with so much of Java, you can abuse the intended use of assertions, despite the best efforts of Oracle’s Java engineers to discourage you from doing so. For example, you’re never supposed to handle an assertion failure. That means you shouldn’t catch it with a <code>catch</code> clause and attempt to recover. Legally, however, <code>AssertionError</code> is a subclass of <code>Throwable</code>, so it can be caught. But just don’t do it! If you’re going to try to recover from something, it should be an exception. To discourage you from trying to substitute an assertion for an exception, the <code>AssertionError</code> doesn’t provide access to the object that generated it. All you get is the <code>String</code> message.</p>
+<p class="indent">So who gets to decide what’s appropriate? Oracle. The exam uses Oracle’s “official” assertion documentation to define appropriate and inappropriate uses.</p>
+<h5 class="h5">Don’t Use Assertions to Validate Arguments to a public Method</h5>
+<p class="noindent">The following is an inappropriate use of assertions:</p>
+<p class="pre"><img src="images/un176-01.jpg" alt="Images" /></p>
+<div class="side">
+<p class="exam"><span id="page_177" epub:type="pagebreak"></span><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1"><strong><em>If you see the word “appropriate” on the exam, do not mistake that for “legal.” “Appropriate” always refers to the way in which something is supposed to be used, according to either the developers of the mechanism or best practices officially embraced by Oracle. If you see the word “correct” in the context of assertions, as in “Line 3 is a correct use of assertions,” you should also assume that correct is referring to how assertions SHOULD be used rather than how they legally COULD be used.</em></strong>
+</div>
+<p class="indent">A <code>public</code> method might be called from code that you don’t control (or from code you have never seen). Because <code>public</code> methods are part of your interface to the outside world, you’re supposed to guarantee that any constraints on the arguments will be enforced by the method itself. But since assertions aren’t guaranteed to actually run (they’re typically disabled in a deployed application), the enforcement won’t happen if assertions aren’t enabled. You don’t want publicly accessible code that works only conditionally, depending on whether assertions are enabled.</p>
+<p class="indent">If you need to validate <code>public</code> method arguments, you’ll probably use exceptions to throw, say, an <code>IllegalArgumentException</code> if the values passed to the <code>public</code> method are invalid.</p>
+<h5 class="h5">Do Use Assertions to Validate Arguments to a private Method</h5>
+<p class="noindent">If you write a <code>private</code> method, you almost certainly wrote (or control) any code that calls it. When you assume that the logic in code calling your <code>private</code> method is correct, you can test that assumption with an assertion as follows:</p>
+<p class="pre"><img src="images/un177-01.jpg" alt="Images" /></p>
+<p class="indent">The only difference that matters between the preceding example and the one before it is the access modifier. So, do enforce constraints on <code>private</code> methods’ arguments, but do not enforce constraints on <code>public</code> methods. You’re certainly free to compile assertion code with an inappropriate validation of <code>public</code> arguments, but for the exam (and real life), you need to know that you shouldn’t do it.</p>
+<h5 class="h5"><span id="page_178" epub:type="pagebreak"></span>Don’t Use Assertions to Validate Command-Line Arguments</h5>
+<p class="noindent">This is really just a special case of the “Do not use assertions to validate arguments to a <code>public</code> method” rule. If your program requires command-line arguments, you’ll probably use the exception mechanism to enforce them.</p>
+<h5 class="h5">Do Use Assertions, Even in public Methods, to Check for Cases That You Know Are Never, Ever Supposed to Happen</h5>
+<p class="noindent">This can include code blocks that should never be reached, including the default of a <code>switch</code> statement as follows:</p>
+<p class="pre"><img src="images/un178-01.jpg" alt="Images" /></p>
+<p class="indent">If you assume that a particular code block won’t be reached, as in the preceding example where you assert that <code>x</code> must be 1, 2, or 3, then you can use <code>assert false</code> to cause an <code>AssertionError</code> to be thrown immediately if you ever do reach that code. So in the <code>switch</code> example, we’re not performing a boolean test—we’ve already asserted that we should never be there, so just getting to that point is an automatic failure of our assertion/assumption.</p>
+<h5 class="h5">Don’t Use assert Expressions That Can Cause Side Effects!</h5>
+<p class="noindent">The following would be a very bad idea:</p>
+<p class="pre"><img src="images/un178-02.jpg" alt="Images" /></p>
+<p class="indent">The rule is that an <code>assert</code> expression should leave the program in the same state it was in before the expression! Think about it. <code>assert</code> expressions aren’t guaranteed to always run, so you don’t want your code to behave differently depending on whether assertions are enabled. Assertions must not cause any side effects. If assertions are enabled, the only change to the way your program runs is that an <code>AssertionError</code> can be thrown if one of your assertions (think <em>assumptions</em>) turns out to be false.</p>
+<p class="text-icon"><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_179" epub:type="pagebreak"></span><strong><em>Using assertions that cause side effects can cause some of the most maddening and hard-to-find bugs known to man or woman! When a hot-tempered QA analyst is screaming at you that your code doesn’t work, trotting out the old “well, it works on MY machine” excuse won’t get you very far.</em></strong></p>
+<p class="title-o"><span class="white"><strong>CERTIFICATION OBJECTIVE</strong></span></p>
+<h3 class="h3" id="ch3lev1sec2"><strong>Working with Exception Handling (OCP Objectives 6.1, 6.2, 6.3, and 6.4)</strong></h3>
+<p class="noindent"><em>6.1 Use try-catch, and throw statements.</em></p>
+<p class="noindent"><em>6.2 Use catch, multi-catch, and finally clauses</em>.</p>
+<p class="noindent"><em>6.3 Use Autoclose resources with a try-with-resources statement.</em></p>
+<p class="noindentb"><em>6.4 Create custom exceptions and Auto-closeable resources.</em></p>
+<p class="noindent">You should already know the basics of <code>try</code>, <code>catch</code>, and <code>throw</code>, but if you need a refresher, head back to <a href="ch5.xhtml#ch5">Chapter 5</a> of the <em>OCA Java SE 8 Programmer I Exam Guide.</em> For this section, we’re assuming you know that material, so we’re going to dive right into Java’s more advanced exception-handling features.</p>
+<h4 class="h4" id="ch3lev2sec4"><strong>Use the try Statement with multi-catch and finally Clauses</strong></h4>
+<p class="noindent">Sometimes we want to handle different types of exceptions the same way. Especially when all we can do is log the exception and declare defeat. But we don’t want to repeat code. So what to do? When you were studying for the OCA 8 exam, you already saw that having a single catch-all exception handler is a bad idea. Prior to Java 7, the best we could do was</p>
+<p class="pre"><img src="images/un179-01.jpg" alt="Images" /></p>
+<p class="noindent">You may be thinking that it is only one line of duplicate code. But what happens when you are catching six different exception types? That’s a lot of duplication. <span id="page_180" epub:type="pagebreak"></span>Luckily, Java 7 made handling this sort of situation nice and easy with a feature called multi-<code>catch</code>:</p>
+<p class="pre"><img src="images/un180-01.jpg" alt="Images" /></p>
+<p class="noindent">No more duplication. This is great. As you might imagine, multi-<code>catch</code> is short for “multiple <code>catch</code>.” You just list out the types you want the multi-<code>catch</code> to handle separated by pipe (<code>|</code>) characters. This is easy to remember because <code>|</code> is the “or” operator in Java, which means the <code>catch</code> can be read as “<code>SQLException</code> or <code>IOException e</code>.“</p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indentb"><strong><em>You can’t use the variable name multiple times in a <code>multi</code>-catch. The following won’t compile:</em></strong></p>
+<p class="noindentb"><code>catch(Exception1 e1 | Exception2 e2)</code></p>
+<p class="noindent"><strong><em>It makes sense that this example doesn’t compile. After all, the code in the exception handler needs to know which variable name to refer to.</em></strong></p>
+<p class="noindentb"><code>catch(Exception1 e | Exception2 e)</code></p>
+<p class="noindentb"><strong><em>This one is tempting. When we declare variables, we normally put the variable name right after the type. Try to think of it as a list of types. We are declaring variable e to be caught and it must be one of <code>Exception1</code> or <code>Exception2</code> types.</em></strong></p>
+</div>
+<p class="indent">With multi-<code>catch</code>, order doesn’t matter. The following two snippets are equivalent to each other:</p>
+<p class="pre"><img src="images/un180-04.jpg" alt="Images" /></p>
+<p class="indent">Just like with exception matching in a regular <code>catch</code> block, you can’t just throw any two exceptions together. With multi-<code>catch</code>, you have to make sure a given exception can only match one type. The following will not compile:</p>
+<p class="pre"><img src="images/un180-05.jpg" alt="Images" /></p>
+<p class="indent"><span id="page_181" epub:type="pagebreak"></span>You’ll get a compiler error that looks something like:</p>
+<p class="pre"><img src="images/un181-01.jpg" alt="Images" /></p>
+<p class="noindent">Since <code>FileNotFoundException</code> is a subclass of <code>IOException</code>, we could have just written that in the first place! There was no need to use multi-<code>catch</code>. The simplified and working version simply says:</p>
+<p class="pre"><img src="images/un181-02.jpg" alt="Images" /></p>
+<p class="indent">Remember, multi-<code>catch</code> is only for exceptions in different inheritance hierarchies. To make sure this is clear, what do you think happens with the following code?</p>
+<p class="pre"><img src="images/un181-03.jpg" alt="Images" /></p>
+<p class="noindent">That’s right. It won’t compile because <code>IOException</code> is a subclass of <code>Exception</code>. Which means it is redundant and the compiler won’t accept it.</p>
+<p class="indent">To summarize, we use multi-<code>catch</code> when we want to reuse an exception handler. We can list as many types as we want so long as none of them have a superclass/subclass relationship with each other.</p>
+<h5 class="h5">Multi-catch and catch Parameter Assignment</h5>
+<p class="noindent">There is one tricky thing with multi-<code>catch</code>. And we know the exam creators like tricky things!</p>
+<p class="indent">The following LEGAL code demonstrates assigning a new value to the single catch parameter:</p>
+<p class="pre"><img src="images/un181-04.jpg" alt="Images" /></p>
+<p class="text-icon"><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindentb"><strong>Don’t assign a new value to the <strong><em>catch</em></strong> parameter. It is <strong>not</strong> good practice and creates confusing, hard-to-maintain code. But it is legal Java code to assign a new value to the <strong><em>catch</em></strong> block’s parameter when there is only one type listed, and it will compile.</strong></p>
+<p class="indent">The following ILLEGAL code demonstrates trying to assign a value to the final multi-<code>catch</code> parameter:</p>
+<p class="pre"><img src="images/un181-05.jpg" alt="Images" /></p>
+<p class="noindent"><span id="page_182" epub:type="pagebreak"></span>At least you get a clear compiler error if you try to do this. The compiler tells you:</p>
+<p class="pre"><code>The parameter e of a multi-catch block cannot be assigned</code></p>
+<p class="indent">Since multi-<code>catch</code> uses multiple types, there isn’t a clearly defined type for the variable that you can set. Java solves this by making the catch parameter <code>final</code> when that happens. And then the code doesn’t compile because you can’t assign a new value to a <code>final</code> variable.</p>
+<h5 class="h5">Rethrowing Exceptions</h5>
+<p class="noindent">Sometimes we want to do something with the thrown exceptions before we rethrow them:</p>
+<p class="pre"><img src="images/un182-02.jpg" alt="Images" /></p>
+<p class="indent">This is a common pattern called “handle and declare.” We want to do something with the exception—log it. We also want to acknowledge we couldn’t completely handle it, so we declare it and let the caller deal with it. (As an aside, many programmers believe that logging an exception and rethrowing it is a bad practice, but you never know—you might see this kind of code on the exam.)</p>
+<p class="indent">You may have noticed that <code>couldThrowAnException()</code> doesn’t actually throw an exception. The compiler doesn’t know this. The method signature is key to the compiler. It can’t assume that no exception gets thrown, as a subclass could override the method and throw an exception.</p>
+<p class="indent">There is a bit of duplicate code here. We have the list of exception types thrown by the methods we call typed twice. Multi-<code>catch</code> was introduced to avoid having duplicate code, yet here we are with duplicate code.</p>
+<p class="indent">Lucky for us, Java helps us out here as well with a feature added in Java 7. This example is a nicer way of writing the previous code:</p>
+<p class="pre"><img src="images/un182-03.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_183" epub:type="pagebreak"></span><img src="images/un183-01.jpg" alt="Images" /></p>
+<p class="noindent"><strong>Notice the multi-</strong><strong>catch</strong><strong> is gone and replaced with catch(Exception e</strong><strong>)</strong>. It’s not bad practice here, though, because we aren’t really catching all exceptions. The compiler is treating <code>Exception</code> as “any exceptions that the called methods happen to throw.” (You’ll see this idea of code shorthand again with the diamond operator when you get to generics.)</p>
+<p class="indent">This is very different from Java 6 code that catches <code>Exception</code>. In Java 6, we’d need the <code>rethrow()</code> method signature to be <code>throws Exception</code> in order to make this code compile.</p>
+<p class="indent">In Java 7 and later, <code>} catch (Exception e) {</code> doesn’t really catch ANY <code>Exception</code> subclass. The code may say that, but the compiler is translating for you. The compiler says, “Well, I know it can’t be just any exception because the throws clause won’t let me. I’ll pretend the developer meant to only catch <code>SQLException</code> and <code>IOException</code>. After all, if any others show up, I’ll just fail compilation on <code>throw e;</code>—just like I used to in Java 6.” Tricky, isn’t it?</p>
+<p class="indent">At the risk of being too repetitive, remember that <code>catch (Exception e)</code> doesn’t necessarily catch all <code>Exception</code> subclasses. In Java 7 and later, it means catch all <code>Exception</code> subclasses that would allow the method to compile.</p>
+<p class="indent">Got that? Now why on earth would Oracle do this to us? It sounds more complicated than it used to be! Turns out they were trying to solve another problem at the same time they were changing this stuff. Suppose the API developer of <code>couldThrowAnException()</code> decided the method will never throw a <code>SQLException</code> and removes <code>SQLException</code> from the signature to reflect that.</p>
+<p class="indent">Imagine we were using the Java 6 style of having one <code>catch</code> block per exception or even the multi-<code>catch</code> style of</p>
+<p class="pre"><code>  } catch (SQLException | IOException e) {</code></p>
+<p class="noindent">Our code would stop compiling with an error like:</p>
+<p class="pre"><code>Unreachable catch block for SQLException</code></p>
+<p class="indent">It is reasonable for code to stop compiling if we add exceptions to a method. But we don’t want our code to break if a method’s implementation gets LESS brittle. And that’s the advantage of using</p>
+<p class="pre"><code>  } catch (Exception e) {</code></p>
+<p class="noindent"><span id="page_184" epub:type="pagebreak"></span>Java infers what we mean here and doesn’t say a peep when the API we are calling removes an exception.</p>
+<p class="text-icon"><img src="images/onjob.jpg" alt="Images" /></p>
+<p class="noindentb"><strong>Don’t go changing your API signatures on a whim. Most code was written before Java 7 and will break if you change signatures. Your callers won’t thank you when their code suddenly fails compilation because they tried to use your new, shiny, “cleaner” API.</strong></p>
+<p class="indent">You’ve probably noticed by now that Oracle values backward compatibility and doesn’t change the behavior or “compiler worthiness” of code from older versions of Java. That still stands. In Java 6, we can’t write <code>catch (Exception e)</code> and merely throw specific exceptions. If we tried, the compiler would still complain:</p>
+<p class="pre"><code>Unhandled exception type Exception.</code></p>
+<p class="noindent">Backward compatibility only needs to work for code that compiles! It’s OK for the compiler to get less strict over time.</p>
+<p class="indent">To make sure you understand what is going on here, think about what happens in this example:</p>
+<p class="pre"><img src="images/un184-02.jpg" alt="Images" /></p>
+<p class="indent"><a href="ch3.xhtml#ch3tab2">Table 3-2</a> summarizes handling changes to the exception-related parts of method signatures in Java 6, Java 7, and Java 8.</p>
+<p class="tabcap" id="ch3tab2"><span class="table"><strong>TABLE 3-2</strong></span> Exceptions and Signatures</p>
+<p class="imaget"><img src="images/tab03-02.jpg" alt="Images" /></p>
+<p class="indent">There is one more trick. If you assign a value to the <code>catch</code> parameter, the code no longer compiles:</p>
+<p class="pre"><img src="images/un184-03.jpg" alt="Images" /></p>
+<p class="noindent">As with multi-<code>catch</code>, you shouldn’t be assigning a new value to the <code>catch</code> parameter in real life anyway. The difference between this and multi-<code>catch</code> is where the compiler error occurs. For multi-<code>catch</code>, the compiler error occurs on the line where we attempt to assign a new value to the parameter, whereas here, the compiler error occurs on the line where we <code>throw e</code>. It is different because code written prior to Java 7 still needs to compile. Because the multi-<code>catch</code> syntax is still relatively new, there is no legacy code to worry about.<span id="page_185" epub:type="pagebreak"></span></p>
+<h4 class="h4" id="ch3lev2sec5"><strong>AutoCloseable Resources with a try-with-resources Statement</strong></h4>
+<p class="noindent">The <code>finally</code> block is a good place for closing files and assorted other resources, but real-world clean-up code is easy to get wrong. And when correct, it is verbose. Let’s look at the code to close our one resource when closing a file:</p>
+<p class="pre">     <img src="images/un185-01.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_186" epub:type="pagebreak"></span><img src="images/un186-01.jpg" alt="Images" /></p>
+<p class="indent">That’s a lot of code just to close a single file! But it’s all necessary. First, we need to check if the reader is null on line 7. It is possible the <code>try</code> block threw an exception before creating the reader, or while trying to create the reader if the file we are trying to read doesn’t exist. It isn’t until line 9 that we get to the one line in the whole <code>finally</code> block that does what we care about—closing the file. Lines 8 and 10 show a bit more housekeeping. We can get an <code>IOException</code> on attempting to close the file. While we could try to handle that exception, there isn’t much we can do, thus making it common to just ignore the exception. This gives us nine lines of code (lines 6–14) just to close a file.</p>
+<p class="indent">Developers typically write a helper class to close resources, or they use the open-source Apache Commons helper to get this mess down to three lines:</p>
+<p class="pre"><img src="images/un186-02.jpg" alt="Images" /></p>
+<p class="noindent">Which is still three lines too many.</p>
+<p class="indent">Lucky for us, we have <em>Automatic Resource Management</em> using “<code>try</code>-with-resources” to get rid of even these three lines. The following code is equivalent to the previous example:</p>
+<p class="pre"><img src="images/un186-03.jpg" alt="Images" /></p>
+<p class="noindent">No <code>finally</code> left at all! We don’t even mention closing the reader. Automatic Resource Management takes care of it for us. Let’s take a look at what happens here. <strong>We start out by declaring the reader inside the try declaration. Think of the parentheses as a for loop in which we declare a loop index variable that is scoped to just the loop. Here, the reader is scoped to just the try block. Not the catch block, just the try block.</strong></p>
+<p class="indent"><span id="page_187" epub:type="pagebreak"></span>The actual <code>try</code> block does the same thing as before. It reads from the file. Or, at least, it comments that it would read from the file. The <code>catch</code> block also does the same thing as before. And just like in our traditional <code>try</code> statement, <code>catch</code> is optional.</p>
+<p class="indent">Remember that a <code>try</code> must have <code>catch</code> or <code>finally</code>. Time to learn something new about that rule.</p>
+<p class="indent">This is ILLEGAL code because it demonstrates a <code>try</code> without a <code>catch</code> or <code>finally</code>:</p>
+<p class="pre"><img src="images/un187-01.jpg" alt="Images" /></p>
+<p class="indent">The following LEGAL code demonstrates a <code>try</code>-with-resources with no <code>catch</code> or <code>finally</code>:</p>
+<p class="pre"><img src="images/un187-02.jpg" alt="Images" /></p>
+<p class="indent">What’s the difference? The legal example does have a <code>finally</code> block; you just don’t see it. <strong>The try</strong><strong>-with-resources statement is logically calling a finally block to close the reader.</strong> And just to make this even trickier, you can add your own <code>finally</code> block to <code>try</code>-with-resources as well. Both will get called. We’ll take a look at how this works shortly.</p>
+<p class="indent">Since the syntax is inspired from the <code>for</code> loop, we get to use a semicolon when declaring multiple resources in the <code>try</code>. For example:</p>
+<p class="pre"><img src="images/un187-03.jpg" alt="Images" /></p>
+<p class="indent">There is something new here. Our declaration calls methods. Remember that the <code>try</code>-with-resources is just Java code. It is restricted to only declarations. This means if you want to do anything more than one statement long, you’ll need to put it into a method.</p>
+<p class="indent">To review, <a href="ch3.xhtml#ch3tab3">Table 3-3</a> lists the big differences that are new for <code>try</code>-with-resources.</p>
+<p class="tabcap" id="ch3tab3"><span class="table"><strong>TABLE 3-3</strong></span> Comparing Traditional <code>try</code> Statement to <code>try</code>-with-resources</p>
+<p class="imaget"><img src="images/tab03-03.jpg" alt="Images" /></p>
+<h5 class="h5">AutoCloseable and Closeable</h5>
+<p class="noindent">Because Java is a statically typed language, it doesn’t let you declare just any type in a <code>try</code>-with-resources statement. The following code will not compile:</p>
+<p class="pre"><code><strong>try</strong> (String s = "hi") {}</code><span id="page_188" epub:type="pagebreak"></span></p>
+<p class="noindent">You’ll get a compiler error that looks something like:</p>
+<p class="pre"><code>The resource type String does not implement java.lang.AutoCloseable</code></p>
+<p class="indent"><code>AutoCloseable</code> only has one method to implement. Let’s take a look at the simplest code we can write using this interface:</p>
+<p class="pre"><img src="images/un188-02.jpg" alt="Images" /></p>
+<p class="indent">There’s also an interface called <code>java.io.Closeable</code>, which is similar to <code>AutoCloseable</code> but with some key differences. Why are there two similar interfaces, you may wonder? The <code>Closeable</code> interface was introduced in Java 5. When <code>try</code>-with-resources was invented in Java 7, the language designers wanted to change some things but needed backward compatibility with all existing code. So they created a superinterface with the rules they wanted.</p>
+<p class="indent">One thing the language designers wanted to do was make the signature more generic. <code>Closeable</code> allows implementors to throw only an <code>IOException</code> or a <code>RuntimeException</code>. <code>AutoCloseable</code> allows any <code>Exception</code> at all to be thrown. Look at some examples:</p>
+<p class="pre"><img src="images/un188-03.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_189" epub:type="pagebreak"></span><img src="images/un189-01.jpg" alt="Images" /></p>
+<p class="noindent">In your code, Oracle recommends throwing the narrowest <code>Exception</code> subclass that will compile. However, they do limit <code>Closeable</code> to <code>IOException</code>, and you must use <code>AutoCloseable</code> for anything more.</p>
+<p class="indent">The next difference is even trickier. What happens if we call the <code>close()</code> multiple times? It depends. For classes that implement <code>Closeable</code>, the implementation is required to be <em>idempotent</em>—which means you can call <code>close()</code> over and over again and nothing will happen the second time and beyond. It will not attempt to close the resource again and it will not blow up. For classes that implement <code>AutoCloseable</code>, there is no such guarantee.</p>
+<p class="indent">If you look at the JavaDoc, you’ll notice many classes implement both <code>AutoCloseable</code> and <code>Closeable</code>. These classes use the stricter signature rules and are idempotent. They still need to implement <code>Closeable</code> for backward compatibility, but added <code>AutoCloseable</code> for the new contract.</p>
+<p class="indent">To review, <a href="ch3.xhtml#ch3tab4">Table 3-4</a> shows the differences between <code>AutoCloseable</code> and <code>Closeable</code>. Remember the exam creators like to ask about “similar but not quite the same” things!</p>
+<p class="tabcap" id="ch3tab4"><span class="table"><strong>TABLE 3-4</strong></span> Comparing <code>AutoCloseable</code> and <code>Closeable</code></p>
+<p class="imaget"><img src="images/tab03-04.jpg" alt="Images" /></p>
+<p class="noindentt"><strong>A Complex try-with-resources Example</strong> The following example is as complicated as <code>try</code>-with-resources gets:</p>
+<p class="pre">    <img src="images/un189-02.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_190" epub:type="pagebreak"></span><img src="images/un190-01.jpg" alt="Images" /></p>
+<p class="noindentb">Running the preceding code will print:</p>
+<p class="indent"><code>Try</code></p>
+<p class="indent"><code>Close – Two</code></p>
+<p class="indent"><code>Close – One</code></p>
+<p class="indent"><code>Catch</code></p>
+<p class="indentb"><code>Finally</code></p>
+<p class="indent">It’s actually more logical than it looks at first glance. We first enter the <code>try</code> block on line 11, and Java creates our two resources. Line 12 prints <code>Try</code>. When we throw an exception on line 13, the first interesting thing happens. The <code>try</code> block “ends,” and Automatic Resource Management automatically cleans up the resources before moving on to the <code>catch</code> or <code>finally</code>. The resources get cleaned up, “backward” printing <code>Close – Two</code> and then <code>Close – One</code>. The <code>close()</code> method gets called in the reverse order in which resources are declared to allow for the fact that resources might depend on each other. Then we are back to the regular <code>try</code> block order, printing <code>Catch</code> and <code>Finally</code> on lines 15 and 17.</p>
+<p class="indent">If you only remember two things from this example, remember that <code>try</code>-with-resources is part of the <code>try</code> block, and resources are cleaned up in the reverse order in which they were created.</p>
+<h5 class="h5">Suppressed Exceptions</h5>
+<p class="noindent">We’re almost done with exceptions. There’s only one more wrinkle to cover in exception handling. Now that we have an extra step of closing resources in the <code>try</code>, it is possible for multiple exceptions to get thrown. Each <code>close()</code> method can throw an exception in addition to the <code>try</code> block itself.</p>
+<p class="pre"><img src="images/un190-02.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_191" epub:type="pagebreak"></span><img src="images/un191-01.jpg" alt="Images" /></p>
+<p class="noindent">We know that after the exception in the <code>try</code> block gets thrown on line 4, the <code>try</code>-with-resources still calls <code>close()</code> on line 3 and the <code>catch</code> block on line 5 catches one of the exceptions. Running the code prints:</p>
+<p class="pre"><img src="images/un191-02.jpg" alt="Images" /></p>
+<p class="noindent">This tells us the exception we thought we were throwing still gets treated as most important. Java also adds any exceptions thrown by the <code>close()</code> methods to a suppressed array in that main exception. The <code>catch</code> block or caller can deal with any or all of these. If we remove line 4, the code just prints <code>Closing</code>.</p>
+<p class="indent">In other words, the exception thrown in <code>close()</code> doesn’t always get suppressed. It becomes the main exception if there isn’t already one existing. As one more example, think about what the following prints:</p>
+<p class="pre"><img src="images/un191-03.jpg" alt="Images" /></p>
+<p class="noindentb">The answer is:</p>
+<p class="pre"><code>Closing - 2</code></p>
+<p class="pre"><code>suppressed:java.io.IOException: Closing – 1</code></p>
+<p class="indent"><span id="page_192" epub:type="pagebreak"></span>Until <code>try</code>-with-resources calls <code>close()</code>, everything is going just dandy. When Automatic Resource Management calls <code>b2.close()</code>, we get our first exception. This becomes the main exception. Then, Automatic Resource Management calls <code>b1.close()</code> and throws another exception. Since there was already an exception thrown, this second exception gets added as a second exception.</p>
+<p class="indent">If the <code>catch</code> or <code>finally</code> block throws an exception, no suppressions happen. The last exception thrown gets sent to the caller rather than the one from the <code>try</code>—just like before <code>try</code>-with-resources was created.</p>
+<h3 class="h3b" id="ch3lev1sec3">CERTIFICATION SUMMARY</h3>
+<hr/>
+<p class="noindent">Assertions are a useful debugging tool. You learned how you can use them for testing by enabling them but keep them disabled when the application is deployed.</p>
+<p class="indent">You learned how <code>assert</code> statements always include a boolean expression, and if the expression is <code>true</code>, the code continues on, but if the expression is false, an <code>AssertionError</code> is thrown. If you use the two-expression <code>assert</code> statement, then the second expression is evaluated, converted to a <code>String</code> representation, and inserted into the stack trace to give you a little more debugging info. Finally, you saw why assertions should not be used to enforce arguments to public methods and why <code>assert</code> expressions must not contain side effects!</p>
+<p class="indent">Exception handling was enhanced in Java version 7, making exceptions easier to use. First you learned that you can specify multiple exception types to share a <code>catch</code> block using the new multi-<code>catch</code> syntax. The major benefit is in reducing code duplication by having multiple exception types share the same exception handler. The variable name is listed only once, even though multiple types are listed. You can’t assign a new exception to that variable in the <code>catch</code> block. Then you saw the “handle and declare” pattern where the exception types in the multi-<code>catch</code> are listed in the method signature and Java translates “<code>catch Exception e</code>” into that exception type list.</p>
+<p class="indent">Next, you learned about the <code>try</code>-with-resources syntax where Java will take care of calling <code>close()</code> for you. The objects are scoped to the <code>try</code> block. Java treats them as a <code>finally</code> block and closes these resources for you in the opposite order to which they were opened. If you have your own <code>finally</code> block, it is executed after <code>try</code>-with-resources closes the objects. You also learned the difference between <code>AutoCloseable</code> and <code>Closeable</code>. <code>Closeable</code> was introduced in Java 5, allowing only <code>IOException</code> (and <code>RuntimeException</code>) to be thrown. <code>AutoCloseable</code> was added in Java 7, allowing any type of <code>Exception</code>.</p>
+<h3 class="h3b" id="ch3lev1sec4"><span id="page_193" epub:type="pagebreak"></span><img src="images/tick1.jpg" alt="Images" /> TWO-MINUTE DRILL</h3>
+<p class="noindentt">Here are some of the key points from the certification objectives in this chapter.</p>
+<h5 class="h5">Test Invariants Using Assertions (OCP Objective 6.5)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Assertions give you a way to test your assumptions during development and debugging.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Assertions are typically enabled during testing but disabled during deployment.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Assertions are disabled at runtime by default. To enable them, use a command-line flag: <code>-ea</code> or <code>-enableassertions</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Selectively disable assertions by using the <code>-da</code> or <code>-disableassertions</code> flag.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If you enable or disable assertions using the flag without any arguments, you’re enabling or disabling assertions in general. You can combine enabling and disabling switches to have assertions enabled for some classes and/or packages, but not others.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  You can enable and disable assertions on a class-by-class basis, using the following syntax:<br/><code>java -ea-da:MyClass TestClass</code></p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  You can enable and disable assertions on a package-by-package basis, and any package you specify also includes any subpackages (packages further down the directory hierarchy).</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Do not use assertions to validate arguments to <code>public</code> methods.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Do not use <code>assert</code> expressions that cause side effects. Assertions aren’t guaranteed to always run, and you don’t want behavior that changes depending on whether assertions are enabled.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Do use assertions—even in <code>public</code> methods—to validate that a particular code block will never be reached. You can use <code>assert false;</code> for code that should never be reached so that an assertion error is thrown immediately if the <code>assert</code> statement is executed.</p>
+<h5 class="h5"><span id="page_194" epub:type="pagebreak"></span>Use the try Statement with Multi-catch and finally Clauses (OCP Objective 6.2)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If two <code>catch</code> blocks have the same exception handler code, you can merge them with multi-<code>catch</code> using <code>catch (Exception1 | Exception2 e)</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The types in a multi-<code>catch</code> list must not extend one another.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  When using multi-<code>catch</code>, the <code>catch</code> block parameter is final and cannot have a new value assigned in the <code>catch</code> block.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If you catch a general exception as shorthand for specific subclass exceptions and rethrow the caught exception, you can still list the specific subclasses in the method signature. The compiler will treat it as if you had listed them out in the catch.</p>
+<h5 class="h5">AutoCloseable Resources with a try-with-resources Statement (OCP Objectives 6.3 and 6.4)</h5>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>try</code>-with-resources automatically calls <code>close()</code> on any resources declared in the <code>try</code> as <code>try(Resource r = new Foo())</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>try</code> must have at least a <code>catch</code> or <code>finally</code> unless it is a <code>try</code>-with-resources. For <code>try</code>-with-resources, it can have neither, one, or both of the keywords.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>AutoCloseable</code>’s <code>close()</code> method throws <code>Exception</code> and may be but is not required to be idempotent. <code>Closeable</code>’s <code>close()</code> throws <code>IOException</code> and must be idempotent.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  <code>try</code>-with-resources are closed in reverse order of creation and before going on to <code>catch</code> or <code>finally</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  If more than one exception is thrown in a <code>try</code>-with-resources block, it gets added as a suppressed exception.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The type used in a <code>try</code>-with-resources statement must implement <code>AutoCloseable</code>.</p>
+<h3 class="h3b" id="ch3lev1sec5"><span id="page_195" epub:type="pagebreak"></span><img src="images/qs.jpg" alt="Images" /> SELF TEST</h3>
+<p class="noindentb">The following questions will help you measure your understanding of the material presented in this chapter. Read all of the choices carefully, as there may be more than one correct answer. Choose all correct answers for each question. Stay focused.</p>
+<p class="que"><strong><a id="ch3ans1" href="ch3.xhtml#r_ch3ans1">1</a>.</strong>   Which are true? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong>   It is appropriate to use assertions to validate arguments to methods marked <code>public</code></p>
+<p class="alpha"><strong>B.</strong>   It is appropriate to catch and handle assertion errors</p>
+<p class="alpha"><strong>C.</strong>   It is NOT appropriate to use assertions to validate command-line arguments</p>
+<p class="alpha"><strong>D.</strong>   It is appropriate to use assertions to generate alerts when you reach code that should not be reachable</p>
+<p class="alpha"><strong>E.</strong>   It is NOT appropriate for assertions to change a program’s state</p>
+<p class="que"><strong><a id="ch3ans2" href="ch3.xhtml#r_ch3ans2">2</a>.</strong>   Given:</p>
+<p class="pre">        <img src="images/un195-01.jpg" alt="Images" /></p>
+<p class="alpha-no">Which are true? (Choose all that apply.)</p>
+<p class="alpha"><strong>A.</strong>   Compilation succeeds</p>
+<p class="alpha"><strong>B.</strong>   Compilation fails due to an error on line 6</p>
+<p class="alpha"><strong>C.</strong>   Compilation fails due to an error on line 7</p>
+<p class="alpha"><strong>D.</strong>   Compilation fails due to an error on line 8</p>
+<p class="alpha"><strong>E.</strong>   Compilation fails due to an error on line 9</p>
+<p class="alpha"><strong>F.</strong>   Compilation fails due to an error on line 10</p>
+<p class="que"><strong><a id="ch3ans3" href="ch3.xhtml#r_ch3ans3">3</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un195-02.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_196" epub:type="pagebreak"></span><img src="images/un196-01.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result?</p>
+<p class="alpha">A. <code>ad</code></p>
+<p class="alpha">B. <code>acd</code></p>
+<p class="alpha">C. <code>cd</code></p>
+<p class="alpha">D. <code>d</code></p>
+<p class="alpha">E. Compilation fails</p>
+<p class="alpha">F. An exception is thrown at runtime</p>
+<p class="que"><strong><a id="ch3ans4" href="ch3.xhtml#r_ch3ans4">4</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un196-02.jpg" alt="Images" /></p>
+<p class="alpha-no">Which, inserted independently at <code>// insert code here</code>, will compile and produce the output <code>b</code>? (Choose all that apply.)</p>
+<p class="alpha">A. <code>catch(Exception e) {</code></p>
+<p class="alpha">B. <code>catch(FileNotFoundException e) {</code></p>
+<p class="alpha">C. <code>catch(IOException e) {</code></p>
+<p class="alpha">D. <code>catch(IOException | SQLException e) {</code></p>
+<p class="alpha">E. <code>catch(IOException e | SQLException e) {</code></p>
+<p class="alpha"><span id="page_197" epub:type="pagebreak"></span>F. <code>catch(SQLException e) {</code></p>
+<p class="alpha">G. <code>catch(SQLException | IOException e) {</code></p>
+<p class="alpha">H. <code>catch(SQLException e | IOException e) {</code></p>
+<p class="que"><strong><a id="ch3ans5" href="ch3.xhtml#r_ch3ans5">5</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un197-02.jpg" alt="Images" /></p>
+<p class="alpha-no">Which, inserted independently at <code>// insert code here</code>, will compile and produce the output <code>error driving</code> before throwing an exception? (Choose all that apply.)</p>
+<p class="alpha">A. <code>catch(AnotherTrainComing e) {</code></p>
+<p class="alpha">B. <code>catch(AnotherTrainComing | RanOutOfTrack e) {</code></p>
+<p class="alpha">C. <code>catch(AnotherTrainComing e | RanOutOfTrack e) {</code></p>
+<p class="alpha">D. <code>catch(Exception e) {</code></p>
+<p class="alpha">E. <code>catch(IllegalArgumentException e) {</code></p>
+<p class="alpha">F. <code>catch(RanOutOfTrack e) {</code></p>
+<p class="alpha">G. None of the above—code fails to compile for another reason</p>
+<p class="que"><strong><a id="ch3ans6" href="ch3.xhtml#r_ch3ans6">6</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un197-04.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_198" epub:type="pagebreak"></span><img src="images/un198-01.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result?</p>
+<p class="alpha">A. <code>-t123t</code></p>
+<p class="alpha">B. <code>-t12c3</code></p>
+<p class="alpha">C. <code>-t123</code></p>
+<p class="alpha">D. <code>-t1c3</code></p>
+<p class="alpha">E. <code>-t1c23</code></p>
+<p class="alpha"><span id="page_199" epub:type="pagebreak"></span>F. None of the above; <code>main()</code> throws an exception</p>
+<p class="alpha">G. Compilation fails</p>
+<p class="que"><strong><a id="ch3ans7" href="ch3.xhtml#r_ch3ans7">7</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un198-02.jpg" alt="Images" /></p>
+<p class="alpha-no">What is the result?</p>
+<p class="alpha">A. <code>2glf</code></p>
+<p class="alpha">B. <code>2lgf</code></p>
+<p class="alpha">C. <code>tglf</code></p>
+<p class="alpha">D. <code>t2lgf</code></p>
+<p class="alpha">E. <code>t2lgf</code></p>
+<p class="alpha">F. None of the above; <code>main()</code> throws an exception</p>
+<p class="alpha">G. Compilation fails</p>
+<p class="que"><strong><a id="ch3ans8" href="ch3.xhtml#r_ch3ans8">8</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un199-01.jpg" alt="Images" /></p>
+<p class="alpha-no">And the following possible changes:</p>
+<p class="alpha-no">C1. Replace line 2 with class <code>Lamb</code> implements <code>AutoCloseable {</code></p>
+<p class="alpha-no">C2. Replace line 2 with class <code>Lamb</code> implements <code>Closeable {</code></p>
+<p class="alpha-no">C3. Replace line 11 with <code>} finally {}</code></p>
+<p class="alpha-no">What change(s) allow the code to compile? (Choose all that apply.)</p>
+<p class="alpha">A. Just C1 is sufficient</p>
+<p class="alpha">B. Just C2 is sufficient</p>
+<p class="alpha">C. Just C3 is sufficient</p>
+<p class="alpha">D. Both C1 and C3 are required</p>
+<p class="alpha">E. Both C2 and C3 are required</p>
+<p class="alpha">F. The code compiles without any changes</p>
+<p class="que"><strong><a id="ch3ans9" href="ch3.xhtml#r_ch3ans9">9</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un199-03.jpg" alt="Images" /></p>
+<p class="alpha-no"><span id="page_200" epub:type="pagebreak"></span>Which exceptions will the code throw?</p>
+<p class="alpha">A. <code>IOException</code> with suppressed <code>RuntimeException a</code></p>
+<p class="alpha">B. <code>IOException</code> with suppressed <code>RuntimeException c</code></p>
+<p class="alpha">C. <code>RuntimeException a</code> with no suppressed exception</p>
+<p class="alpha">D. <code>RuntimeException c</code> with no suppressed exception</p>
+<p class="alpha">E. <code>RuntimeException a</code> with suppressed <code>RuntimeException c</code></p>
+<p class="alpha">F. <code>RuntimeException c</code> with suppressed <code>RuntimeException a</code></p>
+<p class="alpha">G. Compilation fails</p>
+<p class="que"><strong><a id="ch3ans10" href="ch3.xhtml#r_ch3ans10">10</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un200-01.jpg" alt="Images" /></p>
+<p class="alpha-no">Which exceptions will the code throw?</p>
+<p class="alpha">A. <code>IOException</code> with suppressed <code>RuntimeException a</code></p>
+<p class="alpha">B. <code>IOException</code> with suppressed <code>Exception e</code></p>
+<p class="alpha">C. <code>RuntimeException a</code> with no suppressed exception</p>
+<p class="alpha">D. <code>Exception e</code> with no suppressed exception</p>
+<p class="alpha">E. <code>RuntimeException a</code> with suppressed <code>Exception e</code></p>
+<p class="alpha">F. <code>RuntimeException c</code> with suppressed <code>RuntimeException a</code></p>
+<p class="alpha">G. Compilation fails</p>
+<p class="que"><strong><a id="ch3ans11" href="ch3.xhtml#r_ch3ans11">11</a>.</strong>   Given:</p>
+<p class="pre"><img src="images/un200-02.jpg" alt="Images" /></p>
+<p class="pre"><span id="page_201" epub:type="pagebreak"></span><img src="images/un201-01.jpg" alt="Images" /></p>
+<p class="alpha-no">What will this code print?</p>
+<p class="alpha">A. <code>a</code></p>
+<p class="alpha">B. <code>ab</code></p>
+<p class="alpha">C. <code>ac</code></p>
+<p class="alpha">D. <code>abc</code></p>
+<p class="alpha">E. <code>bc</code></p>
+<p class="alpha">F. Compilation fails</p>
+<h3 class="h3b" id="ch3lev2sec6"><span id="page_202" epub:type="pagebreak"></span><img src="images/aself.jpg" alt="Images" /> <strong>SELF TEST ANSWERS</strong></h3>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans1" id="r_ch3ans1">1</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong><strong>, D,</strong> and <strong>E</strong> are correct statements.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A</strong> is incorrect. It is acceptable to use assertions to test the arguments of <code>private</code> methods. <strong>B</strong> is incorrect. While assertion errors can be caught, Oracle discourages you from doing so. (OCP Objective 6.5)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans2" id="r_ch3ans2">2</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>E</strong> is correct. When an <code>assert</code> statement has two expressions, the second expression must return a value. The only two-expression <code>assert</code> statement that doesn’t return a value is on line 9.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, D,</strong> and <strong>F</strong> are incorrect based on the above. (OCP Objective 6.5)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans3" id="r_ch3ans3">3</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>E</strong> is correct. <code>catch (IOException e | SQLException e)</code> doesn’t compile. While multiple exception types can be specified in the multi-<code>catch</code>, only one variable name is allowed. The correct syntax is <code>catch (IOException | SQLException e)</code>. Other than this, the code is valid. Note that it is legal for <code>blowUp()</code> to have <code>IOException</code> in its signature even though that <code>Exception</code> can’t be thrown.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, D,</strong> and<strong> F</strong> are incorrect based on the above. If the <code>catch</code> block’s syntax error were corrected, the code would output <code>cd</code>. The multi-<code>catch</code> would catch the <code>SQLException</code> from <code>blowUp()</code> since it is one of the exception types listed. And, of course, the <code>finally</code> block runs at the end of the <code>try/catch</code>. (OCP Objective 6.2)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans4" id="r_ch3ans4">4</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong><strong>, D,</strong> and <strong>G</strong> are correct. Since order doesn’t matter, both <strong>D</strong> and <strong>G</strong> show correct use of the multi-<code>catch</code> block. And <strong>C</strong> catches the <code>IOException</code> from <code>fileBlowUp()</code> directly. Note that <code>databaseBlowUp()</code> is never called at runtime. However, if you remove the call, the compiler won’t let you catch the <code>SQLException</code> since it would be impossible to be thrown.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, E, H,</strong> and<strong> F</strong> are incorrect.<strong> A</strong> is incorrect because it will not compile. Since there is already a <code>catch</code> block for <code>Exception</code>, adding another will make the compiler think there is unreachable code. <strong>B</strong> is incorrect because it will print <code>c</code> rather than <code>b</code>. Since <code>FileNotFoundException</code> is a subclass of <code>IOException</code>, the thrown <code>IOException</code> will not match the <code>catch</code> block for <code>FileNotFoundException</code>. <strong>E</strong> and <strong>H</strong> are incorrect because they are invalid syntax for multi-<code>catch</code>. The catch parameter <code>e</code> can only appear once. <strong>F</strong> is incorrect because it will print <code>c</code> rather than <code>b</code>. Since the <code>IOException</code> thrown by <code>fileBlowUp()</code> is never caught, the thrown exception will match the <code>catch</code> block for <code>Exception</code>. (OCP Objective 6.2)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans5" id="r_ch3ans5">5</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong><strong>, D,</strong> and <strong>F</strong> are correct. <strong>B</strong> uses multi-<code>catch</code> to identify both exceptions <code>drive()</code> may throw. <strong>D</strong> still compiles since it uses the new enhanced exception typing to recognize that <code>Exception</code> may only refer to <code>AnotherTrainComing</code> and <code>RanOutOfTrack</code>. <strong>F</strong> is the simple case that catches a single exception. Since <code>main</code> declares that it can throw <code>AnotherTrainComing</code>, the <code>catch</code> block doesn’t need to handle it.</p>
+<p class="quep"><span id="page_203" epub:type="pagebreak"></span><img src="images/times.jpg" alt="Images" />   <strong>A, C, E,</strong> and<strong> G</strong> are incorrect.<strong> A</strong> and <strong>E</strong> are incorrect because the <code>catch</code> block will not handle <code>RanOutOfTrack</code> when <code>drive()</code> throws it. The <code>main</code> method will still throw the exception, but the <code>println()</code> will not run. <strong>C</strong> is incorrect because it is invalid syntax for multi-<code>catch</code>. The <code>catch</code> parameter <code>e</code> can only appear once. <strong>G</strong> is incorrect because of the above. (OCP Objective 6.2)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans6" id="r_ch3ans6">6</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>E</strong> is correct. After the exception is thrown, Automatic Resource Management calls <code>close()</code> before completing the <code>try</code> block. From that point, <code>catch</code> and <code>finally</code> execute in the normal order.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>F</strong> is incorrect because the <code>catch</code> block catches the exception and does not rethrow it.<br/><strong>A, B, C, D,</strong> and <strong>G</strong> are incorrect because of the above. (OCP Objective 6.3)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans7" id="r_ch3ans7">7</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>G</strong> is correct. <code>System.out.println</code> cannot be in the declaration clause of a <code>try</code>-with-resources block because it does not declare a variable. If the <code>println</code> was removed, the answer would be <strong>A</strong> because resources are closed in the opposite order in which they are created.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, D, E,</strong> and <strong>F</strong> are incorrect because of the above. (OCP Objective 6.3)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans8" id="r_ch3ans8">8</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct. If the code is left with no changes, it will not compile because <code>try</code>-with-resources requires <code>Lamb</code> to implement <code>AutoCloseable</code> or a subinterface. If C2 is implemented, the code will not compile because <code>close()</code> throws <code>Exception</code> instead of <code>IOException</code>. Unlike the traditional <code>try</code>, <code>try</code>-with-resources does not require <code>catch</code> or <code>finally</code> to be present.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D, E,</strong> and <strong>F</strong> are incorrect because of the above. (OCP Objective 6.3)</p>
+<p class="que-q"><strong><a href="ch3.xhtml#ch3ans9" id="r_ch3ans9">9</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct. While the exception caught by the <code>catch</code> block matches choice <strong>A,</strong> it is ignored by the <code>catch</code> block. The <code>catch</code> block just throws <code>RuntimeException c</code> without any suppressed exceptions.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, E, F,</strong> and <strong>G</strong> are incorrect because of the above. (OCP Objective 6.3)</p>
+<p class="que-q1"><strong><a href="ch3.xhtml#ch3ans10" id="r_ch3ans10">10</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct. After the <code>try</code> block throws an <code>IOException</code>, Automatic Resource Management calls <code>close()</code> to clean up the resources. Since an exception was already thrown in the <code>try</code> block, <code>RuntimeException</code> <code>a</code> gets added to it as a suppressed exception. The <code>catch</code> block merely rethrows the caught exception. The code does compile, even though the <code>catch</code> block catches an <code>Exception</code> and the method merely throws an <code>IOException</code>. In Java 7, the compiler is able to pick up on this.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D, E, F,</strong> and <strong>G</strong> are incorrect because of the above. (OCP Objective 6.3)</p>
+<p class="que-q1"><strong><a href="ch3.xhtml#ch3ans11" id="r_ch3ans11">11</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>F</strong> is correct. The exception variable in a <code>catch</code> block may not be reassigned when using multi-<code>catch</code>. It CAN be reassigned if we are only catching one exception.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>C</strong> would have been correct if <code>e = new PowerOutage();</code> were removed. <strong>A, B, D,</strong> and <strong>E</strong> are incorrect because of the above. (OCP Objectives 6.2 and 6.4)<span id="page_204" epub:type="pagebreak"></span></p>
+</section>
+</div>
+</body>
+</html>

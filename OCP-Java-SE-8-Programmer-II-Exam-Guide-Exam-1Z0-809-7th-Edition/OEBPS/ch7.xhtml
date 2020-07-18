@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pls="http://www.w3.org/2005/01/pronunciation-lexicon" xmlns:ssml="http://www.w3.org/2001/10/synthesis" xmlns:svg="http://www.w3.org/2000/svg">
+<head>
+  <meta charset="UTF-8" />
+  <title>7 Inner Classes</title>
+  <link type="text/css" rel="stylesheet" media="all" href="style.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="core.css" />
+</head>
+<body>
+  <div id="sbo-rt-content"><section epub:type="chapter">
+<p class="image"><img src="images/common-01.jpg" alt="Images" /></p>
+<h2 class="h2p" id="ch7"><span id="page_449" epub:type="pagebreak"></span>7</h2>
+<h2 class="h2p1">Inner Classes</h2>
+<p class="title-o"><span class="white">CERTIFICATION OBJECTIVES</span></p>
+<p class="toc-l">•       Create Top-Level and Nested Classes</p>
+<p class="toc-l">•       Create Inner Classes Including Static Inner Class, Local Class, Nested Class, and Anonymous Inner Class</p>
+<p class="toc-l">•       Create and Use Lambda Expressions</p>
+<p class="toc-lq"><img src="images/tick.jpg" alt="Images" />    Two-Minute Drill</p>
+<p class="s-bull"><strong>Q&amp;A</strong>  Self Test</p>
+<p class="noindent-d"><span id="page_450" epub:type="pagebreak"></span><span class="dropcap">I</span>nner classes (including static nested classes) appear throughout the exam. The code used to represent questions on virtually <em>any</em> topic on the exam can involve inner (aka nested) classes. Unless you deeply understand the rules and syntax for inner classes, you’re likely to miss questions you’d otherwise be able to answer. <em>As if the exam weren’t already tough enough</em>.</p>
+<p class="indent">This chapter looks at the ins and outs (inners and outers?) of inner classes and exposes you to the kinds of (often strange-looking) syntax examples you’ll see scattered throughout the entire exam. So you’ve really got two goals for this chapter—to learn what you’ll need to answer questions testing your inner-class knowledge and to learn how to read and understand inner-class code so you can handle questions testing your knowledge of <em>other</em> topics.</p>
+<p class="indent">What’s all the hoopla about inner classes? Before we get into it, we have to warn you (if you don’t already know) that inner classes have inspired passionate love ‘em or hate ‘em debates since first introduced in version 1.1 of the language. For once, we’re going to try to keep our opinions to ourselves here and just present the facts as you’ll need to know them for the exam. It’s up to you to decide how—and to what extent—you should use inner classes in your own development. We mean it. We believe they have some powerful, efficient uses in very specific situations, including code that’s easier to read and maintain, but they can also be abused and lead to code that’s as clear as a cornfield maze and to the syndrome known as “reuseless”: <em>code that’s useless over and over again.</em></p>
+<p class="indent">Inner classes let you define one class within another. They provide a type of scoping for your classes because you can make one class <em>a member of another class.</em> Just as classes have member <em>variables</em> and <em>methods,</em> a class can also have member <em>classes.</em> They come in several flavors, depending on how and where you define the inner class, including a special kind of inner class known as a “top-level nested class” (an inner class marked <code>static</code>), which technically isn’t really an inner class. Because a static nested class is still a class defined within the scope of another class, we’ll cover them in this chapter on inner classes. We’ll also take another brief look at lambda expressions, which are often used as an alternative syntax (shorthand) for inner classes, so this is a good time to get more familiar with lambda expression syntax before we do a deep dive in the next chapter. </p>
+<p class="indent">Many of the questions on the exam that make use of inner classes are focused on other certification topics and only use inner classes along the way. So in this chapter, we’ll discuss the following four inner-class <em>topics</em>:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Inner classes (“nested class” in the objective)</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Method-local inner classes (“local class” in the objective)</p>
+<p class="bull"><span id="page_451" epub:type="pagebreak"></span><img class="inline" src="images/box.jpg" alt="Images" />   Anonymous inner classes</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   Static nested classes (“static inner class” in the objective)</p>
+<p class="indent">The one certification objective directly related to inner classes is OCP Objective 2.3:</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Create inner classes including static inner class, local class, nested class, and anonymous inner class</p>
+<p class="indent">which captures all the topics above in one objective.</p>
+<h5 class="title-o"><span class="white">CERTIFICATION OBJECTIVE</span></h5>
+<h3 class="h3" id="ch7lev1sec1"><strong>Nested Classes (OCP Objective 2.3)</strong></h3>
+<p class="noindent"><em>2.3 Create inner classes including static inner class, local class, nested class, and anonymous inner class.</em></p>
+<p class="indentt">Note: As we’ve mentioned, mapping Objective 2.3 to this chapter is somewhat accurate, but it’s also a bit misleading. You’ll find inner classes used for many different exam topics. For that reason, we’re not going to keep saying that this chapter is for Objective 2.3.</p>
+<h3 class="h3-a" id="ch7lev1sec2"><strong>Inner Classes</strong></h3>
+<p class="noindent">You’re an OO programmer, so you know that for reuse and flexibility/extensibility, you need to keep your classes specialized. In other words, a class should have code <em>only</em> for the things an object of that particular type needs to do; any <em>other</em> behavior should be part of another class better suited for <em>that</em> job. Sometimes, though, you find yourself designing a class where you discover you need behavior that not only belongs in a separate specialized class, but also needs to be intimately tied to the class you’re designing.</p>
+<p class="indent">Event handlers are perhaps the best example of this (and are, in fact, one of the main reasons inner classes were added to the language in the first place). If you have a GUI class that performs some job, like, say, a chat client, you might want the chat-client-specific methods (accept input, read new messages from server, send user input back to server, and so on) to be in the class. But how do those methods get invoked in the first place? A user clicks a button. Or types some text in the input field. Or a separate thread doing the I/O work of getting messages from the server has messages that need to be displayed in the GUI. So you have chat-client-specific methods, but you also need methods for handling the “events” (button presses, keyboard typing, I/O available, and so on) that drive the calls on those chat-client methods. The ideal scenario—from an OO perspective—is to keep the chat-client-specific methods in the <code>ChatClient</code> class and put the event-handling <em>code</em> in a separate event-handling <em>class.</em></p>
+<p class="indent"><span id="page_452" epub:type="pagebreak"></span><em>Nothing unusual about that so far; after all, that’s how you’re supposed</em> to design OO classes. As <em>specialists.</em> But here’s the problem with the chat-client scenario: The event-handling code is intimately tied to the chat-client-specific code! Think about it: When users click a Send button (indicating that they want their typed-in message to be sent to the chat server), the chat-client code that sends the message needs to read from a <em>particular</em> text field. In other words, if the user clicks Button A, the program is supposed to extract the text from the TextField B <em>of a particular </em><em>ChatClient</em><em> instance.</em> Not from some <em>other</em> text field from some <em>other</em> object, but specifically the text field that a specific instance of the <code>ChatClient</code> class has a reference to. So the event-handling code needs access to the members of the <code>ChatClient</code> object to be useful as a “helper” to a particular <code>ChatClient</code> instance.</p>
+<p class="indent">And what if the <code>ChatClient</code> class needs to inherit from one class, but the event-handling code is better off inheriting from some <em>other</em> class? You can’t make a class extend more than one class, so putting all the code (the chat-client-specific code and the event-handling code) in one class won’t work in that case. So what you’d really like to have is the benefit of putting your event code in a separate class (better OO, encapsulation, and the ability to extend a class other than the class the <code>ChatClient</code> extends), but still allow the event-handling code to have easy access to the members of the <code>ChatClient</code> (so the event-handling code can, for example, update the <code>ChatClient</code>’s private instance variables). You <em>could</em> manage it by making the members of the <code>ChatClient</code> accessible to the event-handling class by, for example, marking them <code>public</code>. But that’s not a good solution either.</p>
+<p class="indent">You already know where this is going—one of the key benefits of an inner class is the “special relationship” an <em>inner class instance</em> shares with <em>an instance of the outer class.</em> That “special relationship” gives code in the inner class access to members of the enclosing (outer) class, <em>as if the inner class were part of the outer class.</em> In fact, that’s exactly what it means: The inner class <em>is</em> a part of the outer class. Not just a “part,” but a full-fledged, card-carrying <em>member</em> of the outer class. Yes, an inner class instance has access to all members of the outer class, <em>even those marked private.</em> (Relax, that’s the whole point, remember? We want this separate inner class instance to have an intimate relationship with the outer class instance, but we still want to keep everyone <em>else</em> out. And besides, if you wrote the outer class, then you also wrote the inner class! So you’re not violating encapsulation; you <em>designed</em> it this way.)</p>
+<h4 class="h4" id="ch7lev2sec1"><span id="page_453" epub:type="pagebreak"></span>Coding a “Regular” Inner Class</h4>
+<p class="noindent">We use the term <em>regular</em> here to represent inner classes that are not</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   Static</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   Method-local</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   Anonymous</p>
+<p class="noindent">For the rest of this section, though, we’ll just use the term “inner class” and drop the “regular.” (When we switch to one of the other three types in the preceding list, you’ll know it.) You define an inner class within the curly braces of the outer class:</p>
+<p class="imageip"><img src="images/un453-01.jpg" alt="images" /></p>
+<p class="noindent">Piece of cake. And if you compile it:</p>
+<p class="imageip"><img src="images/un453-02.jpg" alt="images" /></p>
+<p class="noindent">you’ll end up with <em>two</em> class files:</p>
+<p class="imageip"><img src="images/un453-03.jpg" alt="images" /></p>
+<p class="indent">The inner class is still, in the end, a separate class, so a separate class file is generated for it. But the inner class file isn’t accessible to you in the usual way. You can’t say</p>
+<p class="imageip"><img src="images/un453-04.jpg" alt="images" /></p>
+<p class="noindent">in hopes of running the <code>main()</code> method of the inner class <strong>because a regular inner class cannot have static declarations of any kind.</strong> <strong><em>The only way you can access the inner class is through a live instance of the outer class! </em></strong>In other words, only at runtime, when there’s already an instance of the outer class to tie the inner class instance to. You’ll see all this in a moment. First, let’s beef up the classes a little:</p>
+<p class="imageip"><img src="images/un453-05.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_454" epub:type="pagebreak"></span><img src="images/un454-01.jpg" alt="images" /></p>
+<p class="indent">The preceding code is perfectly legal. Notice that the inner class is, indeed, accessing a private member of the outer class. That’s fine, because the inner class is also a member of the outer class. So just as any member of the outer class (say, an instance method) can access any other member of the outer class, <code>private</code> or not, the inner class—also a member—can do the same.</p>
+<p class="indent">Okay, so now that we know how to write the code giving an inner class access to members of the outer class, how do you actually use it?</p>
+<h5 class="h5">Instantiating an Inner Class</h5>
+<p class="noindent">To create an instance of an inner class, <em>you must have an instance of the outer class </em>to tie to the inner class. There are no exceptions to this rule: an inner class instance can never stand alone without a direct relationship to an instance of the outer class.</p>
+<p class="noindentt"><strong>Instantiating an Inner Class from Within the Outer Class</strong> Most often, it is the outer class that creates instances of the inner class, since it is usually the outer class wanting to use the inner instance as a helper for its own personal use. We’ll modify the <code>MyOuter</code> class to create an instance of <code>MyInner</code>:</p>
+<p class="imageip"><img src="images/un454-02.jpg" alt="images" /></p>
+<p class="indent">You can see in the preceding code that the <code>MyOuter</code> code treats <code>MyInner</code> just as though <code>MyInner</code> were any other accessible class—it instantiates it using the class name <code>(new MyInner())</code> and then invokes a method on the reference variable <code>(in.seeOuter())</code>. But the only reason this syntax works is because the outer class instance method code is doing the instantiating. In other words, <em>there’s already an instance of the outer class—the instance running the </em><em>makeInner()</em><em> method. </em>So how do you instantiate a <code>MyInner</code> object from somewhere outside the <code>MyOuter</code> class? Is it even possible? (Well, since we’re going to all the trouble of making a whole new subhead for it, as you’ll see next, there’s no big mystery here.)</p>
+<p class="noindentt"><span id="page_455" epub:type="pagebreak"></span><strong>Creating an Inner Class Object from Outside the Outer Class Instance Code</strong> Whew. Long subhead there, but it does explain what we’re trying to do. If we want to create an instance of the inner class, we must have an instance of the outer class. You already know that, but think about the implications…it means that without a reference to an instance of the outer class, you can’t instantiate the inner class from a <code>static</code> method of the outer class (because, don’t forget, in static code, <em>there is no </em><em>this</em><em> reference</em>), or from any other code in any other class. Inner class instances are always handed an implicit reference to the outer class. The compiler takes care of it, so you’ll never see anything but the end result—the ability of the inner class to access members of the outer class. The code to make an instance from anywhere outside nonstatic code of the outer class is simple, but you must memorize this for the exam!</p>
+<p class="imageip"><img src="images/un455-01.jpg" alt="images" /></p>
+<p class="noindent">The preceding code is the same, regardless of whether the <code>main()</code> method is within the <code>MyOuter</code> class or some <em>other</em> class (assuming the other class has access to <code>MyOuter</code>, and since <code>MyOuter</code> has default access, that means the code must be in a class within the same package as <code>MyOuter</code>).</p>
+<p class="indent">If you’re into one-liners, you can do it like this:</p>
+<p class="imageip"><img src="images/un455-02.jpg" alt="images" /></p>
+<p class="indent">You can think of this as though you’re invoking a method on the outer instance, but the method happens to be a special inner class instantiation method, and it’s invoked using the keyword <code>new</code>. Instantiating an inner class is the <em>only</em> scenario in which you’ll invoke <code>new</code> <em>on</em> an instance as opposed to invoking <code>new</code> to <em>construct</em> an instance.</p>
+<p class="indentb"><span id="page_456" epub:type="pagebreak"></span>Here’s a quick summary of the differences between inner class instantiation code that’s <em>within</em> the outer class (but not <code>static</code>) and inner class instantiation code that’s <em>outside</em> the outer class:</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   From <em>inside</em> the outer class instance code, use the inner class name in the normal way:</p>
+<p class="imagebp"><img src="images/un456-01.jpg" alt="images" /></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   From <em>outside</em> the outer class instance code, the inner class name must now include the outer class’s name:</p>
+<p class="imagebp"><img src="images/un456-02.jpg" alt="images" /></p>
+<p class="imagebp">To instantiate it, you must use a reference to the outer class:</p>
+<p class="imagebp"><img src="images/un456-03.jpg" alt="images" /></p>
+<p class="imagebp">or </p>
+<p class="imagebp"><img src="images/un456-04.jpg" alt="images" /></p>
+<p class="imagebp">if you already have an instance of the outer class.</p>
+<h4 class="h4" id="ch7lev2sec2">Referencing the Inner or Outer Instance from Within the Inner Class</h4>
+<p class="noindentb">How does an object refer to itself normally? By using the <code>this</code> reference. Here is a quick review of <code>this</code>:</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   The keyword <code>this</code> can be used only from within instance code. In other words, not within static code.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   The <code>this</code> reference is a reference to the currently executing object. In other words, the object whose reference was used to invoke the currently running method.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   The <code>this</code> reference is the way an object can pass a reference to itself to some other code as a method argument:</p>
+<p class="imagebp"><img src="images/un456-04a.jpg" alt="images" /></p>
+<p class="indent">Within the inner class code, the <code>this</code> reference refers to the instance of the inner class, as you’d probably expect, since <code>this</code> always refers to the currently executing object. But what if the inner class code wants an explicit reference to the outer class instance that the inner instance is tied to? In other words, <em>how do you reference the “outer </em><em>this</em><em>“</em>? Although normally, the inner class code doesn’t need a reference to the outer class, since it already has an implicit one it’s using to access the members of the outer class, it would need a reference to the outer class if it needed to pass that reference to some other code, as follows:</p>
+<p class="imageip"><span id="page_457" epub:type="pagebreak"></span><img src="images/un457-01.jpg" alt="images" /></p>
+<p class="indent">If we run the complete code as follows:</p>
+<p class="imageip"><img src="images/un457-02.jpg" alt="images" /></p>
+<p class="noindent">the output is something like this:</p>
+<p class="imageip"><img src="images/un457-03.jpg" alt="images" /></p>
+<p class="indent">So the rules for an inner class referencing itself or the outer instance are as follows:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   To reference the inner class instance itself from <em>within </em>the inner class code, use <code>this</code>.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   To reference the “<em>outer </em><em>this</em>” (the outer class instance) from within the inner class code, use <code>NameOfOuterClass.this</code> (example, <code>MyOuter.this</code>).</p>
+<h5 class="h5"><span id="page_458" epub:type="pagebreak"></span>Member Modifiers Applied to Inner Classes</h5>
+<p class="noindent">A regular inner class is a member of the outer class just as instance variables and methods are, so the following modifiers can be applied to an inner class:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   final</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   abstract</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   public</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   private</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   protected</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   static—<em>but static</em> <em>turns it into a static nested class, not an inner class</em></p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   strictfp</p>
+<h3 class="h3-a" id="ch7lev1sec3"><strong>Method-Local Inner Classes</strong></h3>
+<p class="noindent">A regular inner class is scoped inside another class’s curly braces, but outside any method code (in other words, at the same level that an instance variable is declared). But you can also define an inner class within a method:</p>
+<p class="imageip"><img src="images/un458-01.jpg" alt="images" /></p>
+<p class="indent">The preceding code declares a class, <code>MyOuter2</code>, with one method, <code>doStuff()</code>. But <em>inside</em> <code>doStuff()</code>, another class, <code>MyInner</code>, is declared, and it has a method of its own, <code>seeOuter()</code>. The previous code is completely useless, however, because <em>it never instantiates the inner class!</em> Just because you <em>declared</em> the class doesn’t mean you created an <em>instance</em> of it. So to <em>use</em> the inner class, you must make an instance of it somewhere <em>within the method but below the inner class definition </em>(or the compiler won’t be able to find the inner class). The following legal code shows how to instantiate and use a method-local inner class:</p>
+<p class="imageip"><img src="images/un458-02.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_459" epub:type="pagebreak"></span><img src="images/un459-01.jpg" alt="images" /></p>
+<h4 class="h4" id="ch7lev2sec3">What a Method-Local Inner Object Can and Can’t Do</h4>
+<p class="noindent"><em>A method-local inner class can be instantiated only within the method where the inner class is defined.</em> In other words, no other code running in any other method—inside or outside the outer class—can ever instantiate the method-local inner class. Like regular inner class objects, the method-local inner class object shares a special relationship with the enclosing (outer) class object and can access its <code>private</code> (or any other) members. However, <em>the inner class object cannot use the local variables of the method the inner class is in.</em> Why not?</p>
+<p class="indent">Think about it. The local variables of the method live on the stack and exist only for the lifetime of the method. You already know that the scope of a local variable is limited to the method the variable is declared in. When the method ends, the stack frame is blown away and the variable is history. But even after the method completes, the inner class object created within it might still be alive on the heap if, for example, a reference to it was passed into some other code and then stored in an instance variable. Because the local variables aren’t guaranteed to be alive as long as the method-local inner class object is, the inner class object can’t use them. <em>Unless the local variables are marked </em><em>final</em><em> or are effectively final!</em> The following code attempts to access a local variable from within a method-local inner class:</p>
+<p class="imageip"><img src="images/un459-02.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_460" epub:type="pagebreak"></span><img src="images/un460-01.jpg" alt="images" /></p>
+<p class="indent">Removing the line that changes <code>z</code> fixes the problem, and marking the local variable <code>z</code> as <code>final</code>, although optional, is a good reminder that we can’t change it if we want to be able to use <code>z</code> in <code>seeOuter()</code>:</p>
+<p class="imageip"><img src="images/un460-03.jpg" alt="images" /></p>
+<p class="indent">Notice that even though <code>x</code> is not <code>final</code>, or effectively final, and we also use <code>x</code> in the <code>seeOuter()</code> method of <code>MyInner</code>, that’s fine because <code>x</code> is a field of <code>MyOuter2</code>, not a local variable of the method <code>doStuff()</code>.</p>
+<p class="indent">Just a reminder about modifiers within a method: The same rules apply to method-local inner classes as to local variable declarations. You can’t, for example, mark a method-local inner class <code>public</code>,<code> private</code>,<code> protected</code>,<code> static</code>,<code> transient</code>, and the like. For the purpose of the exam, the only modifiers you <em>can</em> apply to a method-local inner class are <code>abstract</code> and <code>final</code>, but, as always, never both at the same time.</p>
+<div class="side">
+<p class="exam"><span id="page_461" epub:type="pagebreak"></span><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>Remember that a local class declared in a <code>static</code> method has access to only <code>static</code> members of the enclosing class, since there is no associated instance of the enclosing class. If you’re in a <code>static</code> method, there is no <code>this</code>, so an inner class in a <code>static</code> method is subject to the same restrictions as the <code>static</code> method. In other words, no access to instance variables.</em></strong></p>
+</div>
+<h3 class="h3-a" id="ch7lev1sec4"><strong>Anonymous Inner Classes</strong></h3>
+<p class="noindent">So far, we’ve looked at defining a class within an enclosing class (a regular inner class) and within a method (a method-local inner class). We’re now going to look at the most unusual syntax you might ever see in Java: inner classes declared without any class name at all (hence, the word <em>anonymous</em>). And if that’s not weird enough, you can define these classes, not just within a method, but even within an <em>argument</em> to a method. We’ll look first at the <em>plain-old </em>(as if there is such a thing as a plain-old anonymous inner class) version (actually, even the plain-old version comes in two flavors), then at the argument-declared anonymous inner class, and finally at anonymous inner classes expressed with lambdas. </p>
+<p class="indent">Perhaps your most important job here is to <em>learn to not be thrown when you see the syntax.</em> The exam is littered with anonymous inner class code—you might see it on questions about threads, wrappers, overriding, garbage collection, and…well, you get the idea.</p>
+<h4 class="h4" id="ch7lev2sec4">Plain-Old Anonymous Inner Classes, Flavor One</h4>
+<p class="noindent">Check out the following legal-but-strange-the-first-time-you-see-it code:</p>
+<p class="imageip"><img src="images/un461-01.jpg" alt="images" /></p>
+<p class="indent"><span id="page_462" epub:type="pagebreak"></span>Let’s look at what’s in the preceding code:</p>
+<p class="bullt"><img class="inline" src="images/box.jpg" alt="Images" />   We define two classes: <code>Popcorn</code> and <code>Food</code>.</p>
+<p class="bull"><img class="inline" src="images/box.jpg" alt="Images" />   <code>P</code><code>opcorn</code> has one method:<code> pop()</code>.</p>
+<p class="bullb"><img class="inline" src="images/box.jpg" alt="Images" />   <code>F</code><code>ood</code> has one instance variable, declared as type <code>Popcorn</code>. That’s it for <code>Food</code>. <code>Food</code> has <em>no</em> methods.</p>
+<p class="indent">And here’s the big thing to get: the <code>Popcorn</code> reference variable refers, <em>not</em> to an instance of <code>Popcorn</code>, but to <em>an instance of an anonymous (unnamed) subclass of </em><em>Popcorn</em><em>.</em></p>
+<p class="indent">Let’s look at just the anonymous class code:</p>
+<p class="imageip"><img src="images/un462-01.jpg" alt="images" /></p>
+<p class="noindentt"><strong>Line 2</strong> Line 2 starts out as an instance variable declaration of type <code>Popcorn</code>. But instead of looking like this:</p>
+<p class="imageip"><img src="images/un462-02.jpg" alt="images" /></p>
+<p class="noindent">there’s a curly brace at the end of line 2, where a semicolon would normally be.</p>
+<p class="imageip"><img src="images/un462-03.jpg" alt="images" /></p>
+<p class="indent">You can read line 2 as saying,</p>
+<p class="indent">Declare a reference variable, <code>p</code>, of type <code>Popcorn</code>. Then declare a new class that has no name but that is a <em>subclass</em> of <code>Popcorn</code>. And here’s the curly brace that opens the class definition…</p>
+<p class="noindentt"><strong>Line 3</strong> Line 3, then, is actually the first statement within the new class definition. And what is it doing? Overriding the <code>pop()</code> method of the superclass <code>Popcorn</code>. This is the whole point of making an anonymous inner class—to <em>override one or more methods of the superclass! </em>(Or to implement methods of an interface, but we’ll save that for a little later.)</p>
+<p class="noindentt"><strong>Line 4 </strong>Line 4 is the first (and, in this case, <em>only</em>) statement within the overriding <code>pop()</code> method. Nothing special there.</p>
+<p class="noindentt"><strong>Line 5</strong> Line 5 is the closing curly brace of the <code>pop()</code> method. Nothing special.</p>
+<p class="noindentt"><span id="page_463" epub:type="pagebreak"></span><strong>Line 6</strong> Here’s where you have to pay attention: Line 6 includes a <em>curly brace closing</em> <em>off the anonymous class definition </em>(it’s the companion brace to the one on line 2), but there’s more! Line 6 also has <em>the semicolon that ends the statement </em><em>started on line 2</em>—the statement where it all began—the statement declaring and initializing the <code>Popcorn</code> reference variable. And what you’re left with is a <code>Popcorn</code> reference to a brand-new <em>instance</em> of a brand-new, Just-In-Time, anonymous (no name) <em>subclass</em> of Popcorn.</p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>The closing semicolon is hard to spot. Watch for code like this:</em></strong></p>
+<p class="imageep"><img src="images/un463-01.jpg" alt="images" /></p>
+<p class="noindent"><strong><em>You’ll need to be especially careful about the syntax when inner classes are involved, because the code on line 6 looks perfectly natural. It’s rare to see semicolons following curly braces.</em></strong></p>
+</div>
+<p class="indent">Polymorphism is in play when anonymous inner classes are involved. Remember that, as in the preceding Popcorn example, we’re using a superclass reference variable type to refer to a subclass object. What are the implications? You can only call methods on an anonymous inner class reference that are defined in the reference variable type! This is no different from any other polymorphic references—for example,</p>
+<p class="imageip"><img src="images/un463-02.jpg" alt="images" /></p>
+<p class="indent">So on the exam, you must be able to spot an anonymous inner class that—rather than overriding a method of the superclass—defines its own new method. The method definition isn’t the problem, though; the real issue is, how do you invoke that new method? The reference variable type (the superclass) won’t know anything about that new method (defined in the anonymous subclass), so the compiler will complain if you try to invoke any method on an anonymous inner class reference that is not in the superclass class definition.</p>
+<p class="indent"><span id="page_464" epub:type="pagebreak"></span>Check out the following <strong>illegal</strong> code:</p>
+<p class="imageip"><img src="images/un464-01.jpg" alt="images" /></p>
+<p class="indent">Compiling the preceding code gives us something like this:</p>
+<p class="imageip"><img src="images/un464-02.jpg" alt="images" /></p>
+<p class="noindent">which is the compiler’s way of saying, “I can’t find method <code>sizzle()</code> in class <code>Popcorn</code>,” followed by, “Get a clue.“</p>
+<h4 class="h4" id="ch7lev2sec5">Plain-Old Anonymous Inner Classes, Flavor Two</h4>
+<p class="noindent">The only difference between flavor one and flavor two is that flavor one creates an anonymous <em>subclass</em> of the specified <em>class</em> type, whereas flavor two creates an anonymous <em>implementer</em> of the specified <em>interface</em> type. In the previous examples, we defined a new anonymous subclass of type <code>Popcorn</code> as follows:</p>
+<p class="imageip"><img src="images/un464-03.jpg" alt="images" /></p>
+<p class="indent"><span id="page_465" epub:type="pagebreak"></span>But if <code>Popcorn</code> were an <em>interface</em> type instead of a <em>class</em> type, then the new anonymous class would be an <em>implementer</em> of the <em>interface</em> rather than a <em>subclass</em> of the <em>class.</em> Look at the following example:</p>
+<p class="imageip"><img src="images/un465-01.jpg" alt="images" /></p>
+<p class="indent">The preceding code, like the Popcorn example, still creates an instance of an anonymous inner class, but this time, the new Just-In-Time class is an implementer of the <code>Cookable</code> interface. And note that this is the only time you will ever see the syntax:</p>
+<p class="imageip"><img src="images/un465-02.jpg" alt="images" /></p>
+<p class="noindent">where <code>Cookable</code> is an <em>interface</em> rather than a non-<code>abstract</code> class type. Think about it: <em>You can’t instantiate an interface,</em> yet that’s what the code <em>looks</em> like it’s doing. But, of course, it’s not instantiating a <code>Cookable</code> object—it’s creating an instance of a new anonymous implementer of <code>Cookable</code>. You can read this line:</p>
+<p class="imageip"><img src="images/un465-03.jpg" alt="images" /></p>
+<p class="noindent">as “Declare a reference variable of type <code>Cookable</code> that, obviously, will refer to an object from a class that implements the <code>Cookable</code> interface. But, oh yes, we don’t yet <em>have</em> a class that implements <code>Cookable</code>, so we’re going to make one right here, right now. We don’t need a name for the class, but it will be a class that implements <code>Cookable</code>, and this curly brace starts the definition of the new implementing class.“</p>
+<p class="indent">One more thing to keep in mind about anonymous interface implementers—<em>they can implement only one interface.</em> There simply isn’t any mechanism to say that your anonymous inner class is going to implement multiple interfaces. In fact, an anonymous inner class can’t even extend a class and implement an interface at the same time. The inner class has to choose either to be a subclass of a named class—and not directly implement any interfaces at all—<em>or</em> to implement a single interface. By directly, we mean actually using the keyword <code>implements</code> as part of the class declaration. If the anonymous inner class is a subclass of a class type, it automatically becomes an implementer of any interfaces implemented by the superclass.</p>
+<div class="side">
+<p class="exam"><span id="page_466" epub:type="pagebreak"></span><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>Don’t be fooled by any attempts to instantiate an interface except in the case of an anonymous inner class. The following is not legal:</em></strong></p>
+<p class="imageep"><img src="images/un466-01.jpg" alt="images" /></p>
+<p class="noindent"><strong><em>whereas the following is legal, because it’s instantiating an <code>implementer</code> of the <code>Runnable</code> interface (an anonymous implementation class):</em></strong></p>
+<p class="imageep"><img src="images/un466-02.jpg" alt="images" /></p>
+</div>
+<h4 class="h4" id="ch7lev2sec6">Argument-Defined Anonymous Inner Classes</h4>
+<p class="noindent">If you understood what we’ve covered so far in this chapter, then this last part will be simple. If you <em>are</em> still a little fuzzy on anonymous classes, however, then you should reread the previous sections. If they’re not completely clear, we’d like to take full responsibility for the confusion. But we’ll be happy to share.</p>
+<p class="indent">Okay, if you’ve made it to this sentence, then we’re all going to assume you understood the preceding section, and now we’re just going to add one new twist. Imagine the following scenario. You’re typing along, creating the Perfect Class, when you write code calling a method on a <code>Bar</code> object and that method takes an object of type <code>Foo</code> (an interface).</p>
+<p class="imageip"><img src="images/un466-03.jpg" alt="images" /></p>
+<p class="indent">No problemo, except that you don’t <em>have</em> an object from a class that implements <code>Foo</code>, and you can’t instantiate one, either, because <em>you don’t even have a class that implements </em><em>Foo</em><em>,</em> let alone an instance of one. So you first need a class that implements <code>Foo</code>, and then you need an instance of that class to pass to the <code>Bar</code> class’s <code>doStuff()</code> method. Savvy Java programmer that you are, you simply define an anonymous inner class <em>right inside the argument.</em> That’s right, just where you least expect to find a class. And here’s what it looks like:</p>
+<p class="imageip"><span id="page_467" epub:type="pagebreak"></span><img src="images/un467-01.jpg" alt="images" /></p>
+<p class="indent">All the action starts on line 4. We’re calling <code>doStuff()</code> on a <code>Bar</code> object, but the method takes an instance that IS-A <code>Foo</code>, where <code>Foo</code> is an interface. So we must make both an <em>implementation</em> class and an <em>instance</em> of that class, all right here in the argument to <code>doStuff()</code>. So that’s what we do. We write</p>
+<p class="imageip"><img src="images/un467-02.jpg" alt="images" /></p>
+<p class="noindent">to start the new class definition for the anonymous class that implements the <code>Foo</code> interface. <code>Foo</code> has a single method to implement, <code>foof()</code>, so on lines 5, 6, and 7, we implement the <code>foof()</code> method. Then on line 8—whoa!—more strange syntax appears. The first curly brace closes off the new anonymous class definition. But don’t forget that this all happened as part of a method argument, so the closing parenthesis, <code>)</code>, finishes off the method invocation, and then we must still end the statement that began on line 4, so we end with a semicolon. Study this syntax! You will see anonymous inner classes on the exam, and you’ll have to be very, very picky about the way they’re closed. If they’re <em>argument local,</em> they end like this:</p>
+<p class="imageip"><img src="images/un467-03.jpg" alt="images" /></p>
+<p class="noindent">but if they’re just plain-old anonymous classes, then they end like this:</p>
+<p class="imageip"><img src="images/un467-04.jpg" alt="images" /></p>
+<p class="indent">Regardless, be careful. Any question from any part of the exam might involve anonymous inner classes as part of the code.</p>
+<p class="indent"><span id="page_468" epub:type="pagebreak"></span>To run this code, simply create a new <code>MyWonderfulClass</code> and call its <code>go()</code> method:</p>
+<p class="imageip"><img src="images/un468-01.jpg" alt="images" /></p>
+<p class="noindent">and you will see the output:</p>
+<p class="imageip"><img src="images/un468-02.jpg" alt="images" /></p>
+<p class="indent">We’ll come back to <code>MyWonderfulClass</code> at the very end of the chapter to see how we can write the anonymous inner class as a lambda expression. But before we do that, one more variation on inner classes.</p>
+<h3 class="h3-a" id="ch7lev1sec5"><strong>Static Nested Classes</strong></h3>
+<p class="noindent">We saved the easiest variation on inner classes for last, as a kind of treat!</p>
+<p class="indent">You’ll sometimes hear static nested classes referred to as <em>static inner classes</em> (and that’s the way they are referred to in OCP Objective 2.3), but they really aren’t inner classes at all based on the standard definition of an inner class. Whereas an inner class (regardless of the flavor) enjoys that <em>special relationship</em> with the outer class (or rather, the <em>instances</em> of the two classes share a relationship), a static nested class does not. It is simply a non-inner (also called “top-level“) class scoped within another. So with static classes, it’s really more about name-space resolution than about an implicit relationship between the two classes.</p>
+<p class="indent">A static nested class is simply a class that’s a static member of the enclosing class:</p>
+<p class="imageip"><img src="images/un468-03.jpg" alt="images" /></p>
+<p class="indent">The class itself isn’t really “static”; there’s no such thing as a static class. The <code>static</code> modifier in this case says that the nested class is <em>a static member of the outer class.</em> That means it can be accessed, as with other static members, <em>without having an instance of the outer class.</em></p>
+<h4 class="h4" id="ch7lev2sec7">Instantiating and Using Static Nested Classes</h4>
+<p class="noindent">You use standard syntax to access a static nested class from its enclosing class. The syntax for instantiating a static nested class from a nonenclosing class is a little different from a normal inner class and looks like this:</p>
+<p class="imageip"><img src="images/un468-04.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_469" epub:type="pagebreak"></span><img src="images/un469-01.jpg" alt="images" /></p>
+<p class="noindent">which produces</p>
+<p class="imageip"><img src="images/un469-02.jpg" alt="images" /></p>
+<div class="side">
+<p class="exam"><img src="images/exam.jpg" alt="Images" /></p>
+</div>
+<div class="side1">
+<p class="indent"><strong><em>Just as a static method does not have access to the instance variables and nonstatic methods of the class, a static nested class does not have access to the instance variables and nonstatic methods of the outer class. Look for static nested classes with code that behaves like a nonstatic (regular inner) class.</em></strong></p>
+</div>
+<h5 class="title-o"><span class="white">CERTIFICATION OBJECTIVE</span></h5>
+<h3 class="h3" id="ch7lev1sec6">Lambda Expressions as Inner Classes (OCP Objective 2.6)</h3>
+<p class="noindent"><em>2.6 Create and use Lambda expressions.</em></p>
+<p class="indentt">Inner classes are often used for short, quick implementations of a class. Flavor two of anonymous inner classes showed you how to implement an interface with an anonymous class, either as a separate statement (as in the <code>Cookable</code> example) or as an argument (as in the <code>MyWonderfulClass</code> example).</p>
+<p class="indent">When implementing an interface with an anonymous inner class, you’ll often have opportunities to use lambda expressions to make your code more concise. In fact, some say lambdas are another way of writing anonymous inner classes. As you’ll see, they certainly seem perfect for this job.</p>
+<p class="indent"><span id="page_470" epub:type="pagebreak"></span>Let’s take another look at <code>MyWonderfulClass</code> as a first example:</p>
+<p class="imageip"><img src="images/un470-01.jpg" alt="images" /></p>
+<p class="indent"><code>Foo</code> is an interface, and we need an instance of a class that implements that interface to pass to the <code>doStuff()</code> method of <code>Bar</code>, so we use an anonymous inner class. Notice one important thing about <code>Foo</code>: it’s an interface with <em>one abstract method</em>. Does that sound familiar (from the previous chapter)? Yes, <code>Foo</code> is a <em>functional interface</em>. </p>
+<p class="indentb">That means we can replace the entire inner class with a lambda expression. Let’s go through the same process we did in the previous chapter (with <code>GenreSort</code>) to see how we can convert the <code>Foo</code> anonymous inner class into a lambda expression.</p>
+<p class="numlist">1.   First we get any parameters from the abstract method in <code>Foo</code>, <code>foof()</code>; those become the parameters for the lambda. In this case we don’t have any parameters, so we write:</p>
+<p class="nump"><img src="images/un470-02.jpg" alt="images" /></p>
+<p class="numlist">2.   Then, we add an arrow:</p>
+<p class="nump"><img src="images/un470-03.jpg" alt="images" /></p>
+<p class="numlist">3.   Then we write the body of the lambda expression. What should the body be? Exactly the same as the body of the <code>foof()</code> method in the <code>Foo</code> instance we’re passing to <code>doStuff()</code>. That is:</p>
+<p class="nump"><img src="images/un470-04.jpg" alt="images" /></p>
+<p class="noindentt"><span id="page_471" epub:type="pagebreak"></span>We don’t need to use any curly braces (or a return) because there’s only one statement in the body of <code>foof()</code>, so we can just copy the expression as is. <code>foof()</code> is <code>void</code> (no return value), so in this case, the lambda expression will not automatically return a value (Java knows that <code>foof()</code> is <code>void</code> because it says so in <code>Foo</code>, so it’s smart enough to know not to generate a return). Notice that we don’t need a semicolon on the expression on the right either; however, as you’ll see shortly, when we write a lambda expression as part of a statement, we still need to end the statement it’s part of with a semicolon.</p>
+<p class="indent">Now, let’s see how to use this lambda expression:</p>
+<p class="imageip"><img src="images/un471-01.jpg" alt="images" /></p>
+<p class="indent">Wow, that’s a lot easier to read, isn’t it? And definitely more concise. It might take you a while to get the hang of reading lambda expressions, but once you do, you’ll find getting rid of the extra stuff that goes along with an inner class is a good way to make your code more concise and readable.</p>
+<p class="indent">The important line to look at is line 4. Compare it to the code using the anonymous inner class. This lambda expression is “standing in” for the <code>foof()</code> function in the instance of the class implementing <code>Foo</code>. </p>
+<p class="indent">But wait! There’s no instance here. There’s only a lambda expression that looks a lot more like a function than an object. And <code>doStuff()</code> is expecting an instance. So what gives? </p>
+<p class="indent">Because <code>Foo</code> is a functional interface and has only one abstract method, Java knows that the function you’re supplying as the lambda expression must be the function that implements that abstract method, <code>foof()</code>. It knows that the argument to <code>doStuff()</code> must be an instance of a class that implements the <code>Foo</code> interface, but the only really important part of that instance is the implementation of that one abstract method. So we shortcut by eliminating all the extra fluff of creating that class and instantiating the object and just provide the method, in the form of a lambda expression.</p>
+<p class="indent"><span id="page_472" epub:type="pagebreak"></span>We can make the instance object—the instance of a class that implements the <code>Foo</code> interface—a bit more explicit by creating it separately and then passing the instance to <code>doStuff()</code>:</p>
+<p class="imageip"><img src="images/un472-01.jpg" alt="images" /></p>
+<p class="indent">You’ll see lambda expressions written this way on the exam, so get lots of practice reading and writing them this way. The syntax of lambda expressions takes some getting used to because it hides a whole bunch of stuff going on behind the scenes. The trick is to remember that the type of a lambda expression is a functional interface. And when used to simplify inner classes, the important thing to know for the exam is that you can substitute a lambda expression for an anonymous inner class whenever that class is implementing a functional interface.</p>
+<h4 class="h4" id="ch7lev2sec8">Comparator Is a Functional Interface</h4>
+<p class="noindent">Let’s take one more look at the DVD example from the previous chapter to help inner classes and lambda expressions sink in just a bit more. </p>
+<p class="indent">In that example we created a class <code>GenreSort</code> that implemented <code>Comparator</code>, which we could use with the <code>Collections.sort()</code> method or 473with the <code>sort()</code> method of our <code>dvdlist</code> <code>ArrayList</code>, both of which take a comparator as an argument. </p>
+<p class="indent">That <code>GenreSort</code> class looked like this:</p>
+<p class="imageip"><img src="images/un472-02.jpg" alt="images" /></p>
+<p class="indent">First, let’s turn this into an anonymous inner class. Here’s the revised <code>go()</code> method from the <code>TestDVD</code> class:</p>
+<p class="imageip"><img src="images/un472-03.jpg" alt="images" /></p>
+<p class="imageip"><span id="page_473" epub:type="pagebreak"></span><img src="images/un473-01.jpg" alt="images" /></p>
+<p class="indent">This is an example of flavor two of anonymous inner classes: that is, we’re creating an instance of a class that implements the <code>Comparator</code> interface. We store this instance in the variable <code>genreSort</code>. Just like before, we pass that instance to the <code>sort()</code> method, which uses it to sort the items in the <code>dvdlist</code> <code>ArrayList</code> by calling the <code>compare()</code> method we implemented in the comparator.</p>
+<p class="indent">Take a careful look at the code to see how we translated the <code>GenreSort</code> class from an outer class into an anonymous inner class. </p>
+<p class="indent"><code>Comparator</code> is a functional interface, meaning it has one abstract method that we must implement to make an instance of a class that implements the <code>Comparator</code> interface. So, we can scrap that inner class entirely and use a lambda expression instead:</p>
+<p class="imageip"><img src="images/un473-02.jpg" alt="images" /></p>
+<p class="indent">This code is no different from what you saw in the previous chapter, only now instead of replacing the outer class <code>GenreSort</code>, we’re replacing the anonymous inner class. It’s exactly the same idea. </p>
+<p class="indent">Note that we could also write the code like this:</p>
+<p class="imageip"><img src="images/un473-03.jpg" alt="images" /></p>
+<p class="indent">On the exam, you’ll see lambdas used both ways: passed directly as arguments and assigned to variables. Assigning the lambda to a variable first makes the type of the lambda more explicit, but the type can always be inferred from the type signature of the method you’re passing the lambda into.</p>
+<p class="indent">For the exam, remember that you’ll still see plenty of inner classes, because not all inner classes can be replaced by lambda expressions. Lambda expressions stand in for methods in classes that implement a functional interface. Don’t be tricked by interfaces that might look functional but aren’t. We’ll cover all the rules that determine exactly what constitutes a functional interface in the next chapter.</p>
+<h3 class="h3b" id="ch7lev1sec7"><span id="page_474" epub:type="pagebreak"></span>CERTIFICATION SUMMARY</h3>
+<hr/>
+<p class="noindent">Inner classes will show up throughout the exam, in any topic, and these are some of the exam’s hardest questions. You should be comfortable with the sometimes bizarre syntax and know how to spot legal and illegal inner class definitions.</p>
+<p class="indent">We looked first at “regular” inner classes, where one class is a member of another. You learned that coding an inner class means putting the class definition of the inner class inside the curly braces of the enclosing (outer) class, but outside of any method or other code block. You learned that an inner class <em>instance</em> shares a special relationship with a specific <em>instance</em> of the outer class and that this special relationship lets the inner class access all members of the outer class, including those marked <code>private</code>. You learned that to instantiate an inner class, you <em>must</em> have a reference to an instance of the outer class.</p>
+<p class="indent">Next, we looked at method-local inner classes—classes defined <em>inside</em> a method. The code for a method-local inner class looks virtually the same as the code for any other class definition, except that you can’t apply an access modifier the way you can with a regular inner class. You learned why method-local inner classes must use <code>final</code> or effectively final local variables declared within the method—the inner class instance may outlive the stack frame, so the local variable might vanish while the inner class object is still alive. You saw that to <em>use</em> the inner class you need to instantiate it and that the instantiation must come <em>after</em> the class declaration in the method.</p>
+<p class="indent">We also explored the strangest inner class type of all—the <em>anonymous</em> inner class. You learned that they come in two forms: normal and argument-defined. Normal, ho-hum, anonymous inner classes are created as part of a variable assignment, whereas argument-defined inner classes are actually declared, defined, and automatically instantiated <em>all within the argument to a method!</em> We covered the way anonymous inner classes can be either a subclass of the named class type or an <em>implementer</em> of the named interface. Finally, we looked at how polymorphism applies to anonymous inner classes: You can invoke on the new instance only those methods defined in the named class or interface type. In other words, even if the anonymous inner class defines its own new method, no code from anywhere outside the inner class will be able to invoke that method.</p>
+<p class="indent">As if we weren’t already having enough fun for one day, we pushed on to static nested classes, which really aren’t inner classes at all. Known as <code>static</code> nested classes, a nested class marked with the <code>static</code> modifier is quite similar to any other non-inner class, except that to access it, the code must have access to both the nested and enclosing class. We saw that because the class is <code>static</code>, no instance of the enclosing class is needed, and thus the static nested class <em>does not share a special relationship with any instance of the enclosing class.</em> Remember, static inner classes can’t access instance methods or variables of the enclosing class.</p>
+<p class="indent"><span id="page_475" epub:type="pagebreak"></span>And finally, just to seal the fate of inner classes entirely, we showed how you can replace an anonymous inner class that’s implementing a functional interface with a lambda expression. Using lambda expressions as shorthand for anonymous inner classes usually makes your code a lot more concise because you no longer have to write out the instance of the class that’s implementing an interface; instead, you just supply the method that’s standing in for the instance. Get ready for a lot more on this topic in the next chapter, but before we get there, practice what you’ve learned in this chapter with the two-minute drill and self test.</p>
+<h3 class="h3b" id="ch7lev1sec8"><span id="page_476" epub:type="pagebreak"></span><img src="images/tick1.jpg" alt="Images" />TWO-MINUTE DRILL</h3>
+<p class="noindent">Here are some of the key points from this chapter. Most are related to OCP Objective 2.3.</p>
+<h4 class="h4">Regular Inner Classes (OCP Objective 2.3)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A “regular” inner class is declared <em>inside</em> the curly braces of another class, but <em>outside</em> any method or other code block.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An inner class is a full-fledged member of the enclosing (outer) class, so it can be marked with an access modifier as well as the <code>abstract</code> or <code>final</code> modifiers. (Never both <code>abstract</code> and <code>final</code> together—remember that <code>abstract</code> <em>must</em> be subclassed, whereas <code>final</code> <em>cannot</em> be subclassed.)</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An inner class instance shares a special relationship with an instance of the enclosing class. This relationship gives the inner class access to <em>all</em> of the outer class’s members, including those marked <code>private</code>.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  To instantiate an inner class, you must have a reference to an instance of the outer class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  From code within the enclosing class, you can instantiate the inner class using only the name of the inner class, as follows:</p>
+<p class="bullp"><code>MyInner mi = new MyInner();</code></p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  From code outside the enclosing class’s instance methods, you can instantiate the inner class only by using both the inner and outer class names and a reference to the outer class, as follows:</p>
+<p class="bullp"><code>MyOuter mo = new MyOuter();<br/>MyOuter.MyInner inner = mo.new MyInner();</code></p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  From code within the inner class, the keyword <code>this</code> holds a reference to the inner class instance. To reference the <em>outer </em><code>this</code> (in other words, the instance of the outer class that this inner instance is tied to), precede the keyword <code>this</code> with the outer class name, as follows: <code>MyOuter.this;</code></p>
+<h4 class="h4">Method-Local Inner Classes (OCP Objective 2.3)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A method-local inner class is defined within a method of the enclosing class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  For the inner class to be used, you must instantiate it, and that instantiation must happen within the same method, but <em>after</em> the class definition code.</p>
+<p class="bull-image"><span id="page_477" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  A method-local inner class cannot use variables declared within the method (including parameters) unless those variables are marked <code>final</code> or are effectively final.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  The only modifiers you can apply to a method-local inner class are <code>abstract</code> and <code>final</code>. (Never both at the same time, though.)</p>
+<h4 class="h4">Anonymous Inner Classes (OCP Objective 2.3)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Anonymous inner classes have no name, and their type must be either a subclass of the named type or an implementer of the named interface.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An anonymous inner class is always created as part of a statement; don’t forget to close the statement after the class definition with a curly brace. This is a rare case in Java, a curly brace followed by a semicolon.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Because of polymorphism, the only methods you can call on an anonymous inner class reference are those defined in the reference variable class (or interface), even though the anonymous class is really a subclass or implementer of the reference variable type.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An anonymous inner class can extend one subclass <em>or</em> implement one interface. Unlike nonanonymous classes (inner or otherwise), an anonymous inner class cannot do both. In other words, it cannot both extend a class <em>and</em> implement an interface, nor can it implement more than one interface.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  An argument-defined inner class is declared, defined, and automatically instantiated as part of a method invocation. The key to remember is that the class is being defined within a method argument, so the syntax will end the class definition with a curly brace, followed by a closing parenthesis to end the method call, followed by a semicolon to end the statement: <code> });</code></p>
+<h4 class="h4">Static Nested Classes (OCP Objective 2.3)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Static nested classes are inner classes marked with the <code>static</code> modifier.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>static</code> nested class is <em>not</em> an inner class; it’s a top-level nested class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Because the nested class is <code>static</code>, it does not share any special relationship with an instance of the outer class. In fact, you don’t need an instance of the outer class to instantiate a <code>static</code> nested class.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  For the purposes of the exam, instantiating a <code>static</code> nested class requires using both the outer and nested class names as follows:</p>
+<p class="bullp"><code>BigOuter.Nested n = new BigOuter.Nested();</code></p>
+<p class="bull-image"><span id="page_478" epub:type="pagebreak"></span><img class="inline" src="images/box1.jpg" alt="Images" />  A <code>static</code> nested class cannot access non-<code>static</code> members of the outer class because it does not have any implicit reference to the outer instance (in other words, the nested class instance does not get an <em>outer </em><code>this</code> reference).</p>
+<h4 class="h4">Replacing Inner Classes with Lambda Expressions (OCP Objective 2.6)</h4>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Lambda expressions are a good way to write anonymous inner classes that implement functional interfaces.</p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  Instead of writing out an instance of the class using an anonymous inner class like this:</p>
+<p class="imagebp"><img src="images/un478-01.jpg" alt="images" /></p>
+<p class="bullp">we can replace the anonymous inner class with a lambda expression, like this:</p>
+<p class="imagebp"><img src="images/un478-02.jpg" alt="images" /></p>
+<p class="bull-image"><img class="inline" src="images/box1.jpg" alt="Images" />  You can replace anonymous inner classes with lambda expressions <em>only</em> if the inner class implements a functional interface. Be careful on the exam; make sure the interface is really functional.</p>
+<h3 class="h3b" id="ch7lev1sec9"><span id="page_479" epub:type="pagebreak"></span><img src="images/qs.jpg" alt="Images" />SELF TEST</h3>
+<p class="noindentb">The following questions will help you measure your understanding of the dynamic and life-altering material presented in this chapter. Read all of the choices carefully. Take your time. Breathe.</p>
+<p class="que"><strong><a id="ch7ans1" href="ch7.xhtml#r_ch7ans1">1</a>.</strong>   Which are true about a <code>static</code> nested class? (Choose all that apply.)</p>
+<p class="alpha">A.   You must have a reference to an instance of the enclosing class in order to instantiate it</p>
+<p class="alpha">B.   It does not have access to nonstatic members of the enclosing class</p>
+<p class="alpha">C.   Its variables and methods must be <code>static</code></p>
+<p class="alpha">D.   If the outer class is named <code>MyOuter</code> and the nested class is named <code>MyInner</code>, it can be instantiated using <code>new</code> <code>MyOuter.MyInner();</code></p>
+<p class="alpha">E.   It must extend the enclosing class</p>
+<p class="que"><strong><a id="ch7ans2" href="ch7.xhtml#r_ch7ans2">2</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un479-01.jpg" alt="images" /></p>
+<p class="quep">Which statements create an anonymous inner class from within class <code>Bar</code>? (Choose all that apply.)</p>
+<p class="quep"><img src="images/un479-02.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch7ans3" href="ch7.xhtml#r_ch7ans3">3</a>.</strong>   Which are true about a method-local inner class? (Choose all that apply.)</p>
+<p class="alpha">A.   It must be marked <code>final</code></p>
+<p class="alpha">B.   It can be marked <code>abstract</code></p>
+<p class="alpha">C.   It can be marked <code>public</code></p>
+<p class="alpha">D.   It can be marked <code>static</code></p>
+<p class="alpha">E.   It can access private members of the enclosing class</p>
+<p class="que"><span id="page_480" epub:type="pagebreak"></span><strong><a id="ch7ans4" href="ch7.xhtml#r_ch7ans4">4</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un480-01.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   An exception occurs at runtime</p>
+<p class="alpha">B.   <code>true</code></p>
+<p class="alpha">C.   <code>Fred</code></p>
+<p class="alpha">D.   Compilation fails because of an error on line 3</p>
+<p class="alpha">E.   Compilation fails because of an error on line 4</p>
+<p class="alpha">F.   Compilation fails because of an error on line 8</p>
+<p class="alpha">G.   Compilation fails because of an error on a line other than 3, 4, or 8</p>
+<p class="que"><strong><a id="ch7ans5" href="ch7.xhtml#r_ch7ans5">5</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un480-02.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   An exception occurs at runtime at line 10</p>
+<p class="alpha">B.   <code>Zippo</code></p>
+<p class="alpha">C.   Compilation fails because of an error on line 3</p>
+<p class="alpha">D.   Compilation fails because of an error on line 9</p>
+<p class="alpha">E.   Compilation fails because of an error on line 10</p>
+<p class="que"><span id="page_481" epub:type="pagebreak"></span><strong><a id="ch7ans6" href="ch7.xhtml#r_ch7ans6">6</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un481-01.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   <code>57 22</code></p>
+<p class="alpha">B.   <code>45 38</code></p>
+<p class="alpha">C.   <code>45 57</code></p>
+<p class="alpha">D.   An exception occurs at runtime</p>
+<p class="alpha">E.   Compilation fails</p>
+<p class="que"><strong><a id="ch7ans7" href="ch7.xhtml#r_ch7ans7">7</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un481-02.jpg" alt="images" /></p>
+<p class="quep">Which, inserted independently at line 6, compiles and produces the output “spooky”? (Choose all that apply.)</p>
+<p class="quep"><span id="page_482" epub:type="pagebreak"></span><img src="images/un482-01.jpg" alt="images" /></p>
+<p class="que"><strong><a id="ch7ans8" href="ch7.xhtml#r_ch7ans8">8</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un482-02.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   <code>inner</code></p>
+<p class="alpha">B.   <code>outer</code></p>
+<p class="alpha">C.   <code>middle</code></p>
+<p class="alpha">D.   Compilation fails</p>
+<p class="alpha">E.   An exception is thrown at runtime</p>
+<p class="que"><strong><a id="ch7ans9" href="ch7.xhtml#r_ch7ans9">9</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un482-03.jpg" alt="images" /></p>
+<p class="quep"><span id="page_483" epub:type="pagebreak"></span>Which, inserted independently at line 5, produces the output <code>"hi"</code>? (Choose all that apply.)</p>
+<p class="quep"><img src="images/un483-01.jpg" alt="images" /></p>
+<p class="que1"><strong><a id="ch7ans10" href="ch7.xhtml#r_ch7ans10">10</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un483-02.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   <code>x</code></p>
+<p class="alpha">B.   <code>x</code> <code>x</code></p>
+<p class="alpha">C.   No output is produced</p>
+<p class="alpha">D.   Compilation fails due to multiple errors</p>
+<p class="alpha">E.   Compilation fails due only to an error on line 4</p>
+<p class="alpha">F.   Compilation fails due only to an error on line 7</p>
+<p class="alpha">G.   Compilation fails due only to an error on line 10</p>
+<p class="alpha">H.   Compilation fails due only to an error on line 13</p>
+<p class="que1"><strong><a id="ch7ans11" href="ch7.xhtml#r_ch7ans11">11</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un483-03.jpg" alt="images" /></p>
+<p class="imageqp"><span id="page_484" epub:type="pagebreak"></span><img src="images/un484-01.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   <code>15</code></p>
+<p class="alpha">B.   <code>21</code></p>
+<p class="alpha">C.   An exception is thrown at runtime</p>
+<p class="alpha">D.   Compilation fails due to multiple errors</p>
+<p class="alpha">E.   Compilation fails due only to an error on line 4</p>
+<p class="alpha">F.   Compilation fails due only to an error on line 5</p>
+<p class="que1"><strong><a id="ch7ans12" href="ch7.xhtml#r_ch7ans12">12</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un484-02.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   Compilation fails</p>
+<p class="quep"><img src="images/un484-03.jpg" alt="images" /></p>
+<p class="alpha">F.   An exception is thrown at runtime</p>
+<p class="que1"><span id="page_485" epub:type="pagebreak"></span><strong><a id="ch7ans13" href="ch7.xhtml#r_ch7ans13">13</a>.</strong>   Given:</p>
+<p class="imageqp"><img src="images/un485-01.jpg" alt="images" /></p>
+<p class="quep">What is the result?</p>
+<p class="alpha">A.   Compilation fails</p>
+<p class="quep"><img src="images/un485-02.jpg" alt="images" /></p>
+<p class="alpha">F.   An exception is thrown at runtime</p>
+<h3 class="h3b" id="ch7lev2sec9"><span id="page_486" epub:type="pagebreak"></span><img src="images/aself.jpg" alt="Images" /> SELF TEST ANSWERS</h3>
+<p class="noindent">Note: Most of the questions in this chapter relate to OCP Objective 2.3. We’ve talked about the actual mapping of inner class ideas to the exam, so we will NOT be citing Objective numbers in the answers to the questions in this chapter, except for the last question, which relates to Objective 2.6.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans1" id="r_ch7ans1">1</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> and <strong>D</strong> are correct.<strong> B</strong> is correct because a static nested class is not tied to an instance of the enclosing class, and thus can’t access the nonstatic members of the class (just as a <code>static</code> method can’t access nonstatic members of a class). <strong>D</strong> uses the correct syntax for instantiating a static nested class.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A</strong> is incorrect because static nested classes do not need (and can’t use) a reference to an instance of the enclosing class. <strong>C</strong> is incorrect because static nested classes can declare and define nonstatic members. <strong>E</strong> is wrong because…it just is. There’s no rule that says an inner or nested class has to extend anything.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans2" id="r_ch7ans2">2</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> and <strong>C</strong> are correct.<strong> B</strong> is correct because anonymous inner classes are no different from any other class when it comes to polymorphism. That means you are always allowed to declare a reference variable of the superclass type and have that reference variable refer to an instance of a subclass type, which, in this case, is an anonymous subclass of <code>Bar</code>. Since <code>Bar</code> is a subclass of <code>Boo</code>, it all works. <strong>C</strong> uses correct syntax for creating an instance of <code>Boo</code>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A</strong> is incorrect because it passes an <code>int</code> to the <code>Boo</code> constructor, and there is no matching constructor in the <code>Boo</code> class. <strong>D</strong> is incorrect because it violates the rules of polymorphism; you cannot refer to a superclass type using a reference variable declared as the subclass type. The superclass doesn’t have everything the subclass has. <strong>E</strong> uses incorrect syntax.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans3" id="r_ch7ans3">3</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> and <strong>E</strong> are correct.<strong> B</strong> is correct because a method-local inner class can be <code>abstract</code>, although it means a subclass of the inner class must be created if the <code>abstract</code> class is to be used (so an <code>abstract</code> method-local inner class is probably not useful). <strong>E</strong> is correct because a method-local inner class works like any other inner class—it has a special relationship to an instance of the enclosing class, thus it can access all members of the enclosing class.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A</strong> is incorrect because a method-local inner class does not have to be declared <code>final</code> (although it is legal to do so). <strong>C</strong> and<strong> D</strong> are incorrect because a method-local inner class cannot be made <code>public</code> (remember—local variables can’t be <code>public</code>) or <code>static</code>.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans4" id="r_ch7ans4">4</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>G</strong> is correct. This code would be legal if line 7 ended with a semicolon. Remember that line 3 is a statement that doesn’t end until line 7, and a statement needs a closing semicolon!</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C, D, E,</strong> and <strong>F</strong> are incorrect based on the program logic just described. If the semicolon were added at line 7, then answer <strong>B</strong> would be correct—the program would print <code>true</code>, the return from the <code>equals()</code> method overridden by the anonymous subclass of <code>Object</code>.</p>
+<p class="que-q"><span id="page_487" epub:type="pagebreak"></span><strong><a href="ch7.xhtml#ch7ans5" id="r_ch7ans5">5</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>E</strong> is correct. If you use a reference variable of type <code>Object</code>, you can access only those members defined in class <code>Object</code>.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C,</strong> and <strong>D</strong> are incorrect based on the program logic just described.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans6" id="r_ch7ans6">6</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct. You can define an inner class as <code>abstract</code>, which means you can instantiate only concrete subclasses of the <code>abstract</code> inner class. The object referenced by the variable<code> t</code> is an instance of an anonymous subclass of <code>AbstractTest</code>, and the anonymous class overrides the <code>getNum()</code> method to return <code>22</code>. The object referenced by variable <code>f</code> is an instance of an anonymous subclass of <code>Bar</code>, and the anonymous <code>Bar</code> subclass also overrides the <code>getNum()</code> method to return <code>57</code>. Remember that to create a <code>Bar</code> instance, we need an instance of the enclosing <code>AbstractTest</code> class to tie to the new <code>Bar</code> inner class instance. <code>AbstractTest</code> can’t be instantiated because it’s <code>abstract</code>, so we created an anonymous subclass (non-<code>abstract</code>) and then used the instance of that anonymous subclass to tie to the new <code>Bar</code> subclass instance.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D,</strong> and <strong>E</strong> are incorrect based on the program logic just described.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans7" id="r_ch7ans7">7</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>D</strong> is correct. It is the only code that uses the correct inner class instantiation syntax.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, C,</strong> and <strong>E</strong> are incorrect based on the above text.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans8" id="r_ch7ans8">8</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct. The <code>"inner"</code> version of <code>class A</code> isn’t used because its declaration comes after the instance of <code>class A</code> is created in the <code>go()</code> method.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, D,</strong> and <strong>E</strong> are incorrect based on the above text.</p>
+<p class="que-q"><strong><a href="ch7.xhtml#ch7ans9" id="r_ch7ans9">9</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> and <strong>G</strong> are correct. <strong>C</strong> is the correct syntax to access an inner class’s outer instance method from an initialization block, and <strong>G</strong> is the correct syntax to access it from a constructor.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, D, E,</strong> and <strong>F</strong> are incorrect based on the above text.</p>
+<p class="que-q1"><strong><a href="ch7.xhtml#ch7ans10" id="r_ch7ans10">10</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct. The inner classes are valid, and all the methods (including <code>main()</code>), correctly throw an exception, given that <code>doStuff()</code> throws an exception. The <code>doStuff()</code> in class <code>TimesSquare</code> overrides class <code>Manhattan</code>’s <code>doStuff()</code> and produces no output.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, D, E, F, G,</strong> and <strong>H</strong> are incorrect based on the above text.</p>
+<p class="que-q1"><strong><a href="ch7.xhtml#ch7ans11" id="r_ch7ans11">11</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>B</strong> is correct. The inner class <code>Gazer</code> has access to <code>Navel</code>’s <code>private static</code> and private instance variables.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, C, D, E,</strong> and <strong>F</strong> are incorrect based on the above text.</p>
+<p class="que-q1"><strong><a href="ch7.xhtml#ch7ans12" id="r_ch7ans12">12</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>A</strong> is correct. The inner class <code>Sorter</code> must be declared <code>static</code> to be called from the <code>static</code> method <code>main()</code>. If <code>Sorter</code> had been <code>static</code>, answer <strong>E</strong> would be correct.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>B, C, D, E,</strong> and <strong>F</strong> are incorrect based on the above text.</p>
+<p class="que-q1"><span id="page_488" epub:type="pagebreak"></span><strong><a href="ch7.xhtml#ch7ans13" id="r_ch7ans13">13</a>.</strong>   <img src="images/tick2.jpg" alt="Images" />   <strong>C</strong> is correct. We’re using a lambda expression to stand in for the <code>Comparator</code> we pass to <code>Arrays.sort()</code>. There is no inner (or outer) class we need to supply; the JDK knows we are supplying a lambda expression that implements the <code>compareTo()</code> method for <code>Comparator</code> because of the type signature of <code>Arrays.sort()</code>. In this case, we are sorting the list in ascending order.</p>
+<p class="quep"><img src="images/times.jpg" alt="Images" />   <strong>A, B, D, E,</strong> and <strong>F</strong> are incorrect based on the above text. (Objective 2.6)</p>
+</section>
+</div>
+</body>
+</html>
